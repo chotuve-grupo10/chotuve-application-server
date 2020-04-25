@@ -15,6 +15,8 @@ def app():
     with app.app_context():
     	pass
 
+    return app
+
 @pytest.fixture
 def client(app):
     return app.test_client()
