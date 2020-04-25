@@ -5,7 +5,7 @@ def test_hello(client):
     assert response.data == b'Hello, World!'
     assert response.status_code == 200
 
-def test_abort(client):
+def test_about(client):
 	response = client.get('/about/', follow_redirects=True)
 	assert response.data == b'This is Application Server for chotuve-10. Still in construction'
 	assert response.status_code == 200

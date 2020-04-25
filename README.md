@@ -19,7 +19,7 @@
 ```export FLASK_APP=app_server```   
 ```export FLASK_ENV=development```   
 
-5. Corremos el server localmente:  
+6. Corremos el server localmente:  
 ```flask run```
 
 ## Server en heroku
