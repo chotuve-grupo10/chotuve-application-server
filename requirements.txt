@@ -1,4 +1,4 @@
--e git+git@github.com:chotuve-grupo10/chotuve-application-server.git
+-e git+git@github.com:chotuve-grupo10/chotuve-application-server.git#egg=app_server
 attrs==19.3.0
 click==7.1.1
 Flask==1.1.2
