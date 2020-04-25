@@ -1,4 +1,4 @@
--e git+https://github.com/chotuve-grupo10/chotuve-application-server.git@668c05ae5e2d0d130073a9dab291962d6f2486e6#egg=app_server
+-e git+https://github.com/chotuve-grupo10/chotuve-application-server.git@82045dff925f1b86f9eb1871056005767b2eca9a#egg=app_server
 attrs==19.3.0
 click==7.1.1
 Flask==1.1.2
