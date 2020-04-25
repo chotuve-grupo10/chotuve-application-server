@@ -11,11 +11,15 @@
 3. Activamos el venv:  
 ```source my-venv/bin/activate```
 
-4. Instalamos flask y gunicorn:   
-```pip install flask```   
-```pip install gunicorn```
+4. Instalamos las dependencias de todo el proyecto:   
+```pip install -e .```   
 
-5. Corremos el server localmente:  
+5. Hacemos export de las variables:
+
+```export FLASK_APP=app_server```   
+```export FLASK_ENV=development```   
+
+6. Corremos el server localmente:  
 ```flask run```
 
 ## Server en heroku
