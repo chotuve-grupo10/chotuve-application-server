@@ -2,7 +2,7 @@ import os
 import tempfile
 
 import pytest
-from flaskr import create_app
+from app_server import create_app
 
 @pytest.fixture
 def app():

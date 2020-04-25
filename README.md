@@ -15,7 +15,7 @@
 ```pip install -e .```   
 
 5. Hacemos export de ciertas variables (Acá hay que revisar esto, deberíamos mandarlo a un archivo de configuración si entendí bien lo que dijo ayer gonzalo. Por otro lado, no sé para qué sirve la variable development. Creo que es para avisarle a flask el modo en el que corre):
-```export FLASK_APP=flaskr```   
+```export FLASK_APP=app_server```   
 ```export FLASK_ENV=development```   
 
 5. Corremos el server localmente:  
