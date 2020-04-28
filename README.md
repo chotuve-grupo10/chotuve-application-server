@@ -24,8 +24,9 @@
 
 ## Server en heroku
 
-- Actualmente el server esta corriendo en heroku en la siguiente direccion:   
+- Actualmente el server esta corriendo en heroku en las siguientes direcciones:   
 https://chotuve-app-server-production.herokuapp.com/
-Por ahora esta corriendo en prod pero esta dentro de un pipeline para que podamos setear otros ambientes.
+https://chotuve-app-server-dev.herokuapp.com/
+
 
 
