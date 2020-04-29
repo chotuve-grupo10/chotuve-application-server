@@ -1,9 +1,7 @@
-from app_server import create_app
-
 def test_hello(client):
-    response = client.get('/hello',  follow_redirects=True)
-    assert response.data == b'Hello, World!'
-    assert response.status_code == 200
+	response = client.get('/hello', follow_redirects=True)
+	assert response.data == b'Hello, World!'
+	assert response.status_code == 200
 
 def test_about(client):
 	response = client.get('/about/', follow_redirects=True)
