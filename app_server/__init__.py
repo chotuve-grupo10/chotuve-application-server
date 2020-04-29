@@ -1,39 +1,39 @@
-from flask import Flask, request
 import os
-# La documentación de Flask dice que SIMPLEJSON funciona más rápido y que Flask está bien integrado con este
-import simplejson as json 
+from flask import Flask, request
+# La documentación de Flask dice que SIMPLEJSON funciona más
+# rápido y que Flask está bien integrado con este
+import simplejson as json
 
 def create_app(test_config=None):
 	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
-	app.config.from_mapping(
-	    SECRET_KEY='dev' #,
-	    #DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-	)
+	# Parametro adicional que no estamos usando por ahora en app.config.from_mapping
+	#DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'
+	app.config.from_mapping(SECRET_KEY='dev')
 
 	if test_config is None:
 	    # load the instance config, if it exists, when not testing
-	    app.config.from_pyfile('config.py', silent=True)
+		app.config.from_pyfile('config.py', silent=True)
 	else:
 	    # load the test config if passed in
-	    app.config.from_mapping(test_config)
+		app.config.from_mapping(test_config)
 
 	# ensure the instance folder exists
 	try:
-	    os.makedirs(app.instance_path)
+		os.makedirs(app.instance_path)
 	except OSError:
-	    pass
+		pass
 
 	@app.route('/ping/', methods=['GET'])
-	def respond():
+	def _respond():
 
-	    response = {}
-	    response["Status"] = "Running"
-	    return json.dumps(response)
+		response = {}
+		response["Status"] = "Running"
+		return json.dumps(response)
 
 	@app.route('/hello/')
-	def hello():
-	    return 'Hello, World!'
+	def _hello():
+		return 'Hello, World!'
 
 	# @app.route('/user/<username>')
 	# def show_user_profile(username):
@@ -46,12 +46,12 @@ def create_app(test_config=None):
 	#     return 'Post %d' % post_id
 
 	@app.route('/about/')
-	def about():
-	    return 'This is Application Server for chotuve-10. Still in construction'
+	def _about():
+		return 'This is Application Server for chotuve-10. Still in construction'
 
 
 	@app.route('/')
-	def index():
-	    return "<h1>Welcome to application server !</h1>"
+	def _index():
+		return "<h1>Welcome to application server !</h1>"
 
 	return app
