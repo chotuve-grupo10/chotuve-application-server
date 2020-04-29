@@ -6,3 +6,5 @@ install:
   - pip install -r requirements.txt
 script:
   - pytest
+  - pylint app_server
+  - pylint tests/test_app_server.py
