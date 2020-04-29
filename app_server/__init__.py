@@ -25,14 +25,14 @@ def create_app(test_config=None):
 		pass
 
 	@app.route('/ping/', methods=['GET'])
-	def respond():
+	def _respond():
 
 		response = {}
 		response["Status"] = "Running"
 		return json.dumps(response)
 
 	@app.route('/hello/')
-	def hello():
+	def _hello():
 		return 'Hello, World!'
 
 	# @app.route('/user/<username>')
@@ -46,12 +46,12 @@ def create_app(test_config=None):
 	#     return 'Post %d' % post_id
 
 	@app.route('/about/')
-	def about():
+	def _about():
 		return 'This is Application Server for chotuve-10. Still in construction'
 
 
 	@app.route('/')
-	def index():
+	def _index():
 		return "<h1>Welcome to application server !</h1>"
 
 	return app
