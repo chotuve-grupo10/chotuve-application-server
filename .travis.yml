@@ -11,7 +11,7 @@ env:
     - HEROKU_DOCKER_IMAGE=registry.heroku.com/$HEROKU_APP_NAME/web
 
 before_install:
-  # login to docker registries
+  # login to docker registries 
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 install:
