@@ -18,7 +18,6 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - pwd
   - pytest
   - pylint app_server
   - pylint tests/test_app_server.py
