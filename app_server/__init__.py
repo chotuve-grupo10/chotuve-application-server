@@ -1,7 +1,5 @@
 import os
 from flask import Flask, request
-# La documentación de Flask dice que SIMPLEJSON funciona más
-# rápido y que Flask está bien integrado con este
 import simplejson as json
 
 def create_app(test_config=None):
