@@ -5,11 +5,11 @@
 1. Clonar el repo:  
 ```git clone https://github.com/chotuve-grupo10/chotuve-application-server.git```
 
-2. En el directorio del repo, creamos el container de Docker:  
-```docker build . -t application-server```
+2. En el directorio del repo, buildeamos con docker-compose:  
+```docker-compose build```
 
-3. Corremos el docker y nos conectamos a través del puerto 8080:  
-```docker run --name application-server -p 8080:5000 application-server```
+3. Corremos el docker-compose y nos conectamos a través del puerto 8080:  
+```docker-compose run```
 
 ## Server en heroku
 
