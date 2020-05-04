@@ -10,10 +10,6 @@ env:
     - DOCKER_IMAGE=chotuve-grupo10/chotuve-application-server:$TRAVIS_BUILD_NUMBER
     - HEROKU_DOCKER_IMAGE=registry.heroku.com/$HEROKU_APP_NAME/web
 
-before_install:
-  # login to docker registries
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-
 install:
   - pip install -r requirements.txt
 
