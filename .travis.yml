@@ -17,6 +17,7 @@ script:
   - python -m pytest
   - pylint app_server
   - pylint tests/test_app_server.py
+  - docker build -t $DOCKER_IMAGE .
 
 before_deploy:
   - wget -qO- https://toolbelt.heroku.com/install.sh | sh
