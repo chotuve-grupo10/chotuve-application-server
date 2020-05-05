@@ -1,4 +1,5 @@
 import os
+from flasgger import Swagger
 from flask import Flask, request
 import simplejson as json
 
@@ -8,6 +9,7 @@ def create_app(test_config=None):
 	# Parametro adicional que no estamos usando por ahora en app.config.from_mapping
 	#DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'
 	app.config.from_mapping(SECRET_KEY='dev')
+	Swagger(app)
 
 	if test_config is None:
 	    # load the instance config, if it exists, when not testing
@@ -24,7 +26,13 @@ def create_app(test_config=None):
 
 	@app.route('/ping/', methods=['GET'])
 	def _respond():
-
+		"""
+    Este es un método de ejemplo
+    ---
+    responses:
+      200:
+        description: Server status
+    """
 		response = {}
 		response["Status"] = "Running"
 		return json.dumps(response)
