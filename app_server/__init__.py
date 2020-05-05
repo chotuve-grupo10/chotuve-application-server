@@ -9,7 +9,7 @@ def create_app(test_config=None):
 	# Parametro adicional que no estamos usando por ahora en app.config.from_mapping
 	#DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'
 	app.config.from_mapping(SECRET_KEY='dev')
-	swagger = Swagger(app)
+	Swagger(app)
 
 	if test_config is None:
 	    # load the instance config, if it exists, when not testing
