@@ -10,6 +10,7 @@ setup(
         'flask',
         'simplejson',
         'pytest',
-        'flasgger'
+        'flasgger',
+        'requests'
     ],
 )

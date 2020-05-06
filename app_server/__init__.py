@@ -2,6 +2,7 @@ import os
 from flasgger import Swagger
 from flask import Flask, request
 import simplejson as json
+from app_server.http_functions import *
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -24,7 +25,7 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
-	@app.route('/ping/', methods=['GET'])
+	@app.route('/api/ping/', methods=['GET'])
 	def _respond():
 		"""
     Este es un método de ejemplo
@@ -33,11 +34,22 @@ def create_app(test_config=None):
       200:
         description: Server status
     """
-		response = {}
-		response["Status"] = "Running"
-		return json.dumps(response)
+		response = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
+		status = {}
+		status["App Server"] = "OK"
 
-	@app.route('/hello/')
+		if response.status_code == 200:
+			data = response.json()
+			if data['Health'] == 'OK':
+				status["Auth Server"] = "OK"
+			else:
+				status["Auth Server"] = "DOWN"
+		else:
+			status["Auth Server"] = "DOWN"
+
+		return json.dumps(status)
+
+	@app.route('/api/hello/')
 	def _hello():
 		return 'Hello, World!'
 
@@ -51,7 +63,7 @@ def create_app(test_config=None):
 	#     # show the post with the given id, the id is an integer
 	#     return 'Post %d' % post_id
 
-	@app.route('/about/')
+	@app.route('/api/about/')
 	def _about():
 		return 'This is Application Server for chotuve-10. Still in construction'
 
