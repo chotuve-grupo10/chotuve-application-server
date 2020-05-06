@@ -1,7 +1,8 @@
 import os
+import simplejson as json
+
 from flasgger import Swagger
 from flask import Flask, request
-import simplejson as json
 from app_server.http_functions import *
 
 def create_app(test_config=None):
@@ -75,6 +76,20 @@ def create_app(test_config=None):
 		status = {}
 		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
 		return json.dumps(status)
+
+
+### Métodos que aún no implementaremos ###
+
+	@app.route('/api/home/', methods=['GET'])
+	def _home_screen():
+		"""
+    Este es un método para listar los videos en pantalla principal
+    ---
+    responses:
+      200:
+        description: List of videos to show in home screen
+    """
+		return {}
 
 	@app.route('/')
 	def _index():

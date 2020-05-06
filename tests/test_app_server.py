@@ -39,3 +39,8 @@ def test_fake(client):
 	response = client.get('/api/fake/', follow_redirects=True)
 	assert not response.status_code == 200
 	assert response.status_code == 404
+
+def test_home_screen(client):
+	response = client.get('/api/home/', follow_redirects=True)
+	assert json.loads(response.data) == {}
+	assert response.status_code == 200
