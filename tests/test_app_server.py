@@ -12,7 +12,7 @@ def test_about(client):
 
 def test_ping(client):
 	response = client.get('/api/ping/', follow_redirects=True)
-	assert json.loads(response.data) == {'Status' : 'Running'}
+	assert json.loads(response.data) == {'App Server' : 'OK', 'Auth Server' : 'OK'}
 	assert response.status_code == 200
 
 def test_home(client):

@@ -2,6 +2,7 @@ import os
 from flasgger import Swagger
 from flask import Flask, request
 import simplejson as json
+from app_server.httpFunctions import get_auth_server_ping
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -33,9 +34,20 @@ def create_app(test_config=None):
       200:
         description: Server status
     """
-		response = {}
-		response['Status'] = 'Running'
-		return json.dumps(response)
+		response = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
+		status = {}
+		status["App Server"] = "OK"
+
+		if response.status_code == 200:
+			data = response.json()
+			if data['Health'] == 'OK':
+				status["Auth Server"] = "OK"
+			else:
+				status["Auth Server"] = "DOWN"
+		else:
+			status["Auth Server"] = "DOWN"
+
+		return json.dumps(status)
 
 	@app.route('/api/hello/')
 	def _hello():
