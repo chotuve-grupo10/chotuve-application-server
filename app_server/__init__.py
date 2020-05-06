@@ -72,9 +72,9 @@ def create_app(test_config=None):
       200:
         description: About information
     """
-   		status = {}
-   		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
-   		return json.dumps(status)
+		status = {}
+		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
+		return json.dumps(status)
 
 	@app.route('/')
 	def _index():
