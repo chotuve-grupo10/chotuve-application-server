@@ -24,6 +24,11 @@ def test_ping_auth_server_is_down(client):
 	if previous_value:
 		os.environ['AUTH_SERVER_URL'] = old
 
+def test_ping_all_servers_up(client):
+	response = client.get('/api/ping/', follow_redirects=True)
+	assert json.loads(response.data) == {'App Server' : 'OK', 'Auth Server' : 'OK'}
+	assert response.status_code == 200
+
 def test_home(client):
 	response = client.get('/', follow_redirects=True)
 	assert response.data == b'<h1>Welcome to application server !</h1>'
