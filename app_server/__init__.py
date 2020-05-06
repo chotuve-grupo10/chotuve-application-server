@@ -78,10 +78,14 @@ def create_app(test_config=None):
 		return json.dumps(status)
 
 
+	@app.route('/')
+	def _index():
+		return "<h1>Welcome to application server !</h1>"
+
 ### Métodos que aún no implementaremos ###
 
 	@app.route('/api/home/', methods=['GET'])
-	def _home_screen():
+	def _home_page():
 		"""
     Este es un método para listar los videos en pantalla principal
     ---
@@ -91,8 +95,26 @@ def create_app(test_config=None):
     """
 		return {}
 
-	@app.route('/')
-	def _index():
-		return "<h1>Welcome to application server !</h1>"
+	@app.route('/api/register/', methods=['POST'])
+	def _register_user():
+		"""
+    Recibe una solicitud de registro
+    ---
+    responses:
+      200:
+        description: Register solicitation
+        parameters:
+        	- in: header
+        	name: email
+        	type: string
+        	required: true
+        	description: email of the user
+        	- in: header
+        	name: password
+        	type: string
+        	required: true
+        	description: secret password
+    """
+		return {}
 
 	return app

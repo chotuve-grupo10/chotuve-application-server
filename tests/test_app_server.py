@@ -40,7 +40,12 @@ def test_fake(client):
 	assert not response.status_code == 200
 	assert response.status_code == 404
 
-def test_home_screen(client):
+def test_home_page(client):
 	response = client.get('/api/home/', follow_redirects=True)
 	assert json.loads(response.data) == {}
 	assert response.status_code == 200
+
+# def test_registration_page(client):
+# 	response = client.get('/api/register/', follow_redirects=True)
+# 	assert json.loads(response.data) == {}
+# 	assert response.status_code == 200
