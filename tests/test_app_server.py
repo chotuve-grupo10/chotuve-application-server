@@ -1,5 +1,5 @@
 # import os
-# import simplejson as json
+import simplejson as json
 
 def test_hello(client):
 	response = client.get('/api/hello/', follow_redirects=True)
@@ -8,7 +8,8 @@ def test_hello(client):
 
 def test_about(client):
 	response = client.get('/api/about/', follow_redirects=True)
-	assert response.data == b'This is Application Server for chotuve-10. Still in construction'
+	description = 'This is Application Server for chotuve-10. Still in construction'
+	assert json.loads(response.data) == {'Description' : description}
 	assert response.status_code == 200
 
 # def test_ping_auth_server_is_down(client):
