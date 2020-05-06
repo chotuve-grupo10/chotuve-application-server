@@ -28,7 +28,7 @@ def create_app(test_config=None):
 	@app.route('/api/ping/', methods=['GET'])
 	def _respond():
 		"""
-    Este es un método de ejemplo
+    Este es un método para verificar el status del
     ---
     responses:
       200:
@@ -65,8 +65,16 @@ def create_app(test_config=None):
 
 	@app.route('/api/about/')
 	def _about():
-		return 'This is Application Server for chotuve-10. Still in construction'
-
+		"""
+    Este es un método para recibir información del Server
+    ---
+    responses:
+      200:
+        description: About information
+    """
+   		status = {}
+   		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
+   		return json.dumps(status)
 
 	@app.route('/')
 	def _index():
