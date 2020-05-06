@@ -2,7 +2,7 @@ import os
 from flasgger import Swagger
 from flask import Flask, request
 import simplejson as json
-from app_server.httpFunctions import get_auth_server_ping
+from app_server.http_functions import get_auth_server_ping
 
 def create_app(test_config=None):
 	# create and configure the app
