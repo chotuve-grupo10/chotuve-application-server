@@ -1,5 +1,5 @@
 # import os
-import simplejson as json
+# import simplejson as json
 
 def test_hello(client):
 	response = client.get('/api/hello/', follow_redirects=True)
