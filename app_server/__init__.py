@@ -103,17 +103,6 @@ def create_app(test_config=None):
     responses:
       200:
         description: Register solicitation
-        parameters:
-        	- in: header
-        	name: email
-        	type: string
-        	required: true
-        	description: email of the user
-        	- in: header
-        	name: password
-        	type: string
-        	required: true
-        	description: secret password
     """
 		return {}
 
