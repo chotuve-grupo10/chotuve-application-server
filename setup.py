@@ -9,6 +9,8 @@ setup(
     install_requires=[
         'flask',
         'simplejson',
-        'pytest'
+        'pytest',
+        'flasgger',
+        'requests'
     ],
 )
