@@ -17,5 +17,5 @@ responses:
       $ref: '#/definitions/Response'
     example:
       App Server: "OK"
-      Auth Server: OK
-      Media Server: OK
+      Auth Server: "OK"
+      Media Server: "OK"
