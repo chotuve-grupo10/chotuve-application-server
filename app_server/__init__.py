@@ -2,6 +2,7 @@ import os
 import simplejson as json
 
 from flasgger import Swagger
+from flasgger import swag_from
 from flask import Flask, request
 from app_server.http_functions import *
 
@@ -27,14 +28,8 @@ def create_app(test_config=None):
 		pass
 
 	@app.route('/api/ping/', methods=['GET'])
+	@swag_from('ping.yml')
 	def _respond():
-		"""
-    Este es un método para verificar el status del
-    ---
-    responses:
-      200:
-        description: Server status
-    """
 		response = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
 		status = {}
 		status["App Server"] = "OK"

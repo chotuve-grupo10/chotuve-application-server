@@ -1,0 +1,21 @@
+Este es un método para recibir información del estado de los servers
+---
+definitions:
+  Response:
+    type: object
+    properties:
+      App Server:
+        type: string
+      Auth Server:
+        type: string
+      Media Server:
+        type: string
+responses:
+  200:
+    description: Status of each server
+    schema:
+      $ref: '#/definitions/Response'
+    example:
+      App Server: "OK"
+      Auth Server: OK
+      Media Server: OK
