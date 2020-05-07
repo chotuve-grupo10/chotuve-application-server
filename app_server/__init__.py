@@ -91,14 +91,8 @@ def create_app(test_config=None):
 		return {}
 
 	@app.route('/api/register/', methods=['POST'])
+	@swag_from('docs/register.yml')
 	def _register_user():
-		"""
-    Recibe una solicitud de registro
-    ---
-    responses:
-      200:
-        description: Register solicitation
-    """
 		return {}
 
 	return app
