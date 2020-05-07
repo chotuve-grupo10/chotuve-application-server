@@ -28,7 +28,7 @@ def create_app(test_config=None):
 		pass
 
 	@app.route('/api/ping/', methods=['GET'])
-	@swag_from('ping.yml')
+	@swag_from('docs/ping.yml')
 	def _respond():
 		response = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
 		status = {}
