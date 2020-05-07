@@ -1,7 +1,7 @@
 Este es un método para recibir información del estado de los servers
 ---
 definitions:
-  Response:
+  PingResponse:
     type: object
     properties:
       App Server:
@@ -14,7 +14,7 @@ responses:
   200:
     description: Status of each server
     schema:
-      $ref: '#/definitions/Response'
+      $ref: '#/definitions/PingResponse'
     example:
       App Server: "OK"
       Auth Server: "OK"
