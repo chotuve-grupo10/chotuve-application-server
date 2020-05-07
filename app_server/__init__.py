@@ -1,7 +1,9 @@
 import os
-from flasgger import Swagger
-from flask import Flask, request
 import simplejson as json
+
+from flasgger import Swagger
+from flasgger import swag_from
+from flask import Flask, request
 from app_server.http_functions import *
 
 def create_app(test_config=None):
@@ -26,14 +28,8 @@ def create_app(test_config=None):
 		pass
 
 	@app.route('/api/ping/', methods=['GET'])
+	@swag_from('docs/ping.yml')
 	def _respond():
-		"""
-    Este es un método de ejemplo
-    ---
-    responses:
-      200:
-        description: Server status
-    """
 		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
 		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL'))
 		status = {}
@@ -75,11 +71,38 @@ def create_app(test_config=None):
 
 	@app.route('/api/about/')
 	def _about():
-		return 'This is Application Server for chotuve-10. Still in construction'
+		"""
+    Este es un método para recibir información del Server
+    ---
+    responses:
+      200:
+        description: About information
+    """
+		status = {}
+		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
+		return json.dumps(status)
 
 
 	@app.route('/')
 	def _index():
 		return "<h1>Welcome to application server !</h1>"
+
+### Métodos que aún no implementaremos ###
+
+	@app.route('/api/home/', methods=['GET'])
+	def _home_page():
+		"""
+    Este es un método para listar los videos en pantalla principal
+    ---
+    responses:
+      200:
+        description: List of videos to show in home screen
+    """
+		return {}
+
+	@app.route('/api/register/', methods=['POST'])
+	@swag_from('docs/register.yml')
+	def _register_user():
+		return {}
 
 	return app
