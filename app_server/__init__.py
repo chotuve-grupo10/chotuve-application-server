@@ -34,18 +34,28 @@ def create_app(test_config=None):
       200:
         description: Server status
     """
-		response = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
+		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
+		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL'))
 		status = {}
 		status["App Server"] = "OK"
 
-		if response.status_code == 200:
-			data = response.json()
+		if response_auth_server.status_code == 200:
+			data = response_auth_server.json()
 			if data['Health'] == 'OK':
 				status["Auth Server"] = "OK"
 			else:
 				status["Auth Server"] = "DOWN"
 		else:
 			status["Auth Server"] = "DOWN"
+
+		if response_media_server.status_code == 200:
+			data = response_media_server.json()
+			if data['Health'] == 'OK':
+				status["Media Server"] = "OK"
+			else:
+				status["Media Server"] = "DOWN"
+		else:
+			status["Media Server"] = "DOWN"
 
 		return json.dumps(status)
 
