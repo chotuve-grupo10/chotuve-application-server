@@ -11,6 +11,7 @@ setup(
         'simplejson',
         'pytest',
         'flasgger',
-        'requests'
+        'requests',
+        'gunicorn'
     ],
 )
