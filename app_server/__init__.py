@@ -1,6 +1,6 @@
 import os
+import logging
 import simplejson as json
-
 from flasgger import Swagger
 from flasgger import swag_from
 from flask import Flask, request
@@ -26,6 +26,16 @@ def create_app(test_config=None):
 		os.makedirs(app.instance_path)
 	except OSError:
 		pass
+
+	gunicorn_logger = logging.getLogger('gunicorn.error')
+	app.logger.handlers = gunicorn_logger.handlers
+	app.logger.setLevel(gunicorn_logger.level)
+
+	app.logger.debug('this is a DEBUG message')
+	app.logger.info('this is an INFO message')
+	app.logger.warning('this is a WARNING message')
+	app.logger.error('this is an ERROR message')
+	app.logger.critical('this is a CRITICAL message')
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
