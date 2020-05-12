@@ -15,10 +15,10 @@ def create_app(test_config=None):
 	Swagger(app)
 
 	if test_config is None:
-	    # load the instance config, if it exists, when not testing
+		# load the instance config, if it exists, when not testing
 		app.config.from_pyfile('config.py', silent=True)
 	else:
-	    # load the test config if passed in
+		# load the test config if passed in
 		app.config.from_mapping(test_config)
 
 	# ensure the instance folder exists
@@ -55,29 +55,9 @@ def create_app(test_config=None):
 
 		return json.dumps(status)
 
-	@app.route('/api/hello/')
-	def _hello():
-		return 'Hello, World!'
-
-	# @app.route('/user/<username>')
-	# def show_user_profile(username):
-	#     # show the user profile for that user
-	#     return 'User name is %s' % escape(username)
-
-	# @app.route('/post/<int:post_id>')
-	# def show_post(post_id):
-	#     # show the post with the given id, the id is an integer
-	#     return 'Post %d' % post_id
-
-	@app.route('/api/about/')
+	@app.route('/api/about/', methods=['GET'])
+	@swag_from('docs/about.yml')
 	def _about():
-		"""
-    Este es un método para recibir información del Server
-    ---
-    responses:
-      200:
-        description: About information
-    """
 		status = {}
 		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
 		return json.dumps(status)
@@ -90,19 +70,51 @@ def create_app(test_config=None):
 ### Métodos que aún no implementaremos ###
 
 	@app.route('/api/home/', methods=['GET'])
+	@swag_from('docs/home.yml')
 	def _home_page():
-		"""
-    Este es un método para listar los videos en pantalla principal
-    ---
-    responses:
-      200:
-        description: List of videos to show in home screen
-    """
 		return {}
 
 	@app.route('/api/register/', methods=['POST'])
 	@swag_from('docs/register.yml')
 	def _register_user():
+		user_request = request.headers('AuthenticationHeader')
+		response_auth_server = get_auth_server_login_response(os.environ.get('AUTH_SERVER_URL'),
+															  json.dumps(user_request))
 		return {}
+
+	@app.route('/api/register_with_facebook/', methods=['POST'])
+	@swag_from('docs/register_with_facebook.yml')
+	def _register_user_using_facebook():
+		return {}
+
+	@app.route('/api/register_with_google/', methods=['POST'])
+	@swag_from('docs/register_with_google.yml')
+	def _register_user_using_google():
+		return {}
+
+	@app.route('/api/login/', methods=['POST'])
+	@swag_from('docs/login.yml')
+	def _login_user():
+		return {}
+
+	@app.route('/api/login_with_facebook/', methods=['POST'])
+	@swag_from('docs/login_with_facebook.yml')
+	def _login_user_using_facebook():
+		return {}
+
+	@app.route('/api/login_with_google/', methods=['POST'])
+	@swag_from('docs/login_with_google.yml')
+	def _login_user_using_google():
+		return {}
+
+	# @app.route('/user/<username>')
+	# def show_user_profile(username):
+	#     # show the user profile for that user
+	#     return 'User name is %s' % escape(username)
+
+	# @app.route('/post/<int:post_id>')
+	# def show_post(post_id):
+	#     # show the post with the given id, the id is an integer
+	#     return 'Post %d' % post_id
 
 	return app
