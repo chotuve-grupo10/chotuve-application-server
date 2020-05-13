@@ -1,0 +1,6 @@
+Recibe una solicitud de registro utilizando Google
+---
+# parameters:
+responses:
+  200:
+    description: Register solicitation using Google Account

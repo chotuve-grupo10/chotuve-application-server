@@ -1,5 +1,9 @@
 Recibe una solicitud de registro
 ---
+definitions:
+  BasicAuth:
+    scheme: basic
+    type: http
 parameters:
   - in: header
     name: email
@@ -11,6 +15,21 @@ parameters:
     type: string
     required: true
     description: secret password
+  - in: header
+    name: full_names
+    type: string
+    required: true
+    description: name and last name of the user
+  - in: header
+    name: phone_number
+    type: string
+    required: true
+    description: phone number of the user
+  - in: header
+    name: profile_picture
+    type: image   # is this even possible? Suppose so
+    required: true
+    description: profile picture
 responses:
   200:
     description: Register solicitation
