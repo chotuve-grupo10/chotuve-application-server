@@ -27,15 +27,15 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
+	# Set up del log
+	# Basicamente lo que se esta haciendo es usar el handler de gunicorn para
+	# que todos los logs salgan por ese canal.
 	gunicorn_logger = logging.getLogger('gunicorn.error')
 	app.logger.handlers = gunicorn_logger.handlers
 	app.logger.setLevel(gunicorn_logger.level)
 
-	app.logger.debug('this is a DEBUG message')
-	app.logger.info('this is an INFO message')
-	app.logger.warning('this is a WARNING message')
-	app.logger.error('this is an ERROR message')
-	app.logger.critical('this is a CRITICAL message')
+	app.logger.debug('Log configuration finished')
+	app.logger.info('App server running...')
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
