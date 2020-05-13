@@ -9,6 +9,7 @@ __pycache__/
 # Directories
 my-venv/
 .vscode/
+.idea/
 
 # Distribution / packaging
 .Python
