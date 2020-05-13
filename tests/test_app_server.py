@@ -1,11 +1,6 @@
 # import os
 import simplejson as json
 
-def test_hello(client):
-	response = client.get('/api/hello/', follow_redirects=True)
-	assert response.data == b'Hello, World!'
-	assert response.status_code == 200
-
 def test_about(client):
 	response = client.get('/api/about/', follow_redirects=True)
 	description = 'This is Application Server for chotuve-10. Still in construction'
