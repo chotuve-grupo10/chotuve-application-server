@@ -1,5 +1,5 @@
-import requests
 import logging
+import requests
 
 logger = logging.getLogger('gunicorn.error')
 
