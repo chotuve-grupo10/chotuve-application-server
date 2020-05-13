@@ -77,9 +77,8 @@ def create_app(test_config=None):
 	@app.route('/api/register/', methods=['POST'])
 	@swag_from('docs/register.yml')
 	def _register_user():
-		#user_request = request.headers('AuthenticationHeader')
-		# response_auth_server = get_auth_server_login_response(os.environ.get('AUTH_SERVER_URL'),
-		# 						      json.dumps(user_request))
+		#user_request = request.headers['AuthenticationHeader']
+		#response_auth_server = post_auth_server_register(os.environ.get('AUTH_SERVER_URL'), user_request)
 		return {}
 
 	@app.route('/api/register_with_facebook/', methods=['POST'])
