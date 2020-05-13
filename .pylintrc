@@ -2,5 +2,8 @@
 indent-string=\t
 
 [MASTER]
+load-plugins=pylintplugins
 disable=
     C0111, # missing docstring
+    fixme,
+    logging-not-lazy,

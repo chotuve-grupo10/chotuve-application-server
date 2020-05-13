@@ -15,8 +15,8 @@ install:
 
 script:
   - python -m pytest
-  - pylint app_server
-  - pylint tests/test_app_server.py
+  - PYTHONPATH=$(pwd) pylint app_server
+  - PYTHONPATH=$(pwd) pylint tests/test_app_server.py
   - docker build -t $DOCKER_IMAGE .
 
 before_deploy:

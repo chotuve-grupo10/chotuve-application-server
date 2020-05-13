@@ -1,6 +1,6 @@
 import os
+import logging
 import simplejson as json
-
 from flasgger import Swagger
 from flasgger import swag_from
 from flask import Flask, request
@@ -26,6 +26,16 @@ def create_app(test_config=None):
 		os.makedirs(app.instance_path)
 	except OSError:
 		pass
+
+	# Set up del log
+	# Basicamente lo que se esta haciendo es usar el handler de gunicorn para
+	# que todos los logs salgan por ese canal.
+	gunicorn_logger = logging.getLogger('gunicorn.error')
+	app.logger.handlers = gunicorn_logger.handlers
+	app.logger.setLevel(gunicorn_logger.level)
+
+	app.logger.debug('Log configuration finished')
+	app.logger.info('App server running...')
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
