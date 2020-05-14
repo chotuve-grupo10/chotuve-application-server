@@ -2,4 +2,4 @@ Este es un método para listar los videos en pantalla principal
 ---
 responses:
   200:
-  description: URL list to show in home screen
+    description: URL list to show in home screen
