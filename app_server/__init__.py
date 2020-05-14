@@ -40,8 +40,9 @@ def create_app(test_config=None):
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
 	def _respond():
-		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
-		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL'))
+		api_ping = "/api/ping/"
+		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL') + api_ping)
+		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL') + api_ping)
 		status = {}
 		status["App Server"] = "OK"
 
