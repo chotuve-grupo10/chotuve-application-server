@@ -2,4 +2,4 @@ Este es un método para recibir información del Server
 ---
 responses:
   200:
-  description: About information
+    description: About information
