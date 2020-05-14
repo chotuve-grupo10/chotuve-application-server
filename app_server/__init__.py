@@ -40,29 +40,23 @@ def create_app(test_config=None):
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
 	def _respond():
-		api_ping = "/api/ping/"
+		api_ping = '/api/ping/'
 		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL') + api_ping)
 		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL') + api_ping)
 		status = {}
-		status["App Server"] = "OK"
+		status['App Server'] = 'OK'
 
 		if response_auth_server.status_code == 200:
 			data = response_auth_server.json()
-			if data['Health'] == 'OK':
-				status["Auth Server"] = "OK"
-			else:
-				status["Auth Server"] = "DOWN"
+			status['Auth Server'] = data['Health']
 		else:
-			status["Auth Server"] = "DOWN"
+			status['Auth Server'] = 'DOWN'
 
 		if response_media_server.status_code == 200:
 			data = response_media_server.json()
-			if data['Health'] == 'OK':
-				status["Media Server"] = "OK"
-			else:
-				status["Media Server"] = "DOWN"
+			status['Media Server'] = data['Health']
 		else:
-			status["Media Server"] = "DOWN"
+			status['Media Server'] = 'DOWN'
 
 		return json.dumps(status)
 
@@ -70,13 +64,13 @@ def create_app(test_config=None):
 	@swag_from('docs/about.yml')
 	def _about():
 		status = {}
-		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
+		status['Description'] = 'This is Application Server for chotuve-10. Still in construction'
 		return json.dumps(status)
 
 
 	@app.route('/')
 	def _index():
-		return "<h1>Welcome to application server !</h1>"
+		return '<h1>Welcome to application server !</h1>'
 
 ### Métodos que aún no implementaremos ###
 
