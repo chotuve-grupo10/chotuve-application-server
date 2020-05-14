@@ -47,15 +47,19 @@ def create_app(test_config=None):
 		status['App Server'] = 'OK'
 
 		if response_auth_server.status_code == 200:
+			app.logger.debug('Response from auth server ping is 200')
 			data = response_auth_server.json()
 			status['Auth Server'] = data['Health']
 		else:
+			app.logger.debug('Response from auth server ping is NOT 200')
 			status['Auth Server'] = 'DOWN'
 
 		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server ping is 200')
 			data = response_media_server.json()
 			status['Media Server'] = data['Health']
 		else:
+			app.logger.debug('Response from media server ping is NOT 200')
 			status['Media Server'] = 'DOWN'
 
 		return json.dumps(status)
