@@ -47,21 +47,29 @@ def create_app(test_config=None):
 		status["App Server"] = "OK"
 
 		if response_auth_server.status_code == 200:
+			app.logger.debug('Response from auth server is 200')
 			data = response_auth_server.json()
 			if data['Health'] == 'OK':
+				app.logger.debug('Health from auth server is OK')
 				status["Auth Server"] = "OK"
 			else:
+				app.logger.debug('Health from auth server is not ok')
 				status["Auth Server"] = "DOWN"
 		else:
+			app.logger.debug('Response from auth server is not 200')
 			status["Auth Server"] = "DOWN"
 
 		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server is 200')
 			data = response_media_server.json()
 			if data['Health'] == 'OK':
+				app.logger.debug('Health from media server is OK')
 				status["Media Server"] = "OK"
 			else:
+				app.logger.debug('Health from media server is not ok')
 				status["Media Server"] = "DOWN"
 		else:
+			app.logger.debug('Response from media server is not 200')
 			status["Media Server"] = "DOWN"
 
 		return json.dumps(status)
