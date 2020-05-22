@@ -1,8 +1,10 @@
-astroid==2.4.0
+-e git+https://github.com/chotuve-grupo10/chotuve-application-server.git@ae773a37b14f20f35d10eb4a298c67aae3357208#egg=app_server
+astroid==2.4.1
 attrs==19.3.0
 certifi==2020.4.5.1
 chardet==3.0.4
 click==7.1.1
+coverage==5.1
 entrypoints==0.3
 flake8==3.7.9
 flasgger==0.9.4
@@ -25,7 +27,7 @@ pluggy==0.13.1
 py==1.8.1
 pycodestyle==2.5.0
 pyflakes==2.1.1
-pylint==2.5.0
+pylint==2.5.2
 pyparsing==2.4.7
 pyrsistent==0.16.0
 pytest==5.4.1
