@@ -25,15 +25,15 @@ def test_about(client):
 # 	assert json.loads(response.data) == {'App Server' : 'OK', 'Auth Server' : 'OK'}
 # 	assert response.status_code == 200
 
-def test_home(client):
-	response = client.get('/', follow_redirects=True)
-	assert response.data == b'<h1>Welcome to application server !</h1>'
-	assert response.status_code == 200
+# def test_home(client):
+# 	response = client.get('/', follow_redirects=True)
+# 	assert response.data == b'<h1>Welcome to application server !</h1>'
+# 	assert response.status_code == 200
 
-def test_home_page(client):
-	response = client.get('/api/home/', follow_redirects=True)
-	assert json.loads(response.data) == {}
-	assert response.status_code == 200
+# def test_home_page(client):
+# 	response = client.get('/api/home/', follow_redirects=True)
+# 	assert json.loads(response.data) == {}
+# 	assert response.status_code == 200
 
 def test_fake(client):
 	response = client.get('/api/fake/', follow_redirects=True)
