@@ -1,4 +1,3 @@
--e git+https://github.com/chotuve-grupo10/chotuve-application-server.git@55270f3bc1c17ae6ac4c386766a1310820032bf4#egg=app_server
 astroid==2.4.1
 attrs==19.3.0
 CacheControl==0.12.6
