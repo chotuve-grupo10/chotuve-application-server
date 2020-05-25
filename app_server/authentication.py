@@ -1,6 +1,8 @@
+import os
 import logging
-from flask import Blueprint
+from flask import Blueprint, request
 from flasgger import swag_from
+from app_server.http_functions import *
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -8,7 +10,15 @@ logger = logging.getLogger('gunicorn.error')
 @authentication_bp.route('/api/register/', methods=['POST'])
 @swag_from('docs/register.yml')
 def _register_user():
-	return {}
+
+	data = request.json
+	api_register = '/api/register/'
+	url = os.environ.get('AUTH_SERVER_URL') + api_register
+
+	response = post_auth_server_register(url, data)
+	logger.debug('Finished auth server register request')
+
+	return response.text, response.status_code
 
 @authentication_bp.route('/api/register_with_facebook/', methods=['POST'])
 @swag_from('docs/register_with_facebook.yml')

@@ -1,5 +1,6 @@
 import logging
 import requests
+import simplejson as json
 
 logger = logging.getLogger('gunicorn.error')
 
@@ -24,6 +25,13 @@ def get_media_server_ping(url_received):
 	return response
 
 def post_auth_server_register(url, user_data):
+	logger.debug('Auth server register requested')
+	#TODO: manejar error si url viene vacia
+	if url is None:
+		logger.critical("URL received is empty")
+	else:
+		logger.debug('URL: ' + url)
 	# la espera de esta respuesta es bloqueante?
-	response = requests.post(url=url, data=user_data)
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	response = requests.post(url=url, data=json.dumps(user_data), headers=headers)
 	return response
