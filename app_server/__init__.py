@@ -5,6 +5,7 @@ from flasgger import Swagger
 from flasgger import swag_from
 from flask import Flask, request
 from app_server.http_functions import *
+from app_server.authentication import authentication_bp
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -36,6 +37,10 @@ def create_app(test_config=None):
 
 	app.logger.debug('Log configuration finished')
 	app.logger.info('App server running...')
+
+	# Registro de blueprints que encapsulan comportamiento:
+	with app.app_context():
+		app.register_blueprint(authentication_bp)
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
@@ -81,38 +86,6 @@ def create_app(test_config=None):
 	@app.route('/api/home/', methods=['GET'])
 	@swag_from('docs/home.yml')
 	def _home_page():
-		return {}
-
-	@app.route('/api/register/', methods=['POST'])
-	@swag_from('docs/register.yml')
-	def _register_user():
-		#user_request = request.headers['AuthenticationHeader']
-		#response_auth_server = post_auth_server_register(os.environ.get('AUTH_SERVER_URL'), user_request)
-		return {}
-
-	@app.route('/api/register_with_facebook/', methods=['POST'])
-	@swag_from('docs/register_with_facebook.yml')
-	def _register_user_using_facebook():
-		return {}
-
-	@app.route('/api/register_with_google/', methods=['POST'])
-	@swag_from('docs/register_with_google.yml')
-	def _register_user_using_google():
-		return {}
-
-	@app.route('/api/login/', methods=['POST'])
-	@swag_from('docs/login.yml')
-	def _login_user():
-		return {}
-
-	@app.route('/api/login_with_facebook/', methods=['POST'])
-	@swag_from('docs/login_with_facebook.yml')
-	def _login_user_using_facebook():
-		return {}
-
-	@app.route('/api/login_with_google/', methods=['POST'])
-	@swag_from('docs/login_with_google.yml')
-	def _login_user_using_google():
 		return {}
 
 	# @app.route('/user/<username>')
