@@ -1,35 +1,27 @@
-Recibe una solicitud de registro
+Este servicio permitirá a los usuarios darse de alta en el sistema
 ---
 definitions:
-  BasicAuth:
-    scheme: basic
-    type: http
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      first name:
+        type: string
+      last name:
+        type: string
+      password:
+        type: string
+      phone number:
+        type: string
+      profile picture:
+        type: string
 parameters:
-  - in: header
-    name: email
-    type: string
-    required: true
-    description: email of the user
-  - in: header
-    name: password
-    type: string
-    required: true
-    description: secret password
-  - in: header
-    name: full_names
-    type: string
-    required: true
-    description: name and last name of the user
-  - in: header
-    name: phone_number
-    type: string
-    required: true
-    description: phone number of the user
-  - in: header
-    name: profile_picture
-    type: image   # is this even possible? Suppose so
-    required: true
-    description: profile picture
+  - in: body
+    name: user
+    description: The user to create.
+    schema:
+      $ref: '#/definitions/User'
 responses:
   200:
-    description: Register solicitation
+    description: Returns token
