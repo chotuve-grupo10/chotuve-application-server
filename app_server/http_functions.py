@@ -24,7 +24,7 @@ def get_media_server_ping(url_received):
 	response = requests.get(url=url_received)
 	return response
 
-def post_auth_server_register(url, user_data):
+def post_auth_server(url, user_data):
 	logger.debug('Auth server register requested')
 	#TODO: manejar error si url viene vacia
 	if url is None:
