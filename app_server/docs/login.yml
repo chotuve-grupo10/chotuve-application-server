@@ -1,20 +1,19 @@
-Recibe una solicitud de login
+Este servicio permitirá a los usuarios poder ingresar al sistema
 ---
 definitions:
-  BasicAuth:
-    scheme: basic
-    type: http
+  UserLogin:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
 parameters:
-  - in: header
-    name: email
-    type: string
-    required: true
-    description: email of the user
-  - in: header
-    name: password
-    type: string
-    required: true
-    description: secret password
+  - in: body
+    name: user
+    description: User to login.
+    schema:
+      $ref: '#/definitions/UserLogin'
 responses:
   200:
-    description: Login solicitation
+    description: Returns tokens
