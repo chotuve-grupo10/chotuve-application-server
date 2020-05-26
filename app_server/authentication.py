@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
+from app_server.token_functions import *
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -41,7 +42,16 @@ def _login_user():
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server login request')
 
-	return response.text, response.status_code
+	if(response.ok):
+		logger.debug('Login request returned successful status code')
+		jsonResponse = response.json()
+		appToken = generate_app_token(data)
+		text = {'Auth token' : jsonResponse['Token'], 'App token' : appToken}
+	else:
+		logger.debug('Login request returned failure status code')
+		text = response.text
+
+	return text, response.status_code
 
 @authentication_bp.route('/api/login_with_facebook/', methods=['POST'])
 @swag_from('docs/login_with_facebook.yml')
