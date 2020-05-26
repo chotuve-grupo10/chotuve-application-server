@@ -44,9 +44,9 @@ def _login_user():
 
 	if(response.ok):
 		logger.debug('Login request returned successful status code')
-		jsonResponse = response.json()
-		appToken = generate_app_token(data)
-		text = {'Auth token' : jsonResponse['Token'], 'App token' : appToken}
+		json_response = response.json()
+		app_token = generate_app_token(data)
+		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
 	else:
 		logger.debug('Login request returned failure status code')
 		text = response.text
