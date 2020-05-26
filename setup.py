@@ -12,6 +12,7 @@ setup(
         'pytest',
         'flasgger',
         'requests',
-        'gunicorn'
+        'gunicorn',
+        'PyJWT'
     ],
 )
