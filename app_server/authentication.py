@@ -21,6 +21,13 @@ def _register_user():
 
 	return response.text, response.status_code
 
+@authentication_bp.route('/api/validate_token/', methods=['GET'])
+@swag_from('docs/validate_token.yml')
+def _validate_token():
+	jwt_token = request.headers.get('authorization', None)
+	result, status_code = validate_token(jwt_token)
+	return result, status_code
+
 @authentication_bp.route('/api/register_with_facebook/', methods=['POST'])
 @swag_from('docs/register_with_facebook.yml')
 def _register_user_using_facebook():
