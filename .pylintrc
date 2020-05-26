@@ -8,4 +8,5 @@ disable=
     fixme,
     logging-not-lazy,
     wildcard-import,
-    unused-wildcard-import
+    unused-wildcard-import,
+    bad-continuation
