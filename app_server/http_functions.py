@@ -9,8 +9,8 @@ def get_auth_server_ping(url_received):
 	if not url_received:
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
-	else:
-		logger.debug('URL: ' + url_received)
+
+	logger.debug('URL: ' + url_received)
 	response = requests.get(url=url_received)
 	return response
 
@@ -19,8 +19,8 @@ def get_media_server_ping(url_received):
 	if not url_received:
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
-	else:
-		logger.debug('URL: ' + url_received)
+
+	logger.debug('URL: ' + url_received)
 	response = requests.get(url=url_received)
 	return response
 
@@ -32,7 +32,7 @@ def post_auth_server(url, user_data):
 	if user_data is None:
 		logger.critical("User data is None")
 		raise ValueError("User data is None")
-	
+
 	logger.debug('URL: ' + url)
 	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 	response = requests.post(url=url, data=json.dumps(user_data), headers=headers)
