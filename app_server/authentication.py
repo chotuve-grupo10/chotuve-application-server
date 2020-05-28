@@ -49,14 +49,14 @@ def _login_user():
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server login request')
 
-	if response.ok:
+	if response.status_code == 200:
 		logger.debug('Login request returned successful status code')
 		json_response = response.json()
 		app_token = generate_app_token(data)
 		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
 	else:
 		logger.debug('Login request returned failure status code')
-		text = response.text
+		text = response.json()
 
 	return text, response.status_code
 
