@@ -10,7 +10,7 @@ def test_login_fails_auth_server_returns_invalid_password(client):
 		mock.return_value.json.return_value = {'Login' : 'invalid password'}
 
 		value_expected = {'Login' : 'invalid password'}
-		response = client.post('/api/login/',  json=data, follow_redirects=False)
+		response = client.post('/api/login/', json=data, follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -23,7 +23,7 @@ def test_login_fails_auth_server_returns_user_not_found(client):
 		mock.return_value.json.return_value = {'Login' : 'user NOT found'}
 
 		value_expected = {'Login' : 'user NOT found'}
-		response = client.post('/api/login/',  json=data, follow_redirects=False)
+		response = client.post('/api/login/', json=data, follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -37,7 +37,8 @@ def test_login_success_returns_two_tokens(client):
 
 		auth_value_expected = 'Auth token'
 		app_value_expected = '12k22l232nj3gghghg32'
-		response = client.post('/api/login/',  json=data, follow_redirects=False)
+		response = client.post('/api/login/', json=data, follow_redirects=False)
 		assert mock.called
 		assert auth_value_expected in json.loads(response.data)
 		assert app_value_expected in json.loads(response.data)[auth_value_expected]
+		
