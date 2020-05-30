@@ -6,9 +6,7 @@ definitions:
     properties:
       email:
         type: string
-      first name:
-        type: string
-      last name:
+      full name:
         type: string
       password:
         type: string
