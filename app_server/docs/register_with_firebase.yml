@@ -1,0 +1,19 @@
+Recibe una solicitud de registro utilizando Firebase
+---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+parameters:
+  - in: header
+    name: authorization
+    description: id token
+    type: string
+    required: true
+responses:
+  200:
+    description: Register solicitation using Firebase

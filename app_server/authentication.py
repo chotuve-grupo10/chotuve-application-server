@@ -28,14 +28,9 @@ def _validate_token():
 	result, status_code = validate_token(jwt_token)
 	return result, status_code
 
-@authentication_bp.route('/api/register_with_facebook/', methods=['POST'])
-@swag_from('docs/register_with_facebook.yml')
-def _register_user_using_facebook():
-	return {}
-
-@authentication_bp.route('/api/register_with_google/', methods=['POST'])
-@swag_from('docs/register_with_google.yml')
-def _register_user_using_google():
+@authentication_bp.route('/api/register_with_firebase/', methods=['POST'])
+@swag_from('docs/register_with_firebase.yml')
+def _register_user_using_firebase():
 	return {}
 
 @authentication_bp.route('/api/login/', methods=['POST'])
@@ -60,12 +55,7 @@ def _login_user():
 
 	return text, response.status_code
 
-@authentication_bp.route('/api/login_with_facebook/', methods=['POST'])
-@swag_from('docs/login_with_facebook.yml')
-def _login_user_using_facebook():
-	return {}
-
-@authentication_bp.route('/api/login_with_google/', methods=['POST'])
-@swag_from('docs/login_with_google.yml')
-def _login_user_using_google():
+@authentication_bp.route('/api/login_with_firebase/', methods=['POST'])
+@swag_from('docs/login_with_firebase.yml')
+def _login_user_using_firebase():
 	return {}
