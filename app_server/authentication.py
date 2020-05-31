@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.token_functions import *
+import requests
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -27,6 +28,20 @@ def _validate_token():
 	jwt_token = request.headers.get('authorization', None)
 	result, status_code = validate_token(jwt_token)
 	return result, status_code
+
+@authentication_bp.route('/api/validate_auth_token/', methods=['GET'])
+@swag_from('docs/validate_auth_token.yml')
+def _validate_auth_token():
+	jwt_token = request.headers.get('authorization', None)
+
+	api_validate_token = '/api/validate_token/'
+	url = os.environ.get('AUTH_SERVER_URL') + api_validate_token
+
+	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
+	response = get_auth_server_request(url, headers)
+	logger.debug('Finished auth server register request')
+
+	return response.json(), response.status_code
 
 @authentication_bp.route('/api/register_with_firebase/', methods=['POST'])
 @swag_from('docs/register_with_firebase.yml')

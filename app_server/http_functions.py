@@ -4,14 +4,18 @@ import simplejson as json
 
 logger = logging.getLogger('gunicorn.error')
 
-def get_auth_server_ping(url_received):
-	logger.debug('Auth server ping requested')
+def get_auth_server_request(url_received, headers_received=None):
+	logger.debug('Auth server get request')
 	if not url_received:
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
 
 	logger.debug('URL: ' + url_received)
-	response = requests.get(url=url_received)
+
+	if headers_received is None:
+		response = requests.get(url=url_received)
+	else:
+		response = requests.get(url=url_received, headers=headers_received)
 	return response
 
 def get_media_server_ping(url_received):
