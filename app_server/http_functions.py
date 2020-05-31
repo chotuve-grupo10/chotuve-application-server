@@ -41,3 +41,14 @@ def post_auth_server(url, user_data):
 	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 	response = requests.post(url=url, data=json.dumps(user_data), headers=headers)
 	return response
+
+## Esto esta mal pero ya estoy quemado
+def post_auth_server_with_header(url, headers):
+	logger.debug('Auth server register requested')
+	if not url:
+		logger.critical("URL received is empty")
+		raise ValueError('URL received is empty')
+
+	logger.debug('URL: ' + url)
+	response = requests.post(url=url, headers=headers)
+	return response

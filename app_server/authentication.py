@@ -45,7 +45,16 @@ def _validate_auth_token():
 @authentication_bp.route('/api/register_with_firebase/', methods=['POST'])
 @swag_from('docs/register_with_firebase.yml')
 def _register_user_using_firebase():
-	return {}
+	jwt_token = request.headers.get('authorization', None)
+
+	api_register_with_firebase = '/api/register_with_firebase/'
+	url = os.environ.get('AUTH_SERVER_URL') + api_register_with_firebase
+
+	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
+	response = post_auth_server_with_header(url, headers)
+	logger.debug('Finished auth server register with firebase request')
+
+	return response.json(), response.status_code
 
 @authentication_bp.route('/api/login/', methods=['POST'])
 @swag_from('docs/login.yml')
@@ -72,4 +81,13 @@ def _login_user():
 @authentication_bp.route('/api/login_with_firebase/', methods=['POST'])
 @swag_from('docs/login_with_firebase.yml')
 def _login_user_using_firebase():
-	return {}
+	jwt_token = request.headers.get('authorization', None)
+
+	api_login_with_firebase = '/api/login_with_firebase/'
+	url = os.environ.get('AUTH_SERVER_URL') + api_login_with_firebase
+
+	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
+	response = post_auth_server_with_header(url, headers)
+	logger.debug('Finished auth server register with firebase request')
+
+	return response.json(), response.status_code
