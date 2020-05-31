@@ -23,7 +23,7 @@ def test_fake(client):
 	assert response.status_code == 404
 
 def test_ping_successfully_to_all_servers(client):
-	with patch('app_server.get_auth_server_ping') as mock_auth_ping:
+	with patch('app_server.get_auth_server_request') as mock_auth_ping:
 
 		mock_auth_ping.return_value.json.return_value = {'Health' : 'OK'}
 		mock_auth_ping.return_value.status_code = 200
@@ -45,7 +45,7 @@ def test_ping_successfully_to_all_servers(client):
 			assert json.loads(response.data) == value_expected
 
 def test_ping_auth_server_down(client):
-	with patch('app_server.get_auth_server_ping') as mock_auth_ping:
+	with patch('app_server.get_auth_server_request') as mock_auth_ping:
 
 		mock_auth_ping.return_value.status_code = 500
 
@@ -66,7 +66,7 @@ def test_ping_auth_server_down(client):
 			assert json.loads(response.data) == value_expected
 
 def test_ping_media_server_down(client):
-	with patch('app_server.get_auth_server_ping') as mock_auth_ping:
+	with patch('app_server.get_auth_server_request') as mock_auth_ping:
 
 		mock_auth_ping.return_value.json.return_value = {'Health' : 'OK'}
 		mock_auth_ping.return_value.status_code = 200
@@ -87,7 +87,7 @@ def test_ping_media_server_down(client):
 			assert json.loads(response.data) == value_expected
 
 def test_ping_media_auth_server_down(client):
-	with patch('app_server.get_auth_server_ping') as mock_auth_ping:
+	with patch('app_server.get_auth_server_request') as mock_auth_ping:
 
 		mock_auth_ping.return_value.status_code = 500
 
