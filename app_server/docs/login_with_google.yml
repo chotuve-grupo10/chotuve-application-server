@@ -1,6 +1,0 @@
-Recibe una solicitud de login utilizando Google
----
-# parameters:
-responses:
-  200:
-    description: Login solicitation using Google Account

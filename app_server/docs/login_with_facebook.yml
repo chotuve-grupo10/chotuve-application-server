@@ -1,6 +1,0 @@
-Recibe una solicitud de login utilizando Facebook
----
-# parameters:
-responses:
-  200:
-    description: Login solicitation using Facebook Account
