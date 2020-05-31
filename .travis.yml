@@ -18,7 +18,7 @@ script:
   - PYTHONPATH=$(pwd) pylint tests/*.py
   - python -m pytest --cov=./app_server
    # TODO subir el threshold a medida que madure el proyecto
-  - coverage report --fail-under=75
+  - coverage report --fail-under=65
   - codecov
   - docker build -t $DOCKER_IMAGE .
 
