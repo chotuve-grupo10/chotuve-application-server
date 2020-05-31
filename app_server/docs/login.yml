@@ -8,6 +8,15 @@ definitions:
         type: string
       password:
         type: string
+  LoginResponse:
+    type: object
+    properties:
+      App token: 
+        type: string
+        description: App server token
+      Auth token:
+        type: string
+        description: Auth server token
 parameters:
   - in: body
     name: user
@@ -17,3 +26,8 @@ parameters:
 responses:
   200:
     description: Returns tokens
+    schema:
+      $ref: '#/definitions/LoginResponse'
+    example:
+      App token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.dQd-o5sC4n8z2rUuu-DVEF7FCJNILrSUVBKDqkutFgA"
+      Auth token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.BzT0Wx3BO2NBQC16UZwXoOV7AwVfwA121gUyzrdZjA4"
