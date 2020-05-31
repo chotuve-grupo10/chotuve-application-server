@@ -4,7 +4,6 @@ from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.token_functions import *
-import requests
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
