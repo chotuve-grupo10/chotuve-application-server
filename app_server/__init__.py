@@ -104,7 +104,7 @@ def create_app(test_config=None):
 	@swag_from('docs/list_videos.yml')
 	def _respond():
 		api_list_videos = '/api/list_videos/'
-		response_media_server = get_media_server_request("https://chotuve-media-server-dev.herokuapp.com" + api_list_videos)
+		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
@@ -121,7 +121,7 @@ def create_app(test_config=None):
 	@swag_from('docs/list_videos.yml')
 	def _listVideosForUser(req):
 		api_list_video_for_user = '/api/list_videos/'+req.id
-		response_media_server = get_media_server_request("https://chotuve-media-server-dev.herokuapp.com" + api_list_video_for_user)
+		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
@@ -139,7 +139,7 @@ def create_app(test_config=None):
 	@swag_from('docs/upload_video.yml') #TODO agregar doc
 	def _uploadVideo(req):
 		api_upload_video = '/api/upload_video/'
-		response_media_server = post_media_server("https://chotuve-media-server-dev.herokuapp.com" + api_upload_video, req.body)
+		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, req.body)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
@@ -156,7 +156,7 @@ def create_app(test_config=None):
 	@swag_from('docs/delete_video.yml')
 	def _deleteVideo(req):
 		api_delete_video = '/api/delete_video/'+req.id
-		response_media_server = delete_media_server("https://chotuve-media-server-dev.herokuapp.com" + api_delete_video)
+		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
