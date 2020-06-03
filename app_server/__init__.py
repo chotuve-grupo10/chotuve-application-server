@@ -99,3 +99,71 @@ def create_app(test_config=None):
 	#     return 'Post %d' % post_id
 
 	return app
+
+	@app.route('/api/list_videos/', methods=['GET'])
+	@swag_from('docs/list_videos.yml')
+	def _respond():
+		api_list_videos = '/api/list_videos/'
+		response_media_server = get_media_server_request("https://chotuve-media-server-dev.herokuapp.com" + api_list_videos)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			#Recibe lista de videos
+			data = response_media_server.json()
+			status['List Videos'] = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['List Videos'] = 'No response'
+
+		return json.dumps(status)
+
+	@app.route('/api/list_videos/:id', methods=['GET'])
+	@swag_from('docs/list_videos.yml')
+	def _listVideosForUser(req):
+		api_list_video_for_user = '/api/list_videos/'+req.id
+		response_media_server = get_media_server_request("https://chotuve-media-server-dev.herokuapp.com" + api_list_video_for_user)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			#Recibe lista de videos según id
+			data = response_media_server.json()
+			status['List Videos'] = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['List Videos'] = 'No response'
+
+		return json.dumps(status)
+
+
+	@app.route('/api/upload_video/', methods=['POST'])
+	@swag_from('docs/upload_video.yml') #TODO agregar doc
+	def _uploadVideo(req):
+		api_upload_video = '/api/upload_video/'
+		response_media_server = post_media_server("https://chotuve-media-server-dev.herokuapp.com" + api_upload_video, req.body)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			data = response_media_server.json()
+			status['Upload Video'] = data['Upload Video']
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['Upload Video'] = 'No response'
+
+		return json.dumps(status)
+
+
+	@app.route('/api/delete_video/', methods=['DELETE'])
+	@swag_from('docs/delete_video.yml')
+	def _deleteVideo(req):
+		api_delete_video = '/api/delete_video/'+req.id
+		response_media_server = delete_media_server("https://chotuve-media-server-dev.herokuapp.com" + api_delete_video)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			data = response_media_server.json()
+			status['Deleted Video'] = data['Deleted Video']
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['Deleted Video'] = 'No response'
+
+		return json.dumps(status)

@@ -1,0 +1,33 @@
+Este servicio permitirá dar de alta un video en el sistema
+---
+definitions:
+  Video:
+    type: object
+    properties:
+      title:
+        type: string
+      url:
+        type: string
+      user:
+        type: string
+parameters:
+  - in: body
+    name: video
+    description: The video to upload.
+    schema:
+        type: object
+        required:
+           - title
+           - url
+           - user
+        properties:
+            title:
+              type: string
+            url:
+              type: string
+            user:
+              type: string
+responses:
+  200:
+    description: video uploaded
+ 

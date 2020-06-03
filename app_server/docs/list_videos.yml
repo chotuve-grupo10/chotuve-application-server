@@ -1,0 +1,18 @@
+Este servicio permitirá listar videos en el sistema
+---
+definitions:
+  Video:
+    type: object
+    properties:
+      title:
+        type: string
+      url:
+        type: string
+      user:
+        type: string
+parameters:
+  - in: body
+    id: id
+responses:
+  200:
+    description: video uploaded
