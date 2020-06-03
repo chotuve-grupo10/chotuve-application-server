@@ -10,9 +10,9 @@ definitions:
         type: string
       user:
         type: string
-parameters:
-  - in: body
-    id: id
+# parameters:
+#   - in: body
+#     id: id
 responses:
   200:
-    description: video uploaded
+    description: videos list returned

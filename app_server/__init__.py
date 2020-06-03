@@ -98,13 +98,13 @@ def create_app(test_config=None):
 	#     # show the post with the given id, the id is an integer
 	#     return 'Post %d' % post_id
 
-	return app
+	## Videos
 
 	@app.route('/api/list_videos/', methods=['GET'])
 	@swag_from('docs/list_videos.yml')
-	def _respond():
+	def _list_videos():
 		api_list_videos = '/api/list_videos/'
-		response_media_server = get_media_server_request("https://chotuve-media-server-dev.herokuapp.com" + api_list_videos)
+		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
@@ -117,6 +117,7 @@ def create_app(test_config=None):
 
 		return json.dumps(status)
 
+	## En principio este deberia apuntar a otra definicion de yaml
 	@app.route('/api/list_videos/:id', methods=['GET'])
 	@swag_from('docs/list_videos.yml')
 	def _listVideosForUser(req):
@@ -167,3 +168,5 @@ def create_app(test_config=None):
 			status['Deleted Video'] = 'No response'
 
 		return json.dumps(status)
+
+	return app
