@@ -159,6 +159,7 @@ def create_app(test_config=None):
 	@app.route('/api/delete_video/<id>', methods=['DELETE'])
 	@swag_from('docs/delete_video.yml')
 	def _deleteVideo(id):
+		app.logger.debug("Requested delete video with id:" + id)
 		api_delete_video = '/api/delete_video/' + id
 		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 		status = {}
