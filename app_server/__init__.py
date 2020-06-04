@@ -156,16 +156,16 @@ def create_app(test_config=None):
 		return json.dumps(status), response_media_server.status_code
 
 
-	@app.route('/api/delete_video/', methods=['DELETE'])
+	@app.route('/api/delete_video/<id>', methods=['DELETE'])
 	@swag_from('docs/delete_video.yml')
-	def _deleteVideo(req):
-		api_delete_video = '/api/delete_video/'+req.id
+	def _deleteVideo(id):
+		api_delete_video = '/api/delete_video/' + id
 		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 		status = {}
 		if response_media_server.status_code == 200:
 			app.logger.debug('Response from media server list videos is 200')
 			data = response_media_server.json()
-			status['Deleted Video'] = data['Deleted Video']
+			status['Deleted Video'] = data
 		else:
 			app.logger.debug('Response from media server is NOT 200')
 			status['Deleted Video'] = 'No response'
