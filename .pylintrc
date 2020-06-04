@@ -10,4 +10,6 @@ disable=
     wildcard-import,
     unused-wildcard-import,
     bad-continuation,
-    redefined-outer-name
+    redefined-outer-name,
+    line-too-long,
+    too-many-statements

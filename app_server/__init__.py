@@ -120,10 +120,10 @@ def create_app(test_config=None):
 	## En principio este deberia apuntar a otra definicion de yaml
 	@app.route('/api/list_videos/<userId>', methods=['GET'])
 	@swag_from('docs/list_videos_for_user_id.yml')
-	def _listVideosForUser(userId):
-		assert userId == request.view_args['userId']
-		app.logger.debug("Requested videos from id:" + userId)
-		api_list_video_for_user = '/api/list_videos/'+ userId
+	def _list_videos_for_user(user_id):
+		assert user_id == request.view_args['userId']
+		app.logger.debug("Requested videos from id:" + user_id)
+		api_list_video_for_user = '/api/list_videos/'+ user_id
 		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
 		status = {}
 		if response_media_server.status_code == 200:
@@ -140,7 +140,7 @@ def create_app(test_config=None):
 
 	@app.route('/api/upload_video/', methods=['POST'])
 	@swag_from('docs/upload_video.yml')
-	def _uploadVideo():
+	def _upload_video():
 		data = request.json
 		api_upload_video = '/api/upload_video/'
 		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
@@ -158,9 +158,9 @@ def create_app(test_config=None):
 
 	@app.route('/api/delete_video/<id>', methods=['DELETE'])
 	@swag_from('docs/delete_video.yml')
-	def _deleteVideo(id):
-		app.logger.debug("Requested delete video with id:" + id)
-		api_delete_video = '/api/delete_video/' + id
+	def _delete_video(video_id):
+		app.logger.debug("Requested delete video with id:" + video_id)
+		api_delete_video = '/api/delete_video/' + video_id
 		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 		status = {}
 		if response_media_server.status_code == 200:
