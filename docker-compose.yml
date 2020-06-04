@@ -4,11 +4,11 @@ services:
     image: $DOCKER_IMAGE
     build: . 
     container_name: app-server
-    # environment:
-      # - FLASK_APP=app_server
-      # - FLASK_ENV=development
-      # - FLASK_RUN_HOST=0.0.0.0
-      # - GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000"
+    #environment:
+     #  - FLASK_APP=app_server
+     # - FLASK_ENV=development
+     #  - FLASK_RUN_HOST=0.0.0.0
+     #  - GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000"
     ports:
       - 8000:8000
     networks:
