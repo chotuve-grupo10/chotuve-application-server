@@ -170,6 +170,6 @@ def create_app(test_config=None):
 			app.logger.debug('Response from media server is NOT 200')
 			status['Deleted Video'] = 'No response'
 
-		return json.dumps(status)
+		return json.dumps(status), response_media_server.status_code
 
 	return app
