@@ -115,13 +115,15 @@ def create_app(test_config=None):
 			app.logger.debug('Response from media server is NOT 200')
 			status['List Videos'] = 'No response'
 
-		return json.dumps(status)
+		return json.dumps(status), response_media_server.status_code
 
 	## En principio este deberia apuntar a otra definicion de yaml
-	@app.route('/api/list_videos/:id', methods=['GET'])
-	@swag_from('docs/list_videos.yml')
-	def _listVideosForUser(req):
-		api_list_video_for_user = '/api/list_videos/'+req.id
+	@app.route('/api/list_videos/<userId>', methods=['GET'])
+	@swag_from('docs/list_videos_for_user_id.yml')
+	def _listVideosForUser(userId):
+		assert userId == request.view_args['userId']
+		app.logger.debug("Requested videos from id:" + userId)
+		api_list_video_for_user = '/api/list_videos/'+ userId
 		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
 		status = {}
 		if response_media_server.status_code == 200:
@@ -133,7 +135,7 @@ def create_app(test_config=None):
 			app.logger.debug('Response from media server is NOT 200')
 			status['List Videos'] = 'No response'
 
-		return json.dumps(status)
+		return json.dumps(status), response_media_server.status_code
 
 
 	@app.route('/api/upload_video/', methods=['POST'])
