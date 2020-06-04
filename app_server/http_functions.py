@@ -87,10 +87,7 @@ def delete_media_server(url):
 	if not url:
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
-	if user_data is None:
-		logger.critical("Video data is None")
-		raise ValueError("Video data is None")
-
+		
 	logger.debug('URL: ' + url)
 	response = requests.delete(url)
 	return response

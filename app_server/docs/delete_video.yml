@@ -11,8 +11,11 @@ definitions:
       user:
         type: string
 parameters:
-  - in: body
-    id: id
+  - in: path
+    name: id
+    description: video id
+    schema:
+       type: string
 responses:
   200:
     description: video deleted
