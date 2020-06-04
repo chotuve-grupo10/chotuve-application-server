@@ -1,0 +1,19 @@
+Este es un método para recibir un token del auth server y validarlo
+---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+parameters:
+  - in: header
+    name: authorization
+    description: bearer token
+    type: string
+    required: true
+responses:
+  200:
+    description: Token validity.

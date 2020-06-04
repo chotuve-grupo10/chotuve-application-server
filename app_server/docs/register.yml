@@ -1,16 +1,25 @@
-Recibe una solicitud de registro
+Este servicio permitirá a los usuarios darse de alta en el sistema
 ---
+definitions:
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      full name:
+        type: string
+      password:
+        type: string
+      phone number:
+        type: string
+      profile picture:
+        type: string
 parameters:
-  - in: header
-    name: email
-    type: string
-    required: true
-    description: email of the user
-  - in: header
-    name: password
-    type: string
-    required: true
-    description: secret password
+  - in: body
+    name: user
+    description: The user to create.
+    schema:
+      $ref: '#/definitions/User'
 responses:
   200:
-    description: Register solicitation
+    description: Returns token

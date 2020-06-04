@@ -2,5 +2,14 @@
 indent-string=\t
 
 [MASTER]
+load-plugins=pylintplugins
 disable=
     C0111, # missing docstring
+    fixme,
+    logging-not-lazy,
+    wildcard-import,
+    unused-wildcard-import,
+    bad-continuation,
+    redefined-outer-name,
+    line-too-long,
+    too-many-statements

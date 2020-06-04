@@ -1,10 +1,11 @@
 import os
+import logging
 import simplejson as json
-
 from flasgger import Swagger
 from flasgger import swag_from
 from flask import Flask, request
 from app_server.http_functions import *
+from app_server.authentication import authentication_bp
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -15,10 +16,10 @@ def create_app(test_config=None):
 	Swagger(app)
 
 	if test_config is None:
-	    # load the instance config, if it exists, when not testing
+		# load the instance config, if it exists, when not testing
 		app.config.from_pyfile('config.py', silent=True)
 	else:
-	    # load the test config if passed in
+		# load the test config if passed in
 		app.config.from_mapping(test_config)
 
 	# ensure the instance folder exists
@@ -27,37 +28,65 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
+	# Set up del log
+	# Basicamente lo que se esta haciendo es usar el handler de gunicorn para
+	# que todos los logs salgan por ese canal.
+	gunicorn_logger = logging.getLogger('gunicorn.error')
+	app.logger.handlers = gunicorn_logger.handlers
+	app.logger.setLevel(gunicorn_logger.level)
+
+	app.logger.debug('Log configuration finished')
+	app.logger.info('App server running...')
+
+	# Registro de blueprints que encapsulan comportamiento:
+	with app.app_context():
+		app.register_blueprint(authentication_bp)
+
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
 	def _respond():
-		response_auth_server = get_auth_server_ping(os.environ.get('AUTH_SERVER_URL'))
-		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL'))
+		api_ping = '/api/ping/'
+		response_auth_server = get_auth_server_request(os.environ.get('AUTH_SERVER_URL') + api_ping)
+		response_media_server = get_media_server_ping(os.environ.get('MEDIA_SERVER_URL') + api_ping)
 		status = {}
-		status["App Server"] = "OK"
+		status['App Server'] = 'OK'
 
 		if response_auth_server.status_code == 200:
+			app.logger.debug('Response from auth server ping is 200')
 			data = response_auth_server.json()
-			if data['Health'] == 'OK':
-				status["Auth Server"] = "OK"
-			else:
-				status["Auth Server"] = "DOWN"
+			status['Auth Server'] = data['Health']
 		else:
-			status["Auth Server"] = "DOWN"
+			app.logger.debug('Response from auth server ping is NOT 200')
+			status['Auth Server'] = 'DOWN'
 
 		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server ping is 200')
 			data = response_media_server.json()
-			if data['Health'] == 'OK':
-				status["Media Server"] = "OK"
-			else:
-				status["Media Server"] = "DOWN"
+			status['Media Server'] = data['Health']
 		else:
-			status["Media Server"] = "DOWN"
+			app.logger.debug('Response from media server ping is NOT 200')
+			status['Media Server'] = 'DOWN'
 
 		return json.dumps(status)
 
-	@app.route('/api/hello/')
-	def _hello():
-		return 'Hello, World!'
+	@app.route('/api/about/', methods=['GET'])
+	@swag_from('docs/about.yml')
+	def _about():
+		status = {}
+		status['Description'] = 'This is Application Server for chotuve-10. Still in construction'
+		return json.dumps(status)
+
+
+	@app.route('/')
+	def _index():
+		return '<h1>Welcome to application server !</h1>'
+
+### Métodos que aún no implementaremos ###
+
+	@app.route('/api/home/', methods=['GET'])
+	@swag_from('docs/home.yml')
+	def _home_page():
+		return {}
 
 	# @app.route('/user/<username>')
 	# def show_user_profile(username):
@@ -69,40 +98,79 @@ def create_app(test_config=None):
 	#     # show the post with the given id, the id is an integer
 	#     return 'Post %d' % post_id
 
-	@app.route('/api/about/')
-	def _about():
-		"""
-    Este es un método para recibir información del Server
-    ---
-    responses:
-      200:
-        description: About information
-    """
+	## Videos
+
+	@app.route('/api/list_videos/', methods=['GET'])
+	@swag_from('docs/list_videos.yml')
+	def _list_videos():
+		api_list_videos = '/api/list_videos/'
+		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
 		status = {}
-		status["Description"] = 'This is Application Server for chotuve-10. Still in construction'
-		return json.dumps(status)
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			#Recibe lista de videos
+			data = response_media_server.json()
+			status['List Videos'] = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['List Videos'] = 'No response'
+
+		return json.dumps(status), response_media_server.status_code
+
+	## En principio este deberia apuntar a otra definicion de yaml
+	@app.route('/api/list_videos/<userId>', methods=['GET'])
+	@swag_from('docs/list_videos_for_user_id.yml')
+	def _list_videos_for_user(user_id):
+		assert user_id == request.view_args['userId']
+		app.logger.debug("Requested videos from id:" + user_id)
+		api_list_video_for_user = '/api/list_videos/'+ user_id
+		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			#Recibe lista de videos según id
+			data = response_media_server.json()
+			status['List Videos'] = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['List Videos'] = 'No response'
+
+		return json.dumps(status), response_media_server.status_code
 
 
-	@app.route('/')
-	def _index():
-		return "<h1>Welcome to application server !</h1>"
+	@app.route('/api/upload_video/', methods=['POST'])
+	@swag_from('docs/upload_video.yml')
+	def _upload_video():
+		data = request.json
+		api_upload_video = '/api/upload_video/'
+		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server upload video is 200')
+			data = response_media_server.json()
+			status = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['Upload Video'] = 'No response'
 
-### Métodos que aún no implementaremos ###
+		return json.dumps(status), response_media_server.status_code
 
-	@app.route('/api/home/', methods=['GET'])
-	def _home_page():
-		"""
-    Este es un método para listar los videos en pantalla principal
-    ---
-    responses:
-      200:
-        description: List of videos to show in home screen
-    """
-		return {}
 
-	@app.route('/api/register/', methods=['POST'])
-	@swag_from('docs/register.yml')
-	def _register_user():
-		return {}
+	@app.route('/api/delete_video/<id>', methods=['DELETE'])
+	@swag_from('docs/delete_video.yml')
+	def _delete_video(video_id):
+		app.logger.debug("Requested delete video with id:" + video_id)
+		api_delete_video = '/api/delete_video/' + video_id
+		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
+		status = {}
+		if response_media_server.status_code == 200:
+			app.logger.debug('Response from media server list videos is 200')
+			data = response_media_server.json()
+			status['Deleted Video'] = data
+		else:
+			app.logger.debug('Response from media server is NOT 200')
+			status['Deleted Video'] = 'No response'
+
+		return json.dumps(status), response_media_server.status_code
 
 	return app
