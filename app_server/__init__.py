@@ -139,20 +139,21 @@ def create_app(test_config=None):
 
 
 	@app.route('/api/upload_video/', methods=['POST'])
-	@swag_from('docs/upload_video.yml') #TODO agregar doc
-	def _uploadVideo(req):
+	@swag_from('docs/upload_video.yml')
+	def _uploadVideo():
+		data = request.json
 		api_upload_video = '/api/upload_video/'
-		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, req.body)
+		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
 		status = {}
 		if response_media_server.status_code == 200:
-			app.logger.debug('Response from media server list videos is 200')
+			app.logger.debug('Response from media server upload video is 200')
 			data = response_media_server.json()
-			status['Upload Video'] = data['Upload Video']
+			status = data
 		else:
 			app.logger.debug('Response from media server is NOT 200')
 			status['Upload Video'] = 'No response'
 
-		return json.dumps(status)
+		return json.dumps(status), response_media_server.status_code
 
 
 	@app.route('/api/delete_video/', methods=['DELETE'])
