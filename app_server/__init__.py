@@ -6,6 +6,7 @@ from flasgger import swag_from
 from flask import Flask, request
 from app_server.http_functions import *
 from app_server.authentication import authentication_bp
+from app_server.videos import videos_bp
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -41,6 +42,7 @@ def create_app(test_config=None):
 	# Registro de blueprints que encapsulan comportamiento:
 	with app.app_context():
 		app.register_blueprint(authentication_bp)
+		app.register_blueprint(videos_bp)
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
@@ -97,80 +99,5 @@ def create_app(test_config=None):
 	# def show_post(post_id):
 	#     # show the post with the given id, the id is an integer
 	#     return 'Post %d' % post_id
-
-	## Videos
-
-	@app.route('/api/list_videos/', methods=['GET'])
-	@swag_from('docs/list_videos.yml')
-	def _list_videos():
-		api_list_videos = '/api/list_videos/'
-		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
-		status = {}
-		if response_media_server.status_code == 200:
-			app.logger.debug('Response from media server list videos is 200')
-			#Recibe lista de videos
-			data = response_media_server.json()
-			status['List Videos'] = data
-		else:
-			app.logger.debug('Response from media server is NOT 200')
-			status['List Videos'] = 'No response'
-
-		return json.dumps(status), response_media_server.status_code
-
-	## En principio este deberia apuntar a otra definicion de yaml
-	@app.route('/api/list_videos/<userId>', methods=['GET'])
-	@swag_from('docs/list_videos_for_user_id.yml')
-	def _list_videos_for_user(user_id):
-		assert user_id == request.view_args['userId']
-		app.logger.debug("Requested videos from id:" + user_id)
-		api_list_video_for_user = '/api/list_videos/'+ user_id
-		response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
-		status = {}
-		if response_media_server.status_code == 200:
-			app.logger.debug('Response from media server list videos is 200')
-			#Recibe lista de videos según id
-			data = response_media_server.json()
-			status['List Videos'] = data
-		else:
-			app.logger.debug('Response from media server is NOT 200')
-			status['List Videos'] = 'No response'
-
-		return json.dumps(status), response_media_server.status_code
-
-
-	@app.route('/api/upload_video/', methods=['POST'])
-	@swag_from('docs/upload_video.yml')
-	def _upload_video():
-		data = request.json
-		api_upload_video = '/api/upload_video/'
-		response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
-		status = {}
-		if response_media_server.status_code == 200:
-			app.logger.debug('Response from media server upload video is 200')
-			data = response_media_server.json()
-			status = data
-		else:
-			app.logger.debug('Response from media server is NOT 200')
-			status['Upload Video'] = 'No response'
-
-		return json.dumps(status), response_media_server.status_code
-
-
-	@app.route('/api/delete_video/<id>', methods=['DELETE'])
-	@swag_from('docs/delete_video.yml')
-	def _delete_video(video_id):
-		app.logger.debug("Requested delete video with id:" + video_id)
-		api_delete_video = '/api/delete_video/' + video_id
-		response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
-		status = {}
-		if response_media_server.status_code == 200:
-			app.logger.debug('Response from media server list videos is 200')
-			data = response_media_server.json()
-			status['Deleted Video'] = data
-		else:
-			app.logger.debug('Response from media server is NOT 200')
-			status['Deleted Video'] = 'No response'
-
-		return json.dumps(status), response_media_server.status_code
 
 	return app
