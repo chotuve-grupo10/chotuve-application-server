@@ -26,10 +26,10 @@ def _list_videos():
 	return json.dumps(status), response_media_server.status_code
 
 
-@videos_bp.route('/api/list_videos/<userId>', methods=['GET'])
+@videos_bp.route('/api/list_videos/<user_id>', methods=['GET'])
 @swag_from('docs/list_videos_for_user_id.yml')
 def _list_videos_for_user(user_id):
-	assert user_id == request.view_args['userId']
+	assert user_id == request.view_args['user_id']
 	logger.debug("Requested videos from id:" + user_id)
 	api_list_video_for_user = '/api/list_videos/'+ user_id
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
@@ -64,7 +64,7 @@ def _upload_video():
 	return json.dumps(status), response_media_server.status_code
 
 
-@videos_bp.route('/api/delete_video/<id>', methods=['DELETE'])
+@videos_bp.route('/api/delete_video/<video_id>', methods=['DELETE'])
 @swag_from('docs/delete_video.yml')
 def _delete_video(video_id):
 	logger.debug("Requested delete video with id:" + video_id)

@@ -3,7 +3,7 @@ Este servicio permitirá listar videos en el sistema
 definitions:
   VideoList:
     type: array
-    items: 
+    items:
       type: object
       properties:
         title:
@@ -14,7 +14,7 @@ definitions:
           type: string
 parameters:
   - in: path
-    name: userId
+    name: user_id
     description: user id
     schema:
       type: string

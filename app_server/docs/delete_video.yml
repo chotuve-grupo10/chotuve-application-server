@@ -12,7 +12,7 @@ definitions:
         type: string
 parameters:
   - in: path
-    name: id
+    name: video_id
     description: video id
     schema:
        type: string
