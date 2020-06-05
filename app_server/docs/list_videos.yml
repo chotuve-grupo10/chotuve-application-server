@@ -6,11 +6,15 @@ definitions:
     items: 
       type: object
       properties:
+        id:
+          type: string
         title:
           type: string
         url:
           type: string
         user:
+          type: string
+        upload_date:
           type: string
 responses:
   200:
