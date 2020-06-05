@@ -1,18 +1,19 @@
 Este servicio permitirá listar videos en el sistema
 ---
 definitions:
-  Video:
-    type: object
-    properties:
-      title:
-        type: string
-      url:
-        type: string
-      user:
-        type: string
-# parameters:
-#   - in: body
-#     id: id
+  VideoList:
+    type: array
+    items: 
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+        user:
+          type: string
 responses:
   200:
     description: videos list returned
+    schema:
+      $ref: '#/definitions/VideoList'
