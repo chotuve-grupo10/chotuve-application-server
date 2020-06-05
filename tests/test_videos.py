@@ -32,10 +32,10 @@ def test_list_videos_sucessfully(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
 
 		mock.return_value.status_code = 200
-		response_media = {'id' : 'test', 'title' : 'test'}
+		response_media = [{'id' : 'test', 'title' : 'test'}]
 		mock.return_value.json.return_value = response_media
 
-		value_expected = {'List Videos' : response_media}
+		value_expected = response_media
 		response = client.get('/api/list_videos/', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
@@ -45,7 +45,7 @@ def test_list_videos_fails(client):
 
 		mock.return_value.status_code = 500
 
-		value_expected = {'List Videos' : 'No response'}
+		value_expected = []
 		response = client.get('/api/list_videos/', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
