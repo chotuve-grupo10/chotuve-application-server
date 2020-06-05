@@ -13,15 +13,15 @@ logger = logging.getLogger('gunicorn.error')
 def _list_videos():
 	api_list_videos = '/api/list_videos/'
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
-	status = {}
+	status = []
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos
 		data = response_media_server.json()
-		status['List Videos'] = data
+		status = data
 	else:
 		logger.debug('Response from media server is NOT 200')
-		status['List Videos'] = 'No response'
+		status = []
 
 	return json.dumps(status), response_media_server.status_code
 
@@ -33,15 +33,15 @@ def _list_videos_for_user(user_id):
 	logger.debug("Requested videos from id:" + user_id)
 	api_list_video_for_user = '/api/list_videos/'+ user_id
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
-	status = {}
+	status = []
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos según id
 		data = response_media_server.json()
-		status['List Videos'] = data
+		status = data
 	else:
 		logger.debug('Response from media server is NOT 200')
-		status['List Videos'] = 'No response'
+		status = []
 
 	return json.dumps(status), response_media_server.status_code
 
