@@ -1,15 +1,5 @@
 Este servicio permitirá dar de baja un video en el sistema
 ---
-definitions:
-  Video:
-    type: object
-    properties:
-      title:
-        type: string
-      url:
-        type: string
-      user:
-        type: string
 parameters:
   - in: path
     name: video_id
