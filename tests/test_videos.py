@@ -5,7 +5,8 @@ def test_upload_video_fails(client):
 	with patch('app_server.videos.post_media_server') as mock:
 
 		video_to_upload = {
-			'description': 'This is a test video', 'isPrivate': False,
+			'description': 'This is a test video', 'fileName': 'HKUG2278kH',
+			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
 			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
 
 		mock.return_value.status_code = 500
@@ -21,7 +22,8 @@ def test_upload_video_successfully(client):
 	with patch('app_server.videos.post_media_server') as mock:
 
 		video_to_upload = {
-			'description': 'This is a test video', 'isPrivate': False,
+			'description': 'This is a test video', 'fileName': 'HKUG2278kH',
+			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
 			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
 
 		mock.return_value.status_code = 200
