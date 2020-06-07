@@ -4,7 +4,10 @@ import simplejson as json
 def test_upload_video_fails(client):
 	with patch('app_server.videos.post_media_server') as mock:
 
-		video_to_upload = {'title': 'Test video', 'url' : 'test', 'user' : 'test'}
+		video_to_upload = {
+			'description': 'This is a test video', 'fileName': 'HKUG2278kH',
+			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
+			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
 
 		mock.return_value.status_code = 500
 		## The json response doesnt matteer because the status code is not 200.
@@ -18,7 +21,10 @@ def test_upload_video_fails(client):
 def test_upload_video_successfully(client):
 	with patch('app_server.videos.post_media_server') as mock:
 
-		video_to_upload = {'title': 'Test video', 'url' : 'test', 'user' : 'test'}
+		video_to_upload = {
+			'description': 'This is a test video', 'fileName': 'HKUG2278kH',
+			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
+			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
 
 		mock.return_value.status_code = 200
 		mock.return_value.json.return_value = {'Upload' : 'video uploaded'}
