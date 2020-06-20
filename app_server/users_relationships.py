@@ -1,6 +1,7 @@
 import os
 import logging
 from flask import Blueprint
+from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.users_db_functions import *
 
@@ -11,6 +12,7 @@ client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
 @users_bp.route('/api/new_friendship_request/<my_user_id>/<new_friends_id>', methods=['POST'])
+@swag_from('docs/new_friendship_request.yml')
 def _new_friendship_request(my_user_id, new_friends_id):
 	coll = 'friendships'
 	response, status_code = insert_new_friendship_request(my_user_id,

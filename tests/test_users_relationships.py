@@ -19,7 +19,7 @@ def test_insert_new_friendship_request_was_already_submitted(client):
 def test_insert_new_friendship_request_failed(client):
 	with patch('app_server.users_relationships.insert_new_friendship_request') as mock:
 
-		info ={'Friendship_request':
+		info = {'Friendship_request':
 				'The request could not complete successfully'}
 		mock.return_value = info, 500
 
