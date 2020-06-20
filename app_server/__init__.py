@@ -42,7 +42,7 @@ def create_app(test_config=None):
 	app.logger.info('App server running...')
 
 	app.logger.debug('Testeando db y coll de mongodb')
-	if test_config == None:
+	if test_config is None:
 		test_database()
 
 	# Registro de blueprints que encapsulan comportamiento:
