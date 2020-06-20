@@ -1,11 +1,19 @@
-# pylint: disable=C0103
 import os
+import logging
+from flask import Blueprint
 from pymongo import MongoClient
+from app_server.users_db_functions import *
+
+users_bp = Blueprint('users_relationships', __name__)
+logger = logging.getLogger('gunicorn.error')
 
 client = MongoClient(os.environ.get('DATABASE_URL'))
+DB = 'app_server'
 
-def test_database():
-	db = 'app_server'
-	coll = 'amistades'
-	amistades = client[db][coll]
-	amistades.insert_one({'this_is': 'primera_prueba_nueva_db'})
+@users_bp.route('/api/new_friendship_request/<my_user_id>/<new_friends_id>', methods=['POST'])
+def _new_friendship_request(my_user_id, new_friends_id):
+	coll = 'friendships'
+	response, status_code = insert_new_friendship_request(my_user_id,
+														  new_friends_id,
+														  client[DB][coll])
+	return response, status_code

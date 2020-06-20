@@ -1,0 +1,11 @@
+Este servicio permitirá dar de alta una solicitud de contacto de usuario
+---
+parameters:
+  - in: path
+    name: user_id
+    description: new (potential) friend's id
+    schema:
+       type: string
+responses:
+  200:
+    description: solicitud dada de alta

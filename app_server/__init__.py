@@ -7,6 +7,7 @@ from flask import Flask, request
 from app_server.http_functions import *
 from app_server.authentication import authentication_bp
 from app_server.videos import videos_bp
+from app_server.users_relationships import users_bp
 
 from app_server.users_relationships import *
 
@@ -41,14 +42,11 @@ def create_app(test_config=None):
 	app.logger.debug('Log configuration finished')
 	app.logger.info('App server running...')
 
-	app.logger.debug('Testeando db y coll de mongodb')
-	if test_config is None:
-		test_database()
-
 	# Registro de blueprints que encapsulan comportamiento:
 	with app.app_context():
 		app.register_blueprint(authentication_bp)
 		app.register_blueprint(videos_bp)
+		app.register_blueprint(users_bp)
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')
@@ -95,15 +93,5 @@ def create_app(test_config=None):
 	@swag_from('docs/home.yml')
 	def _home_page():
 		return {}
-
-	# @app.route('/user/<username>')
-	# def show_user_profile(username):
-	#     # show the user profile for that user
-	#     return 'User name is %s' % escape(username)
-
-	# @app.route('/post/<int:post_id>')
-	# def show_post(post_id):
-	#     # show the post with the given id, the id is an integer
-	#     return 'Post %d' % post_id
 
 	return app
