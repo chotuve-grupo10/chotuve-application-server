@@ -8,6 +8,8 @@ from app_server.http_functions import *
 from app_server.authentication import authentication_bp
 from app_server.videos import videos_bp
 
+from app_server.users_relationships import *
+
 def create_app(test_config=None):
 	# create and configure the app
 	app = Flask(__name__, instance_relative_config=True)
@@ -38,6 +40,9 @@ def create_app(test_config=None):
 
 	app.logger.debug('Log configuration finished')
 	app.logger.info('App server running...')
+
+	app.logger.debug('Testeando db y coll de mongodb')
+	test_database()
 
 	# Registro de blueprints que encapsulan comportamiento:
 	with app.app_context():
