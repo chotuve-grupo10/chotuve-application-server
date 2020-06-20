@@ -1,7 +1,7 @@
 Este servicio permitirá dar de alta un video en el sistema
 ---
 definitions:
-  Video:
+  VideoToUpload:
     type: object
     properties:
       title:
@@ -10,24 +10,30 @@ definitions:
         type: string
       user:
         type: string
+      description:
+        type: string
+      fileName:
+        type: string
+      latitude:
+        type: string
+      longitude:
+        type: string
+      isPrivate:
+        type: boolean
+  UploadVideoResponse:
+    type: object
+    properties:
+      result:
+        type: string
 parameters:
   - in: body
     name: video
     description: The video to upload.
     schema:
-        type: object
-        required:
-           - title
-           - url
-           - user
-        properties:
-            title:
-              type: string
-            url:
-              type: string
-            user:
-              type: string
+      $ref: '#/definitions/VideoToUpload'
 responses:
   200:
     description: video uploaded
+    schema:
+      $ref: '#/definitions/UploadVideoResponse'
  

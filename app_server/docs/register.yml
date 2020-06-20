@@ -1,25 +1,34 @@
 Este servicio permitirá a los usuarios darse de alta en el sistema
 ---
 definitions:
-  User:
+  UserRegister:
     type: object
     properties:
-      email:
-        type: string
       full name:
-        type: string
-      password:
         type: string
       phone number:
         type: string
+      email:
+        type: string
+      password:
+        type: string
       profile picture:
         type: string
+  RegisterResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message_result:
+        type: object
 parameters:
   - in: body
     name: user
     description: The user to create.
     schema:
-      $ref: '#/definitions/User'
+      $ref: '#/definitions/UserRegister'
 responses:
   200:
-    description: Returns token
+    description: Returns completion message
+    schema:
+      $ref: '#/definitions/RegisterResponse'
