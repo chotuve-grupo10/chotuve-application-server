@@ -14,7 +14,7 @@ DB = 'app_server'
 @users_bp.route('/api/new_friendship_request/<my_user_id>/<new_friends_id>', methods=['POST'])
 @swag_from('docs/new_friendship_request.yml')
 def _new_friendship_request(my_user_id, new_friends_id):
-	coll = 'friendships'
+	coll = 'users'
 	response, status_code = insert_new_friendship_request(my_user_id,
 														  new_friends_id,
 														  client[DB][coll])

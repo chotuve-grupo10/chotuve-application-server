@@ -3,6 +3,19 @@ from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
 
+def insert_new_user(data, collection):
+
+	doc = {'email': data['email'],
+		   'friends': [],
+		   'requests': []
+	}
+	result = collection.insert_one(doc)
+	if result.modified_count != 1:
+		return 500
+	else:
+		return 201
+
+
 def insert_new_friendship_request(my_user_id, new_friends_id, collection):
 	# Lo primero que hay que chequear, es que no sean ya amigos!
 	requests = collection.find_one({'_id': ObjectId(new_friends_id)})['requests']

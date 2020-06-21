@@ -82,7 +82,7 @@ def test_comment_video_fails(client):
 	with patch('app_server.videos.insert_comment_into_video') as mock:
 
 		data_to_comment = {
-			'user': 'email01@gmail.com',
+			'email': 'email01@gmail.com',
 			'comment': 'This is one hell of a fake comment'
 		}
 		info = {'Comment video':
@@ -101,7 +101,7 @@ def test_comment_video_is_successfull(client):
 	with patch('app_server.videos.insert_comment_into_video') as mock:
 
 		data_to_comment = {
-			'user': 'email01@gmail.com',
+			'email': 'email01@gmail.com',
 			'comment': 'This is one hell of a fake comment'
 		}
 		info = {'Comment video':
