@@ -4,9 +4,9 @@ from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
 
-def insert_comment_into_video(video_id, user_id, comment, collection):
+def insert_comment_into_video(video_id, user_email, comment, collection):
 
-	data = {'user_id': user_id,
+	data = {'user': user_email,
 			'comment': comment,
 			'timestamp': datetime.datetime.now()}
 	result = collection.update_one({'_id': ObjectId(video_id)},

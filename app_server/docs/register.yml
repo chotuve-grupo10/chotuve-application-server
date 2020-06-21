@@ -21,6 +21,7 @@ definitions:
         type: integer
       message_result:
         type: object
+
 parameters:
   - in: body
     name: user

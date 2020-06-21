@@ -86,14 +86,14 @@ def _delete_video(video_id):
 
 	return json.dumps(status), response_media_server.status_code
 
-@videos_bp.route('/api/comment_video/<video_id>/<user_id>', methods=['POST'])
+@videos_bp.route('/api/comment_video/<video_id>', methods=['POST'])
 @swag_from('docs/comment_video.yml')
-def _comment_video(video_id, user_id):
+def _comment_video(video_id):
 
 	data = request.json
 	coll = 'videos'
 	result, status_code = insert_comment_into_video(video_id,
-													user_id,
+													data['email'],
 													data['comment'],
 													client[DB][coll])
 
