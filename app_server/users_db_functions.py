@@ -1,4 +1,5 @@
 import logging
+import pymongo.errors
 from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
@@ -9,10 +10,12 @@ def insert_new_user(data, collection):
 		   'friends': [],
 		   'requests': []
 	}
-	result = collection.insert_one(doc)
-	if result.modified_count != 1:
+	try:
+		## insert_one result has no attribute modified_counts
+		collection.insert_one(doc)
+		return 201
+	except pymongo.errors.DuplicateKeyError:
 		return 500
-	return 201
 
 
 def insert_new_friendship_request(my_user_id, new_friends_id, collection):
