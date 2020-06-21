@@ -1,12 +1,17 @@
 import os
 import logging
 import simplejson as json
+from pymongo import MongoClient
 from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
+from app_server.videos_db_functions import *
 
 videos_bp = Blueprint('videos', __name__)
 logger = logging.getLogger('gunicorn.error')
+
+client = MongoClient(os.environ.get('DATABASE_URL'))
+DB = 'app_server'
 
 @videos_bp.route('/api/list_videos/', methods=['GET'])
 @swag_from('docs/list_videos.yml')
@@ -80,3 +85,16 @@ def _delete_video(video_id):
 		status['Deleted Video'] = 'No response'
 
 	return json.dumps(status), response_media_server.status_code
+
+@videos_bp.route('/api/comment_video/<video_id>/<user_id>', methods=['POST'])
+@swag_from('docs/comment_video.yml')
+def _comment_video(video_id, user_id):
+
+	data = request.json
+	coll = 'videos'
+	result, status_code = insert_comment_into_video(video_id,
+													user_id,
+													data['comment'],
+													client[DB][coll])
+
+	return result, status_code

@@ -15,7 +15,7 @@ def insert_new_friendship_request(my_user_id, new_friends_id, collection):
 
 	result = collection.update_one({'_id': ObjectId(my_user_id)},
 								   {'$push':{'requests': new_friends_id}})
-	if result.modified_count != 0:
+	if result.modified_count != 1:
 		logger.error('Something went wrong internally with request from id ' +
 					 my_user_id)
 		return {'Friendship_request':

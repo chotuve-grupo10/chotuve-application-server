@@ -77,3 +77,35 @@ def test_delete_video_fails(client):
 		response = client.delete('/api/delete_video/3', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
+
+def test_comment_video_fails(client):
+	with patch('app_server.videos.insert_comment_into_video') as mock:
+
+		data_to_comment = {'comment': 'This is one hell of a fake comment'}
+		info = {'Comment video':
+				'The request could not complete successfully'}
+		mock.return_value = info, 500
+
+		value_expected = info
+		response = client.post('/api/comment_video/01xa/01xb',
+							   json=data_to_comment,
+							   follow_redirects=False)
+		assert mock.called
+		assert response.status_code == 500
+		assert json.loads(response.data) == value_expected
+
+def test_comment_video_is_successfull(client):
+	with patch('app_server.videos.insert_comment_into_video') as mock:
+
+		data_to_comment = {'comment': 'This is one hell of a fake comment'}
+		info = {'Comment video':
+				'Your request was completed successfully'}
+		mock.return_value = info, 201
+
+		value_expected = info
+		response = client.post('/api/comment_video/01xa/01xb',
+							   json=data_to_comment,
+							   follow_redirects=False)
+		assert mock.called
+		assert response.status_code == 201
+		assert json.loads(response.data) == value_expected
