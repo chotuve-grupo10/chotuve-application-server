@@ -81,13 +81,16 @@ def test_delete_video_fails(client):
 def test_comment_video_fails(client):
 	with patch('app_server.videos.insert_comment_into_video') as mock:
 
-		data_to_comment = {'comment': 'This is one hell of a fake comment'}
+		data_to_comment = {
+			'user': 'email01@gmail.com',
+			'comment': 'This is one hell of a fake comment'
+		}
 		info = {'Comment video':
 				'The request could not complete successfully'}
 		mock.return_value = info, 500
 
 		value_expected = info
-		response = client.post('/api/comment_video/01xa/01xb',
+		response = client.post('/api/comment_video/01xa',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
@@ -97,13 +100,16 @@ def test_comment_video_fails(client):
 def test_comment_video_is_successfull(client):
 	with patch('app_server.videos.insert_comment_into_video') as mock:
 
-		data_to_comment = {'comment': 'This is one hell of a fake comment'}
+		data_to_comment = {
+			'user': 'email01@gmail.com',
+			'comment': 'This is one hell of a fake comment'
+		}
 		info = {'Comment video':
 				'Your request was completed successfully'}
 		mock.return_value = info, 201
 
 		value_expected = info
-		response = client.post('/api/comment_video/01xa/01xb',
+		response = client.post('/api/comment_video/01xa',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
