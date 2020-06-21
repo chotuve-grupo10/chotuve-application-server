@@ -12,8 +12,7 @@ def insert_new_user(data, collection):
 	result = collection.insert_one(doc)
 	if result.modified_count != 1:
 		return 500
-	else:
-		return 201
+	return 201
 
 
 def insert_new_friendship_request(my_user_id, new_friends_id, collection):
