@@ -4,6 +4,10 @@ from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
 
+# Me falta el id del MS
+# def insert_video_into_db(video_id, data, collection):
+#
+
 def insert_comment_into_video(video_id, user_email, comment, collection):
 
 	data = {'user': user_email,

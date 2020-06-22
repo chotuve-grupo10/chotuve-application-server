@@ -15,7 +15,7 @@ def test_insert_new_user(client):
 	client = MongoClient()
 	collection = client[DB]['users']
 
-	data ={'email': 'test@test.com'}
+	data = {'email': 'test@test.com'}
 	insert_new_user(data, collection)
 
 	result = list(collection.find({}))
@@ -54,7 +54,7 @@ def test_insert_new_friendship_request_success(client):
 	first_user_id = str(collection.find_one({'email': 'test_0@test.com'})['_id'])
 	second_user_id = str(collection.find_one({'email': 'test_1@test.com'})['_id'])
 	# First user requests second user to be his/her friend
-	result, status_code = insert_new_friendship_request(first_user_id, second_user_id, collection)
+	_, status_code = insert_new_friendship_request(first_user_id, second_user_id, collection)
 	assert status_code == 201
 
 	client.close()
@@ -71,7 +71,7 @@ def test_insert_new_friendship_request_twice_fails_second_time(client):
 	# First user requests second user to be his/her friend
 	insert_new_friendship_request(first_user_id, second_user_id, collection)
 	# assert status_code == 201
-	result, status_code = insert_new_friendship_request(first_user_id, second_user_id, collection)
+	_, status_code = insert_new_friendship_request(first_user_id, second_user_id, collection)
 	assert status_code == 409
 
 	client.close()
@@ -87,7 +87,7 @@ def test_insert_new_friendship_request_two_users(client):
 	for i in range(1, 3):
 		email = 'test_{0}@test.com'.format(i)
 		my_user_id = str(collection.find_one({'email': email})['_id'])
-		result, status_code = insert_new_friendship_request(my_user_id, first_user_id, collection)
+		_, status_code = insert_new_friendship_request(my_user_id, first_user_id, collection)
 		assert status_code == 201
 
 	requests = collection.find_one({'email': 'test_0@test.com'})['requests']

@@ -60,6 +60,7 @@ def _upload_video():
 	status = {}
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server upload video is 200')
+		# result, status_code = insert_video_into_db()	# me falta el id del MS
 		data = response_media_server.json()
 		status = data
 	else:
