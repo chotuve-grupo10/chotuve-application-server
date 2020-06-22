@@ -20,16 +20,33 @@ def insert_new_user(data, collection):
 
 def insert_new_friendship_request(my_user_id, new_friends_id, collection):
 	# Lo primero que hay que chequear, es que no sean ya amigos!
-	requests = collection.find_one({'_id': ObjectId(new_friends_id)})['requests']
+	try:
+		friends = collection.find_one({'_id': ObjectId(my_user_id)})['friends']
+	except TypeError:
+		return {'Friendship_request':
+				'The request could not complete successfully because you appear not to be'
+				'a valid user in db'}, 403	# Forbidden
+	if ObjectId(new_friends_id) in friends:
+		logger.error('User % requested was already submitted and is pending',
+					 my_user_id)
+		return {'Friendship_request':
+				'This user is already your friend!'}, 409	# Conflict
 
-	if new_friends_id in requests:
+	# Segundo, chequeo que la request no haya sido hecha ya
+	try:
+		requests = collection.find_one({'_id': ObjectId(new_friends_id)})['requests']
+	except TypeError:
+		return {'Friendship_request':
+				'This user you are trying to make friends with does not exist in db'}, 403
+
+	if ObjectId(my_user_id) in requests:
 		logger.error('User % requested was already submitted and is pending',
 					 my_user_id)
 		return {'Friendship_request':
 				'Friendship request was already submitted'}, 409
 
-	result = collection.update_one({'_id': ObjectId(my_user_id)},
-								   {'$push':{'requests': new_friends_id}})
+	result = collection.update_one({'_id': ObjectId(new_friends_id)},
+								   {'$push':{'requests': ObjectId(my_user_id)}})
 	if result.modified_count != 1:
 		logger.error('Something went wrong internally with request from id ' +
 					 my_user_id)
