@@ -13,5 +13,11 @@ parameters:
       type: string
       
 responses:
-  200:
-    description: solicitud dada de alta
+  201:
+    description: solicitud completada
+  403:
+    description: alguno de los ids no existe
+  409:
+    description: esta solicitud ya existe
+  500:
+    description: solicitud rechazada por error interno del server

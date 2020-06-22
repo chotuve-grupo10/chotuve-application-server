@@ -11,6 +11,8 @@ def test_new_collection_is_empty(client):
 	client.close()
 	assert len(result) == 0
 
+### Insert users into db ###
+
 def test_insert_new_user(client):
 	client = MongoClient()
 	collection = client[DB]['users']
@@ -43,6 +45,8 @@ def test_insert_ten_users(client):
 	assert len(result) == 10
 	for counter, document in enumerate(result):
 		assert document['email'] == 'test_{0}@test.com'.format(counter)
+
+### Send friendship requests ###
 
 def test_insert_new_friendship_request_success(client):
 	client = MongoClient()
@@ -131,3 +135,18 @@ def test_insert_new_friendship_request_fails_my_id_is_invalid(client):
 				'a valid user in db'}
 
 	client.close()
+
+### Accept friendship request ###
+
+# def test_accept_friendship_request_successfully(client):
+# 	client = MongoClient()
+# 	collection = client[DB]['users']
+# 	data = []
+# 	for i in range(0, 2):
+# 		data.append({'email': 'test_{0}@test.com'.format(i)})
+# 		insert_new_user(data[i], collection)
+#
+# 	_, status_code = insert_new_friendship_request(data[1], data[0] , collection)
+# 	assert status_code == 200
+#
+# 	client.close()
