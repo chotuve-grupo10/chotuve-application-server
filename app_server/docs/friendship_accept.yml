@@ -17,7 +17,7 @@ responses:
     description: solicitud completada
   403:
     description: alguno de los ids no existe
-  403:
+  409:
     description: la solicitud de contacto no existe
   500:
     description: solicitud rechazada por error interno del server

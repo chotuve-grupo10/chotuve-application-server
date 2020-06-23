@@ -1,0 +1,23 @@
+Este servicio permite rechazar una solicitud de contacto de usuario
+---
+parameters:
+  - in: path
+    name: user_id
+    description: my id
+    schema:
+       type: string
+  - in: path
+    name: new_friends_id
+    description: potential new friend's id
+    schema:
+      type: string
+      
+responses:
+  201:
+    description: solicitud completada
+  403:
+    description: alguno de los ids no existe
+  409:
+    description: la solicitud de contacto no existe
+  500:
+    description: solicitud rechazada por error interno del server

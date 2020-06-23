@@ -1,6 +1,5 @@
 import logging
 import pymongo.errors
-from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
 
@@ -17,88 +16,108 @@ def insert_new_user(data, collection):
 	except pymongo.errors.DuplicateKeyError:
 		return 500
 
-
-def insert_new_friendship_request(my_user_id, new_friends_id, collection):
-	# Lo primero que hay que chequear, es que no sean ya amigos!
+def get_user_by_email(user_email, collection):
 	try:
-		friends = collection.find_one({'_id': ObjectId(my_user_id)})['friends']
+		user = collection.find_one({'email': user_email})
+		return user
 	except TypeError:
-		logger.error('User % is not a valid user',
-					 my_user_id)
+		logger.error('User % is not a valid user', user_email)
+		return None
+
+def insert_new_friendship_request(user_email, new_friends_email, collection):
+	# Lo primero que hay que chequear, es que no sean ya amigos!
+	user = get_user_by_email(user_email, collection)
+	new_friend = get_user_by_email(new_friends_email, collection)
+	if user is None or new_friend is None:
 		return {'Friendship_request':
-				'The request could not complete successfully because you appear not to be'
-				'a valid user in db'}, 403	# Forbidden
-	if ObjectId(new_friends_id) in friends:
+				'The request could not complete successfully because one of the users'
+				' is not valid'}, 403	# Forbidden
+
+	if new_friend['_id'] in user['friends']:
 		logger.error('User % requested was already submitted and is pending',
-					 my_user_id)
+					 user_email)
 		return {'Friendship_request':
 				'This user is already your friend!'}, 409	# Conflict
 
 	# Segundo, chequeo que la request no haya sido hecha ya
-	try:
-		requests = collection.find_one({'_id': ObjectId(new_friends_id)})['requests']
-	except TypeError:
-		logger.error('User % is not a valid user',
-					 new_friends_id)
-		return {'Friendship_request':
-				'This user you are trying to make friends with does not exist in db'}, 403
+	requests = new_friend['requests']
 
-	if ObjectId(my_user_id) in requests:
+	if user['_id'] in requests:
 		logger.error('User % requested was already submitted and is pending',
-					 my_user_id)
+					 user_email)
 		return {'Friendship_request':
 				'Friendship request was already submitted'}, 409
 
-	result = collection.update_one({'_id': ObjectId(new_friends_id)},
-								   {'$push':{'requests': ObjectId(my_user_id)}})
+	result = collection.update_one({'_id': new_friend['_id']},
+								   {'$push':{'requests': user['_id']}})
 	if result.modified_count != 1:
 		logger.error('Something went wrong internally with request from id ' +
-					 my_user_id)
+					 user_email)
 		return {'Friendship_request':
 				'The request could not complete successfully'}, 500
 
-	logger.debug('New friendship request submitted ' + my_user_id)
+	logger.debug('New friendship request submitted ' + user_email)
 	return {'Friendship_request':
 			'Your request was completed successfully'}, 201
 
-def respond_to_friendship_request(my_user_id, new_friends_id, collection, accept):
+def respond_to_friendship_request(user_email, new_friends_email, collection, accept):
 	if accept:
-		return accept_friendship_request(my_user_id, new_friends_id, collection)
-	# else:
-		# return reject_friendship(my_user_id, new_friends_id, collection)
-	return None, None
+		return accept_friendship_request(user_email, new_friends_email, collection)
 
-def accept_friendship_request(my_user_id, new_friends_id, collection):
+	return reject_friendship(user_email, new_friends_email, collection)
+
+def accept_friendship_request(user_email, new_friends_email, collection):
 	#1 Chequear que el user exista realmente
-	try:
-		collection.find_one({'_id': ObjectId(my_user_id)})['requests']
-	except TypeError:
-		return {'Accept friendship_request':
-				'The request could not complete successfully because you appear not to be'
-				'a valid user in db'}, 403	# Forbidden
+	user = get_user_by_email(user_email, collection)
+	new_friend = get_user_by_email(new_friends_email, collection)
+	if user is None or new_friend is None:
+		return {'Accept_friendship_request':
+				'The request could not complete successfully because one of the users'
+				' is not valid'}, 403	# Forbidden
 
 	#2 eliminar la request
-	result = collection.update_one({'_id': ObjectId(my_user_id)},
-								   {'$pull': {'requests': ObjectId(new_friends_id)}})
+	result = collection.update_one({'_id': user['_id']},
+								   {'$pull': {'requests': new_friend['_id']}})
 	if result.modified_count != 1:
 		logger.error('There is no friendship request pending to respond between %s and %s',
-					 my_user_id, new_friends_id)
-		return {'Accept friendship_request':
-				'There is no such friendship request pending to respond'}, 403
+					 user_email, new_friends_email)
+		return {'Accept_friendship_request':
+				'There is no such friendship request pending to respond'}, 409
 
 	#3 agregar la amistad para ambos usuarios
-	result_01 = collection.update_one({'_id': ObjectId(my_user_id)},
-						  {'$push': {'friends': ObjectId(new_friends_id)}})
-	result_02 = collection.update_one({'_id': ObjectId(new_friends_id)},
-						  {'$push': {'friends': ObjectId(my_user_id)}})
-	if result_01.modified_count != 1 or result_02.modified_count:
+	result_01 = collection.update_one({'_id': user['_id']},
+						  {'$push': {'friends': new_friend['_id']}})
+	result_02 = collection.update_one({'_id': new_friend['_id']},
+						  {'$push': {'friends': user['_id']}})
+	if result_01.modified_count != 1 or result_02.modified_count != 1:
 		logger.error('Something went wrong internally with request from id ' +
-					 my_user_id)
-		return {'Friendship_request':
-					'The request could not complete successfully'}, 500
+					 user_email)
+		return {'Accept_friendship_request':
+				'The request could not complete successfully'}, 500
 
-	logger.debug('Friendship request was accepted by ' + my_user_id)
-	return {'Accept friendship_request':
+	logger.debug('Friendship request was accepted by ' + user_email)
+	return {'Accept_friendship_request':
 			'Your request was completed successfully'}, 201
 
-# def reject_friendship(my_user_id, new_friends_id, collection):
+def reject_friendship(user_email, new_friends_email, collection):
+	#1 Chequear que el user exista realmente
+	user = get_user_by_email(user_email, collection)
+	new_friend = get_user_by_email(new_friends_email, collection)
+	if user is None or new_friend is None:
+		return {'Reject_friendship_request':
+				'The request could not complete successfully because one of the users'
+				' is not valid'}, 403	# Forbidden
+
+	#2 eliminar la request
+	result = collection.update_one({'_id': user['_id']},
+								   {'$pull': {'requests': new_friend['_id']}})
+	if result.modified_count != 1:
+		logger.error('There is no friendship request pending to respond between %s and %s',
+					 user_email, new_friends_email)
+		return {'Reject_friendship_request':
+				'There is no such friendship request pending to respond'}, 409
+
+	# 3 no agrego nada!
+	logger.debug('Friendship request was denied by ' + user_email)
+	return {'Reject_friendship_request':
+			'Your request was completed successfully'}, 201
