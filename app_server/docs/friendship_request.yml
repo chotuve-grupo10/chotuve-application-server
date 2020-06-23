@@ -1,5 +1,13 @@
 Este servicio permitirá dar de alta una solicitud de contacto de usuario
 ---
+definitions:
+  RequestFriendshipResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message_result:
+        type: object
 parameters:
   - in: path
     name: user_id
@@ -15,9 +23,17 @@ parameters:
 responses:
   201:
     description: solicitud completada
+    schema:
+      $ref: '#/definitions/RequestFriendshipResponse'
   403:
     description: alguno de los ids no existe
+    schema:
+      $ref: '#/definitions/RequestFriendshipResponse'
   409:
     description: esta solicitud ya existe
+    schema:
+      $ref: '#/definitions/RequestFriendshipResponse'
   500:
     description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#/definitions/RequestFriendshipResponse'

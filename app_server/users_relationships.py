@@ -23,7 +23,7 @@ def _new_friendship_request(user_email, new_friends_email):
 
 @users_bp.route('/api/<user_email>/friends/<new_friends_email>/accept',
 				methods=['POST'])
-@swag_from('docs/accept_friendship.yml')
+@swag_from('docs/friendship_accept.yml')
 def _accept_friendship_request(user_email, new_friends_email):
 	coll = 'users'
 	response, status_code = respond_to_friendship_request(user_email,
@@ -34,7 +34,7 @@ def _accept_friendship_request(user_email, new_friends_email):
 
 @users_bp.route('/api/<user_email>/friends/<new_friends_email>/reject',
 				methods=['POST'])
-@swag_from('docs/reject_friendship.yml')
+@swag_from('docs/friendship_reject.yml')
 def _reject_friendship_request(user_email, new_friends_email):
 	coll = 'users'
 	response, status_code = respond_to_friendship_request(user_email,
