@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 from flask import Blueprint
 from flasgger import swag_from
@@ -42,3 +43,17 @@ def _reject_friendship_request(user_email, new_friends_email):
 														  client[DB][coll],
 														  accept=False)
 	return response, status_code
+
+@users_bp.route('/api/<user_email>/information',
+				methods=['GET'])
+@swag_from('docs/get_user_information.yml')
+def _get_user_information(user_email):
+	coll = 'users'
+	response = get_user_information_from_db(user_email,
+											client[DB][coll])
+	if response == 403:
+		return {'Get_user_information':
+				'The request could not complete successfully because one of the users'
+				' is not valid'}, response
+
+	return json.dumps(response), 200

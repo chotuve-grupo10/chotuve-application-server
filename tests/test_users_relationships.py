@@ -2,7 +2,7 @@ from unittest.mock import patch
 import simplejson as json
 
 def test_insert_new_friendship_request_was_already_submitted(client):
-	with patch('app_server.users_relationships.insert_new_friendship_request') as mock:
+	with patch('app_server.users.insert_new_friendship_request') as mock:
 
 		info = {'Friendship_request':
 				'Friendship request was already submitted'}
@@ -16,7 +16,7 @@ def test_insert_new_friendship_request_was_already_submitted(client):
 		assert json.loads(response.data) == value_expected
 
 def test_insert_new_friendship_request_failed(client):
-	with patch('app_server.users_relationships.insert_new_friendship_request') as mock:
+	with patch('app_server.users.insert_new_friendship_request') as mock:
 
 		info = {'Friendship_request':
 				'The request could not complete successfully'}
@@ -31,7 +31,7 @@ def test_insert_new_friendship_request_failed(client):
 		assert json.loads(response.data) == value_expected
 
 def test_insert_new_friendship_request_is_successfull(client):
-	with patch('app_server.users_relationships.insert_new_friendship_request') as mock:
+	with patch('app_server.users.insert_new_friendship_request') as mock:
 
 		info = {'Friendship_request': 'Your request was completed successfully'}
 		mock.return_value = info, 201

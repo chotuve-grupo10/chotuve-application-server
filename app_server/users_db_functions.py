@@ -1,11 +1,13 @@
 import logging
 import pymongo.errors
+from bson import ObjectId
 
 logger = logging.getLogger('gunicorn.error')
 
 def insert_new_user(data, collection):
 
 	doc = {'email': data['email'],
+		   'fullName': data['full Name'],
 		   'friends': [],
 		   'requests': []
 	}
@@ -22,6 +24,17 @@ def get_user_by_email(user_email, collection):
 		return user
 	except TypeError:
 		logger.error('User % is not a valid user', user_email)
+		return None
+
+def get_user_by_objectid(_id, collection, docs=None):
+	try:
+		if docs is None:
+			user = collection.find_one({'_id': _id})
+		else:
+			user = collection.find_one({'_id': _id}, docs)
+		return user
+	except TypeError:
+		logger.error('User with id % is not a valid user', _id)
 		return None
 
 def insert_new_friendship_request(user_email, new_friends_email, collection):
@@ -121,3 +134,16 @@ def reject_friendship(user_email, new_friends_email, collection):
 	logger.debug('Friendship request was denied by ' + user_email)
 	return {'Reject_friendship_request':
 			'Your request was completed successfully'}, 201
+
+def get_user_information_from_db(user_email, collection):
+	#1 Chequear que el user exista realmente
+	user = get_user_by_email(user_email, collection)
+	if user is None:
+		return 403	# Forbidden
+	result = []
+	for friend in user['friends']:
+		this_user = get_user_by_objectid(ObjectId(friend), collection,
+										 {'email': 1, 'fullName': 1, '_id': 0})
+		result.append(this_user)
+
+	return result

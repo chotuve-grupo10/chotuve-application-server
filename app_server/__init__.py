@@ -7,9 +7,9 @@ from flask import Flask, request
 from app_server.http_functions import *
 from app_server.authentication import authentication_bp
 from app_server.videos import videos_bp
-from app_server.users_relationships import users_bp
+from app_server.users import users_bp
 
-from app_server.users_relationships import *
+from app_server.users import *
 
 def create_app(test_config=None):
 	# create and configure the app

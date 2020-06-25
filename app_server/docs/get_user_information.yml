@@ -1,0 +1,26 @@
+Este servicio permite obtener información del usuario (y sus amigos)
+---
+definitions:
+  UserList:
+  type: array
+  items: 
+    type: object
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+parameters:
+  - in: path
+    name: user_id
+    description: my id
+    schema:
+       type: string
+      
+responses:
+  200:
+    description: se envia la información
+    schema:
+      $ref: '#/definitions/UserList'
+  403:
+    description: la request proviene de un usuario invalido
