@@ -12,7 +12,7 @@ logger = logging.getLogger('gunicorn.error')
 client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
-@users_bp.route('/api/<user_email>/friends/<new_friends_email>',
+@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
 				methods=['POST'])
 @swag_from('docs/friendship_request.yml')
 def _new_friendship_request(user_email, new_friends_email):
@@ -22,7 +22,7 @@ def _new_friendship_request(user_email, new_friends_email):
 														  client[DB][coll])
 	return response, status_code
 
-@users_bp.route('/api/<user_email>/friends/<new_friends_email>/accept',
+@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>/accept',
 				methods=['POST'])
 @swag_from('docs/friendship_accept.yml')
 def _accept_friendship_request(user_email, new_friends_email):
@@ -33,7 +33,7 @@ def _accept_friendship_request(user_email, new_friends_email):
 														  accept=True)
 	return response, status_code
 
-@users_bp.route('/api/<user_email>/friends/<new_friends_email>/reject',
+@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>/reject',
 				methods=['POST'])
 @swag_from('docs/friendship_reject.yml')
 def _reject_friendship_request(user_email, new_friends_email):
@@ -44,7 +44,7 @@ def _reject_friendship_request(user_email, new_friends_email):
 														  accept=False)
 	return response, status_code
 
-@users_bp.route('/api/<user_email>/information',
+@users_bp.route('/api/users/<user_email>/information',
 				methods=['GET'])
 @swag_from('docs/get_user_information.yml')
 def _get_user_information(user_email):

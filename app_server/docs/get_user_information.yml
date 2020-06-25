@@ -1,9 +1,7 @@
 Este servicio permite obtener información del usuario (y sus amigos)
 ---
 definitions:
-  UserList:
-  type: array
-  items: 
+  FriendsInformation:
     type: object
     properties:
       email:
@@ -20,7 +18,9 @@ parameters:
 responses:
   200:
     description: se envia la información
-    schema:
-      $ref: '#/definitions/UserList'
+    type: array
+    items:
+      schema:
+        $ref: '#/definitions/FriendsInformation'
   403:
     description: la request proviene de un usuario invalido

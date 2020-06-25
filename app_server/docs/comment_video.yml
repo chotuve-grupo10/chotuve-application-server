@@ -23,7 +23,7 @@ parameters:
        type: string
   - in: body
     name: user
-    description: User to login.
+    description: User making comment.
     schema:
       $ref: '#/definitions/CommentVideo'
 responses:
