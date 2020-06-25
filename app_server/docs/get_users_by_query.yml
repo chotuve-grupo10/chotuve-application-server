@@ -1,0 +1,15 @@
+Este servicio permitirá filtrar usuarios
+---
+definitions:
+parameters:
+  - in: path
+    name: filter
+    description: filtering data
+    schema:
+       type: string
+      
+responses:
+  200:
+    description: obtiene usuarios filtrados
+  500:
+    description: solicitud rechazada por error interno del server
