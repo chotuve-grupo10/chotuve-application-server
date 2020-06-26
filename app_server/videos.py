@@ -58,18 +58,25 @@ def _upload_video():
 	api_upload_video = '/api/upload_video/'
 	response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
 	status = {}
+	status_code = 0
 	# Trate de usar el .ok de la response, pero un 500 lo toma como true.
 	# Por suerte estaban los tests para hacermelo notar
-	if response_media_server.status_code == 200:
-		logger.debug('Response from media server upload video is 200')
-		# result, status_code = insert_video_into_db()	# me falta el id del MS
-		data = response_media_server.json()
-		status = data
-	else:
-		logger.debug('Response from media server is NOT 200')
-		status['Upload Video'] = 'No response'
+	if response_media_server.status_code == 201:
+		logger.debug('Response from media server upload video is 201')
+		coll = 'videos'
+		media_server_response_data = response_media_server.json()
+		status_code = insert_video_into_db(media_server_response_data['_id'], data, client[DB][coll])
 
-	return json.dumps(status), response_media_server.status_code
+		if status_code == 201:
+			status['Upload video'] = 'Successfully uploaded video'
+		else:
+			status['Upload video'] = 'Couldnt upload video'
+	else:
+		logger.debug('Response from media server is NOT 201')
+		status['Upload Video'] = 'No response'
+		status_code = response_media_server.status_code
+
+	return json.dumps(status), status_code
 
 
 @videos_bp.route('/api/delete_video/<video_id>', methods=['DELETE'])
