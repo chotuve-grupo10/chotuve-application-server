@@ -1,0 +1,39 @@
+Este servicio permite aceptar una solicitud de contacto de usuario y crear una relación de amistad
+---
+definitions:
+  AcceptFriendshipResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      message_result:
+        type: object
+parameters:
+  - in: path
+    name: user_id
+    description: my id
+    schema:
+       type: string
+  - in: path
+    name: new_friends_id
+    description: potential new friend's id
+    schema:
+      type: string
+      
+responses:
+  201:
+    description: solicitud completada
+    schema:
+      $ref: '#/definitions/AcceptFriendshipResponse'
+  403:
+    description: alguno de los ids no existe
+    schema:
+      $ref: '#/definitions/AcceptFriendshipResponse'
+  409:
+    description: la solicitud de contacto no existe
+    schema:
+      $ref: '#/definitions/AcceptFriendshipResponse'
+  500:
+    description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#/definitions/AcceptFriendshipResponse'

@@ -2,11 +2,16 @@ import os
 import logging
 from flask import Blueprint, request
 from flasgger import swag_from
+from pymongo import MongoClient
 from app_server.http_functions import *
 from app_server.token_functions import *
+from app_server.users_db_functions import insert_new_user
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
+
+client = MongoClient(os.environ.get('DATABASE_URL'))
+DB = 'app_server'
 
 @authentication_bp.route('/api/register/', methods=['POST'])
 @swag_from('docs/register.yml')
@@ -18,6 +23,15 @@ def _register_user():
 
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server register request')
+
+	if response.status_code == 201:
+		coll = 'users'
+		result = insert_new_user(data, client[DB][coll])
+		if result != 201:
+			return {
+				'Registration': 'User {0} was registered successfully in AuthServer, yet'
+				'operation failed in AppServers db'.format(data['email'])
+			}, 500
 
 	return response.text, response.status_code
 

@@ -13,6 +13,8 @@ setup(
         'flasgger',
         'requests',
         'gunicorn',
-        'PyJWT'
+        'PyJWT',
+        'pymongo',
+        'dnspython'
     ],
 )
