@@ -58,6 +58,8 @@ def _upload_video():
 	api_upload_video = '/api/upload_video/'
 	response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
 	status = {}
+	# Trate de usar el .ok de la response, pero un 500 lo toma como true.
+	# Por suerte estaban los tests para hacermelo notar
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server upload video is 200')
 		# result, status_code = insert_video_into_db()	# me falta el id del MS
