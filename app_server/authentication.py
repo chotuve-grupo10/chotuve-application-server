@@ -90,4 +90,13 @@ def _login_user_using_firebase():
 	response = post_auth_server_with_header(url, headers)
 	logger.debug('Finished auth server register with firebase request')
 
-	return response.json(), response.status_code
+	if response.status_code == 200:
+		logger.debug('Login request returned successful status code')
+		json_response = response.json()
+		app_token = generate_app_token(data)
+		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
+	else:
+		logger.debug('Login request returned failure status code')
+		text = response.json()
+
+	return text, response.status_code
