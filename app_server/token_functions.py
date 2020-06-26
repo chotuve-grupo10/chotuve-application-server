@@ -33,3 +33,7 @@ def validate_token(token):
 			result = {'Message': 'expired token'}
 			status_code = 401
 	return result, status_code
+
+def get_user_from_token(token):
+	payload = jwt.decode(token, 'secret', algorithms='HS256')
+	return payload['user_id']
