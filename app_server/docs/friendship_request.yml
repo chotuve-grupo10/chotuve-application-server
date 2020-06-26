@@ -16,7 +16,7 @@ parameters:
        type: string
   - in: path
     name: new_friends_id
-    description: potential new friend's id
+    description: potential new friends id
     schema:
       type: string
       

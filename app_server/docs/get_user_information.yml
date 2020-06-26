@@ -10,8 +10,8 @@ definitions:
         type: string
 parameters:
   - in: path
-    name: user_id
-    description: my id
+    name: user_email
+    description: email del usuario
     schema:
        type: string
       
@@ -22,5 +22,3 @@ responses:
     items:
       schema:
         $ref: '#/definitions/FriendsInformation'
-  403:
-    description: la request proviene de un usuario invalido
