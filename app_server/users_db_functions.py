@@ -152,6 +152,8 @@ def get_users_by_query(filter, collection):
 
 	regex_doc = {'$regex': filter}
 	users = collection.find({'email': regex_doc},
-							{'_id': False})
+							{'_id': False,
+							 'friends': False,
+							 'requests': False})
 
-	return users
+	return list(users)

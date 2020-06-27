@@ -409,3 +409,17 @@ def test_get_users_by_query_successfull():
 	assert len(list(one)) == 0
 
 	client.close()
+
+def test_get_users_when_filter_is_empty_gets_all():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full Name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	all = get_users_by_query('', collection)
+	assert len(list(all)) == 4
+
+	client.close()

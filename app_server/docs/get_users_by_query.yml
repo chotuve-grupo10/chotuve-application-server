@@ -5,11 +5,10 @@ parameters:
   - in: path
     name: filter
     description: filtering data
-    schema:
-       type: string
+    type: string
       
 responses:
   200:
     description: obtiene usuarios filtrados
-  500:
-    description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#./get_user_friends.yml/definitions/FriendsInformationList'

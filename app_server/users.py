@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from flask import Blueprint
+from flask import Blueprint, request
 from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.users_db_functions import *
@@ -58,10 +58,13 @@ def _get_user_information(user_email):
 
 	return json.dumps(response), 200
 
-@users_bp.route('/api/users?filter=<filter>')
+@users_bp.route('/api/users',
+				methods=['GET'])
 @swag_from('docs/get_users_by_query.yml')
-def _get_users_by_query(filter):
+def _get_users_by_query():
 	coll = 'users'
+
+	filter = request.args.get('filter')
 	response = get_users_by_query(filter,
 								  client[DB][coll])
 
