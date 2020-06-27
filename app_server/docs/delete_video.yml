@@ -4,8 +4,7 @@ parameters:
   - in: path
     name: video_id
     description: video id
-    schema:
-       type: string
+    type: string
 responses:
   200:
     description: video deleted

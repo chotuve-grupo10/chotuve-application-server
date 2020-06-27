@@ -12,13 +12,11 @@ parameters:
   - in: path
     name: user_id
     description: my id
-    schema:
-       type: string
+    type: string
   - in: path
     name: new_friends_id
     description: potential new friends id
-    schema:
-      type: string
+    type: string
       
 responses:
   201:
