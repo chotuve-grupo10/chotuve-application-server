@@ -399,14 +399,14 @@ def test_get_users_by_query_successfull():
 					 'full Name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
-	all = get_users_by_query('test', collection)
-	assert len(list(all)) == 4
+	_all = get_users_by_query('test', collection)
+	assert len(list(_all)) == 4
 
 	one = get_users_by_query('3', collection)
 	assert len(list(one)) == 1
 
-	none = get_users_by_query('SOME_RANDOM_SHIT', collection)
-	assert len(list(one)) == 0
+	_none = get_users_by_query('SOME_RANDOM_SHIT', collection)
+	assert len(list(_none)) == 0
 
 	client.close()
 
@@ -419,7 +419,7 @@ def test_get_users_when_filter_is_empty_gets_all():
 					 'full Name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
-	all = get_users_by_query('', collection)
-	assert len(list(all)) == 4
+	_all = get_users_by_query('', collection)
+	assert len(list(_all)) == 4
 
 	client.close()

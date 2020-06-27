@@ -64,8 +64,8 @@ def _get_user_information(user_email):
 def _get_users_by_query():
 	coll = 'users'
 
-	filter = request.args.get('filter')
-	response = get_users_by_query(filter,
+	filter_str = request.args.get('filter')
+	response = get_users_by_query(filter_str,
 								  client[DB][coll])
 
 	return json.dumps(response), 200

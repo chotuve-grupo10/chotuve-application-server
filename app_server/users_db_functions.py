@@ -148,9 +148,9 @@ def get_user_information_from_db(user_email, collection):
 
 	return result
 
-def get_users_by_query(filter, collection):
+def get_users_by_query(filter_str, collection):
 
-	regex_doc = {'$regex': filter}
+	regex_doc = {'$regex': filter_str}
 	users = collection.find({'email': regex_doc},
 							{'_id': False,
 							 'friends': False,
