@@ -58,11 +58,11 @@ def _get_user_information(user_email):
 
 	return json.dumps(response), 200
 
-# @users_bp.route('/api/users?<filter>')
-# @swag_from('docs/get_users_by_query.yml')
-# def _get_users_by_query(filter):
-# 	coll = 'users'
-# 	# response = get_users_by_query(filter,
-# 	# 							  client[DB][coll])
-#
-# 	return json.dumps(response), 200
+@users_bp.route('/api/users?filter=<filter>')
+@swag_from('docs/get_users_by_query.yml')
+def _get_users_by_query(filter):
+	coll = 'users'
+	response = get_users_by_query(filter,
+								  client[DB][coll])
+
+	return json.dumps(response), 200

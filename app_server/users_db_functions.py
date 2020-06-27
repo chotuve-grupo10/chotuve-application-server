@@ -139,7 +139,7 @@ def get_user_information_from_db(user_email, collection):
 	#1 Chequear que el user exista realmente
 	user = get_user_by_email(user_email, collection)
 	if user is None:
-		return 403	# Forbidden
+		return 404	# User not found
 	result = []
 	for friend in user['friends']:
 		this_user = get_user_by_objectid(ObjectId(friend), collection,
@@ -147,3 +147,11 @@ def get_user_information_from_db(user_email, collection):
 		result.append(this_user)
 
 	return result
+
+def get_users_by_query(filter, collection):
+
+	regex_doc = {'$regex': filter}
+	users = collection.find({'email': regex_doc},
+							{'_id': False})
+
+	return users
