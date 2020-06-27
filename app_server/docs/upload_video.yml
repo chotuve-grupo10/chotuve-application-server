@@ -32,8 +32,11 @@ parameters:
     schema:
       $ref: '#/definitions/VideoToUpload'
 responses:
-  200:
+  201:
     description: video uploaded
     schema:
       $ref: '#/definitions/UploadVideoResponse'
- 
+  500:
+    description: There is a problem with the app or media server.
+    schema:
+      $ref: '#/definitions/UploadVideoResponse'

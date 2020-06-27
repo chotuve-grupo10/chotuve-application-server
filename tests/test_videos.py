@@ -18,6 +18,28 @@ def test_upload_video_fails(client):
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
+def test_upload_fails_problems_inserting_into_db(client):
+	with patch('app_server.videos.post_media_server') as mock:
+
+		video_to_upload = {
+			'description': 'This is a test video', 'fileName': 'HKUG2278kH',
+			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
+			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
+
+		mock.return_value.status_code = 201
+		mock.return_value.json.return_value = {'_id' : '12345'}
+
+		with patch('app_server.videos.insert_video_into_db') as mock_insert_video:
+
+			mock_insert_video.return_value = 500
+
+			value_expected = {'Upload video' : 'Couldnt upload video'}
+			response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
+
+			assert mock.called
+			assert mock_insert_video.called
+			assert json.loads(response.data) == value_expected
+
 def test_upload_video_successfully(client):
 	with patch('app_server.videos.post_media_server') as mock:
 
@@ -26,13 +48,19 @@ def test_upload_video_successfully(client):
 			'isPrivate': False, 'latitude': '-27.0000', 'longitude': '-54.22',
 			'title': 'Test video', 'url' : 'test', 'user' : 'test'}
 
-		mock.return_value.status_code = 200
-		mock.return_value.json.return_value = {'Upload' : 'video uploaded'}
+		mock.return_value.status_code = 201
+		mock.return_value.json.return_value = {'_id' : '12345'}
 
-		value_expected = {'Upload' : 'video uploaded'}
-		response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
-		assert mock.called
-		assert json.loads(response.data) == value_expected
+		with patch('app_server.videos.insert_video_into_db') as mock_insert_video:
+
+			mock_insert_video.return_value = 201
+
+			value_expected = {'Upload video' : 'Successfully uploaded video'}
+			response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
+
+			assert mock.called
+			assert mock_insert_video.called
+			assert json.loads(response.data) == value_expected
 
 def test_list_videos_sucessfully(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
