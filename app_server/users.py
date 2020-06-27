@@ -12,40 +12,41 @@ logger = logging.getLogger('gunicorn.error')
 client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
+# No logré que funcionara el yml de swagger así
+# @users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
+# 				methods=['POST', 'PATCH', 'DELETE'])
+# @swag_from('docs/friendship_handling.yml')
+# def _handle_friendships(user_email, new_friends_email):
+
 @users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
 				methods=['POST'])
 @swag_from('docs/friendship_request.yml')
-def _new_friendship_request(user_email, new_friends_email):
+def _request_friendships(user_email, new_friends_email):
 	coll = 'users'
 	response, status_code = insert_new_friendship_request(user_email,
 														  new_friends_email,
 														  client[DB][coll])
 	return response, status_code
 
-@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>/accept',
-				methods=['POST'])
-@swag_from('docs/friendship_accept.yml')
-def _accept_friendship_request(user_email, new_friends_email):
+@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
+				methods=['PATCH'])
+@swag_from('docs/friendship_response.yml')
+def _respond_to_friendship_request(user_email, new_friends_email):
+	data = request.json
+	try:
+		accept_or_reject = data['response']
+	except KeyError:
+		return {'Friendship_response': 'Response was missing'}, 400
+
 	coll = 'users'
 	response, status_code = respond_to_friendship_request(user_email,
 														  new_friends_email,
 														  client[DB][coll],
-														  accept=True)
+														  accept=accept_or_reject)
 	return response, status_code
 
-@users_bp.route('/api/users/<user_email>/friends/<new_friends_email>/reject',
-				methods=['POST'])
-@swag_from('docs/friendship_reject.yml')
-def _reject_friendship_request(user_email, new_friends_email):
-	coll = 'users'
-	response, status_code = respond_to_friendship_request(user_email,
-														  new_friends_email,
-														  client[DB][coll],
-														  accept=False)
-	return response, status_code
 
-@users_bp.route('/api/users/<user_email>/friends',
-				methods=['GET'])
+@users_bp.route('/api/users/<user_email>/friends', methods=['GET'])
 @swag_from('docs/get_user_friends.yml')
 def _get_user_information(user_email):
 	coll = 'users'
@@ -57,14 +58,16 @@ def _get_user_information(user_email):
 				' is not valid'}, response
 
 	return json.dumps(response), 200
-
-@users_bp.route('/api/users',
-				methods=['GET'])
+#
+@users_bp.route('/api/users', methods=['GET'])
 @swag_from('docs/get_users_by_query.yml')
 def _get_users_by_query():
 	coll = 'users'
+	try:
+		filter_str = request.args.get('filter')
+	except KeyError:
+		return {'get_users_by_query': 'No filter parameter was given'}, 400
 
-	filter_str = request.args.get('filter')
 	response = get_users_by_query(filter_str,
 								  client[DB][coll])
 

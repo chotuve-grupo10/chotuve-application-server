@@ -8,14 +8,18 @@ definitions:
         type: integer
       message_result:
         type: object
+        properties:
+          message: 
+            type: string
+
 parameters:
   - in: path
-    name: user_id
-    description: my id
+    name: user_email
+    description: my email
     type: string
   - in: path
-    name: new_friends_id
-    description: potential new friends id
+    name: new_friends_email
+    description: potential new friends email
     type: string
       
 responses:

@@ -1,6 +1,18 @@
 Este servicio permitirá filtrar usuarios
 ---
 definitions:
+  FriendsInformationList:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        fullName:
+          type: string
+      example:
+        email: 'diegote@gmail.com'
+        fullName: 'Diegote'
 parameters:
   - in: path
     name: filter
@@ -11,4 +23,4 @@ responses:
   200:
     description: obtiene usuarios filtrados
     schema:
-      $ref: '#./get_user_friends.yml/definitions/FriendsInformationList'
+      $ref: '#/definitions/FriendsInformationList'
