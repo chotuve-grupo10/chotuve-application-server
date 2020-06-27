@@ -19,8 +19,8 @@ parameters:
   - in: path
     name: video_id
     description: id del video
-    schema:
-       type: string
+    type: string
+    
   - in: body
     name: user
     description: User making comment.

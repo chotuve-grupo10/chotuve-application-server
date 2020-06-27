@@ -1,0 +1,26 @@
+Este servicio permite obtener información del usuario (y sus amigos)
+---
+definitions:
+  FriendsInformationList:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+        fullName:
+          type: string
+      example:
+        email: 'diegote@gmail.com'
+        fullName: 'Diegote'
+parameters:
+  - in: path
+    name: user_email
+    description: email del usuario
+    type: string
+      
+responses:
+  200:
+    description: se envia la información
+    schema:
+      $ref: '#/definitions/FriendsInformationList'

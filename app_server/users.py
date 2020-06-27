@@ -44,9 +44,9 @@ def _reject_friendship_request(user_email, new_friends_email):
 														  accept=False)
 	return response, status_code
 
-@users_bp.route('/api/users/<user_email>/information',
+@users_bp.route('/api/users/<user_email>/friends',
 				methods=['GET'])
-@swag_from('docs/get_user_information.yml')
+@swag_from('docs/get_user_friends.yml')
 def _get_user_information(user_email):
 	coll = 'users'
 	response = get_user_information_from_db(user_email,

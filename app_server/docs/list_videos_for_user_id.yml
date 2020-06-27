@@ -20,8 +20,7 @@ parameters:
   - in: path
     name: user_id
     description: user id
-    schema:
-      type: string
+    type: string
 responses:
   200:
     description: videos list returned
