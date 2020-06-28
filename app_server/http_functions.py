@@ -52,6 +52,7 @@ def post_auth_server_with_header(url, headers):
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
 
+	headers[APP_SERVER_TOKEN_HEADER] = os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')
 	logger.debug('URL: ' + url)
 	response = requests.post(url=url, headers=headers)
 	return response
