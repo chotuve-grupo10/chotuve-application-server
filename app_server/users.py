@@ -66,7 +66,7 @@ def _get_users_by_query():
 	try:
 		filter_str = request.args.get('filter')
 	except KeyError:
-		return {'get_users_by_query': 'No filter parameter was given'}, 400
+		return {'Users_by_query': 'No filter parameter was given'}, 400
 
 	response = get_users_by_query(filter_str,
 								  client[DB][coll])

@@ -14,10 +14,11 @@ definitions:
         email: 'diegote@gmail.com'
         fullName: 'Diegote'
 parameters:
-  - in: path
+  - in: query
     name: filter
     description: filtering data
-    type: string
+    schema:
+      type: string
       
 responses:
   200:
