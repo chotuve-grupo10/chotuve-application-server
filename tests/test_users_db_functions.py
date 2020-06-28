@@ -17,7 +17,7 @@ def test_insert_new_user():
 	client = MongoClient()
 	collection = client[DB]['users']
 
-	data = {'email': 'test@test.com', 'full Name': ''}
+	data = {'email': 'test@test.com', 'full name': ''}
 	insert_new_user(data, collection)
 
 	result = list(collection.find({}))
@@ -32,7 +32,7 @@ def test_insert_ten_users():
 	collection = client[DB]['users']
 	for i in range(0, 10):
 		data = {'email': 'test_{0}@test.com'.format(i),
-				'full Name': ''}
+				'full name': ''}
 		insert_new_user(data, collection)
 
 	fifth_user = collection.find_one({'email': 'test_5@test.com'})
@@ -55,7 +55,7 @@ def test_insert_new_friendship_request_success():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	# First user requests second user to be his/her friend
@@ -72,7 +72,7 @@ def test_insert_new_friendship_request_twice_fails_second_time():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	# First user requests second user to be his/her friend
@@ -89,7 +89,7 @@ def test_insert_new_friendship_request_two_users():
 	data = []
 	for i in range(0, 3):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	for i in range(1, 3):
@@ -107,7 +107,7 @@ def test_insert_new_friendship_request_fails_friends_email_is_invalid():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
@@ -128,7 +128,7 @@ def test_insert_new_friendship_request_fails_my_id_is_invalid():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
@@ -148,7 +148,7 @@ def test_accept_friendship_request_successfully():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -174,7 +174,7 @@ def test_accept_friendship_request_successfully_appends_friends_to_user_in_db():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -196,7 +196,7 @@ def test_accept_friendship_non_existing_fails():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -227,7 +227,7 @@ def test_accept_friendship_non_existing_user_fails():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -261,7 +261,7 @@ def test_reject_friendship_request_successfully():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -286,7 +286,7 @@ def test_reject_friendship_non_existing_fails():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -312,7 +312,7 @@ def test_reject_friendship_non_existing_user_fails():
 	data = []
 	for i in range(0, 2):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': ''})
+					 'full name': ''})
 		insert_new_user(data[i], collection)
 
 	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
@@ -346,7 +346,7 @@ def test_get_user_information():
 	data = []
 	for i in range(0, 4):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': '{0}'.format(i)})
+					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
 	result = collection.find({})
@@ -378,7 +378,7 @@ def test_get_user_information_fails():
 	data = []
 	for i in range(0, 4):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': '{0}'.format(i)})
+					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
 	result = collection.find({})
@@ -396,7 +396,7 @@ def test_get_users_by_query_successfull():
 	data = []
 	for i in range(0, 4):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': '{0}'.format(i)})
+					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
 	_all = get_users_by_query('test', collection)
@@ -416,7 +416,7 @@ def test_get_users_when_filter_is_empty_gets_all():
 	data = []
 	for i in range(0, 4):
 		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full Name': '{0}'.format(i)})
+					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
 	_all = get_users_by_query('', collection)
