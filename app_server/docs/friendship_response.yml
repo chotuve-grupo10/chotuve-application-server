@@ -1,6 +1,11 @@
 Este servicio permite aceptar una solicitud de contacto de usuario y crear una relación de amistad
 ---
 definitions:
+  AcceptFriend:
+    type: object
+    properties:
+      response:
+        type: boolean
   RespondFriendshipResponse:
     type: object
     properties:
@@ -8,10 +13,6 @@ definitions:
         type: integer
       message_result:
         type: object
-        properties:
-          message: 
-            type: string
-        
 parameters:
   - in: path
     name: user_email
@@ -21,6 +22,11 @@ parameters:
     name: new_friends_email
     description: potential new friends email
     type: string
+  - in: body
+    name: response_body
+    description: Document containing true for accept, false for reject.
+    schema:
+      $ref: '#/definitions/AcceptFriend'
       
 responses:
   201:

@@ -8,9 +8,6 @@ definitions:
         type: integer
       message_result:
         type: object
-        properties:
-          message: 
-            type: string
 
 parameters:
   - in: path
