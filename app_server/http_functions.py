@@ -1,8 +1,11 @@
+import os
 import logging
 import requests
 import simplejson as json
 
 logger = logging.getLogger('gunicorn.error')
+
+APP_SERVER_TOKEN_HEADER = 'AppServerToken'
 
 def get_auth_server_request(url_received, headers_received=None):
 	logger.debug('Auth server get request')
@@ -38,7 +41,7 @@ def post_auth_server(url, user_data):
 		raise ValueError("User data is None")
 
 	logger.debug('URL: ' + url)
-	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain', APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
 	response = requests.post(url=url, data=json.dumps(user_data), headers=headers)
 	return response
 
@@ -49,6 +52,7 @@ def post_auth_server_with_header(url, headers):
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
 
+	headers[APP_SERVER_TOKEN_HEADER] = os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')
 	logger.debug('URL: ' + url)
 	response = requests.post(url=url, headers=headers)
 	return response

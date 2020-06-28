@@ -7,7 +7,7 @@ logger = logging.getLogger('gunicorn.error')
 def insert_new_user(data, collection):
 
 	doc = {'email': data['email'],
-		   'fullName': data['full Name'],
+		   'fullName': data['full name'],
 		   'friends': [],
 		   'requests': []
 	}
