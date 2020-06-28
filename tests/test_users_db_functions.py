@@ -370,3 +370,56 @@ def test_get_user_information():
 		assert data[i]['email'] == list_result[i]['email']
 
 	assert my_user not in result
+	client.close()
+
+def test_get_user_information_fails():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full Name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	result = collection.find({})
+	assert len(list(result)) == 4
+
+	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
+	result = get_user_information_from_db(third_user, collection)
+	assert result == 404
+	client.close()
+
+### Filter users by string_query ###
+def test_get_users_by_query_successfull():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full Name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	_all = get_users_by_query('test', collection)
+	assert len(list(_all)) == 4
+
+	one = get_users_by_query('3', collection)
+	assert len(list(one)) == 1
+
+	_none = get_users_by_query('SOME_RANDOM_SHIT', collection)
+	assert len(list(_none)) == 0
+
+	client.close()
+
+def test_get_users_when_filter_is_empty_gets_all():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full Name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	_all = get_users_by_query('', collection)
+	assert len(list(_all)) == 4
+
+	client.close()
