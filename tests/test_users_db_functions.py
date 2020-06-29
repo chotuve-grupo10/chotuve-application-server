@@ -1,5 +1,6 @@
 from pymongo_inmemory import MongoClient
 from app_server.users_db_functions import *
+from app_server.users import respond_to_friendship_request
 
 DB = 'test_app_server'
 
@@ -47,6 +48,29 @@ def test_insert_ten_users():
 	for counter, document in enumerate(result):
 		assert document['email'] == 'test_{0}@test.com'.format(counter)
 
+def test_insert_firebase_user_inserts_new_user_once():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = {'email': 'test_1@test.com',
+			'name': 'No Name'}
+
+	insert_new_firebase_user_if_not_exists(data, collection)
+	insert_new_firebase_user_if_not_exists(data, collection)
+
+	result = collection.find({})
+	assert len(list(result)) == 1
+
+	data = {'email': 'test_2@test.com',
+			'name': 'No Name'}
+
+	insert_new_firebase_user_if_not_exists(data, collection)
+
+	result = collection.find({})
+	assert len(list(result)) == 2
+
+	client.close()
+
+
 ### Send friendship requests ###
 
 def test_insert_new_friendship_request_success():
@@ -59,9 +83,9 @@ def test_insert_new_friendship_request_success():
 		insert_new_user(data[i], collection)
 
 	# First user requests second user to be his/her friend
-	_, status_code = insert_new_friendship_request(data[0]['email'],
-												   data[1]['email'],
-												   collection)
+	status_code = insert_new_friendship_request(data[0]['email'],
+												data[1]['email'],
+												collection)
 	assert status_code == 201
 
 	client.close()
@@ -76,9 +100,9 @@ def test_insert_new_friendship_request_twice_fails_second_time():
 		insert_new_user(data[i], collection)
 
 	# First user requests second user to be his/her friend
-	_, status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
+	status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
 	assert status_code == 201
-	_, status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
+	status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
 	assert status_code == 409
 
 	client.close()
@@ -93,7 +117,7 @@ def test_insert_new_friendship_request_two_users():
 		insert_new_user(data[i], collection)
 
 	for i in range(1, 3):
-		_, status_code = insert_new_friendship_request(data[i]['email'], data[0]['email'], collection)
+		status_code = insert_new_friendship_request(data[i]['email'], data[0]['email'], collection)
 		assert status_code == 201
 
 	requests = collection.find_one({'email': data[0]['email']})['requests']
@@ -112,13 +136,10 @@ def test_insert_new_friendship_request_fails_friends_email_is_invalid():
 
 	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
 	# First user requests second user to be his/her friend
-	_, status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
+	status_code = insert_new_friendship_request(data[0]['email'], data[1]['email'], collection)
 	assert status_code == 201
-	result, status_code = insert_new_friendship_request(data[0]['email'], third_user, collection)
-	assert status_code == 403
-	assert result == {'Friendship_request':
-				'The request could not complete successfully because one of the users'
-				' is not valid'}
+	status_code = insert_new_friendship_request(data[0]['email'], third_user, collection)
+	assert status_code == 404
 
 	client.close()
 #
@@ -132,11 +153,8 @@ def test_insert_new_friendship_request_fails_my_id_is_invalid():
 		insert_new_user(data[i], collection)
 
 	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
-	result, status_code = insert_new_friendship_request(third_user, data[0]['email'], collection)
-	assert status_code == 403
-	assert result == {'Friendship_request':
-				'The request could not complete successfully because one of the users'
-				' is not valid'}
+	status_code = insert_new_friendship_request(third_user, data[0]['email'], collection)
+	assert status_code == 404
 
 	client.close()
 
@@ -151,7 +169,7 @@ def test_accept_friendship_request_successfully():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -161,9 +179,9 @@ def test_accept_friendship_request_successfully():
 														collection,
 														accept=True)
 
-	assert status_code == 201
+	assert status_code == 200
 	assert result == {'Accept_friendship_request':
-			'Your request was completed successfully'}
+			'Friendship accepted successfully'}
 
 	client.close()
 
@@ -199,7 +217,7 @@ def test_accept_friendship_non_existing_fails():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -210,7 +228,7 @@ def test_accept_friendship_non_existing_fails():
 														collection,
 														accept=True)
 
-	assert status_code == 409
+	assert status_code == 403
 	assert result == {'Accept_friendship_request':
 		'There is no such friendship request pending to respond'}
 
@@ -230,7 +248,7 @@ def test_accept_friendship_non_existing_user_fails():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -245,7 +263,7 @@ def test_accept_friendship_non_existing_user_fails():
 														third_user,
 														collection,
 														accept=True)
-	assert status_code == 403
+	assert status_code == 404
 	assert result == {'Accept_friendship_request':
 					  'The request could not complete successfully because one of the users'
 					  ' is not valid'
@@ -264,7 +282,7 @@ def test_reject_friendship_request_successfully():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -274,9 +292,9 @@ def test_reject_friendship_request_successfully():
 														collection,
 														accept=False)
 
-	assert status_code == 201
+	assert status_code == 200
 	assert result == {'Reject_friendship_request':
-			'Your request was completed successfully'}
+			'Friendship rejected successfully'}
 
 	client.close()
 
@@ -289,7 +307,7 @@ def test_reject_friendship_non_existing_fails():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -300,7 +318,7 @@ def test_reject_friendship_non_existing_fails():
 														collection,
 														accept=False)
 
-	assert status_code == 409
+	assert status_code == 403
 	assert result == {'Reject_friendship_request':
 		'There is no such friendship request pending to respond'}
 
@@ -315,7 +333,7 @@ def test_reject_friendship_non_existing_user_fails():
 					 'full name': ''})
 		insert_new_user(data[i], collection)
 
-	_, status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
+	status_code = insert_new_friendship_request(data[1]['email'], data[0]['email'], collection)
 	assert status_code == 201
 	user = collection.find_one({'email': data[0]['email']})
 	assert len(user['requests']) == 1
@@ -330,7 +348,7 @@ def test_reject_friendship_non_existing_user_fails():
 														third_user,
 														collection,
 														accept=False)
-	assert status_code == 403
+	assert status_code == 404
 	assert result == {'Reject_friendship_request':
 					  'The request could not complete successfully because one of the users'
 					  ' is not valid'
@@ -360,7 +378,7 @@ def test_get_user_information():
 													   data[i]['email'],
 													   collection,
 													   accept=True)
-		assert status_code == 201
+		assert status_code == 200
 
 	result = get_user_information_from_db(my_user['email'], collection)
 	assert len(result) == 3
@@ -399,27 +417,33 @@ def test_get_users_by_query_successfull():
 					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
-	_all = get_users_by_query('test', collection)
-	assert len(list(_all)) == 4
+	almost_all = get_users_by_query('test', 'test_3@test.com', collection)
+	assert len(list(almost_all)) == 3
 
-	one = get_users_by_query('3', collection)
+	one = get_users_by_query('3', 'test_2@test.com', collection)
 	assert len(list(one)) == 1
 
-	_none = get_users_by_query('SOME_RANDOM_SHIT', collection)
+	zero = get_users_by_query('3', 'test_3@test.com', collection)
+	assert len(list(zero)) == 0
+
+	_none = get_users_by_query('SOME_RANDOM_SHIT', 'test_3@test.com', collection)
 	assert len(list(_none)) == 0
 
 	client.close()
 
-def test_get_users_when_filter_is_empty_gets_all():
+def test_get_users_when_filter_is_empty_gets_all_except_me():
 	client = MongoClient()
 	collection = client[DB]['users']
 	data = []
-	for i in range(0, 4):
+	for i in range(0, 5):
 		data.append({'email': 'test_{0}@test.com'.format(i),
 					 'full name': '{0}'.format(i)})
 		insert_new_user(data[i], collection)
 
-	_all = get_users_by_query('', collection)
+	_all = get_users_by_query('', 'test_4@test.com', collection)
 	assert len(list(_all)) == 4
+
+	emails = [item['email'] for item in list(_all)]
+	assert 'test_4@test.com' not in emails
 
 	client.close()

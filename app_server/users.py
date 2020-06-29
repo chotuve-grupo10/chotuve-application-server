@@ -23,10 +23,23 @@ DB = 'app_server'
 @swag_from('docs/friendship_request.yml')
 def _request_friendships(user_email, new_friends_email):
 	coll = 'users'
-	response, status_code = insert_new_friendship_request(user_email,
-														  new_friends_email,
-														  client[DB][coll])
-	return response, status_code
+	status_code = insert_new_friendship_request(user_email,
+												new_friends_email,
+												client[DB][coll])
+	if status_code == HTTP_CREATED:
+		message = 'Your request was completed successfully'
+	elif status_code == HTTP_FORBIDDEN:
+		message = 'This user is already your friend!'
+	elif status_code == HTTP_NOT_FOUND:
+		message = 'The request could not complete successfully because one of the users is not valid'
+	elif status_code == HTTP_METHOD_NOT_ALLOWED:
+		message = "You can't ask yourself for friendship. That's weird"
+	elif status_code == HTTP_CONFLICT:
+		message = 'Friendship request was already submitted'
+	else: # HTTP_INTERNAL_SERVER_ERROR
+		message = 'The request could not complete successfully'
+
+	return {'Friendship_request': message}, status_code
 
 @users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
 				methods=['PATCH'])
@@ -36,7 +49,7 @@ def _respond_to_friendship_request(user_email, new_friends_email):
 	try:
 		accept_or_reject = data['response']
 	except KeyError:
-		return {'Friendship_response': 'Response was missing'}, 400
+		return {'Friendship_response': 'Response was missing'}, HTTP_BAD_REQUEST
 
 	coll = 'users'
 	response, status_code = respond_to_friendship_request(user_email,
@@ -45,6 +58,34 @@ def _respond_to_friendship_request(user_email, new_friends_email):
 														  accept=accept_or_reject)
 	return response, status_code
 
+def respond_to_friendship_request(user_email, new_friends_email, collection, accept):
+	if accept:
+		status_code = accept_friendship_request(user_email, new_friends_email, collection)
+
+		if status_code == HTTP_OK:
+			message = 'Friendship accepted successfully'
+		elif status_code == HTTP_FORBIDDEN:
+			message = 'There is no such friendship request pending to respond'
+		elif status_code == HTTP_NOT_FOUND:
+			message = 'The request could not complete successfully because one of the users is not valid'
+		else: # HTTP_INTERNAL_SERVER_ERROR
+			message = 'The request could not complete successfully'
+
+		return {'Accept_friendship_request': message}, status_code
+
+	status_code = reject_friendship(user_email, new_friends_email, collection)
+
+	if status_code == HTTP_OK:
+		message = 'Friendship rejected successfully'
+	elif status_code == HTTP_FORBIDDEN:
+		message = 'There is no such friendship request pending to respond'
+	elif status_code == HTTP_NOT_FOUND:
+		message = 'The request could not complete successfully because one of the users is not valid'
+	else: 	# ?
+		message = 'The request could not complete successfully'
+
+	return {'Reject_friendship_request': message}, status_code
+
 
 @users_bp.route('/api/users/<user_email>/friends', methods=['GET'])
 @swag_from('docs/get_user_friends.yml')
@@ -52,12 +93,11 @@ def _get_user_information(user_email):
 	coll = 'users'
 	response = get_user_information_from_db(user_email,
 											client[DB][coll])
-	if response == 403:
+	if response == HTTP_NOT_FOUND:
 		return {'Get_user_information':
-				'The request could not complete successfully because one of the users'
-				' is not valid'}, response
+				'User not found'}, response
 
-	return json.dumps(response), 200
+	return json.dumps(response), HTTP_OK
 #
 @users_bp.route('/api/users', methods=['GET'])
 @swag_from('docs/get_users_by_query.yml')
@@ -66,9 +106,10 @@ def _get_users_by_query():
 	try:
 		filter_str = request.args.get('filter')
 	except KeyError:
-		return {'Users_by_query': 'No filter parameter was given'}, 400
+		return {'Users_by_query': 'No filter parameter was given'}, HTTP_BAD_REQUEST
 
-	response = get_users_by_query(filter_str,
+	data = request.json
+	response = get_users_by_query(filter_str, data['email'],
 								  client[DB][coll])
 
-	return json.dumps(response), 200
+	return json.dumps(response), HTTP_OK

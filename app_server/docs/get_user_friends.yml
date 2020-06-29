@@ -1,7 +1,7 @@
 Este servicio permite obtener información del usuario (y sus amigos)
 ---
 definitions:
-  FriendsInformationList:
+  UsersInformationList:
     type: array
     items:
       type: object
@@ -23,4 +23,4 @@ responses:
   200:
     description: se envia la información
     schema:
-      $ref: '#/definitions/FriendsInformationList'
+      $ref: '#/definitions/UsersInformationList'

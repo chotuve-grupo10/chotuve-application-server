@@ -5,7 +5,7 @@ from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.http_functions import *
 from app_server.token_functions import *
-from app_server.users_db_functions import insert_new_user
+from app_server.users_db_functions import insert_new_user, insert_new_firebase_user_if_not_exists
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -66,7 +66,6 @@ def _register_user_using_firebase():
 
 	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
 	response = post_auth_server_with_header(url, headers)
-	logger.debug('Finished auth server register with firebase request')
 
 	return response.json(), response.status_code
 
@@ -83,6 +82,7 @@ def _login_user():
 
 	if response.status_code == 200:
 		logger.debug('Login request returned successful status code')
+
 		json_response = response.json()
 		app_token = generate_app_token(data)
 		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
@@ -106,6 +106,10 @@ def _login_user_using_firebase():
 
 	if response.status_code == 200:
 		logger.debug('Login request returned successful status code')
+		coll = 'users'
+		insert_new_firebase_user_if_not_exists(response['claims'],
+											   client[DB][coll])
+
 		json_response = response.json()
 		app_token = generate_app_token({'email': get_user_from_token(json_response['Token'])})
 		text = {'Auth token' : json_response['Token'], 'App token' : app_token}

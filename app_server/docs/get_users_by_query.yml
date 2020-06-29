@@ -1,27 +1,17 @@
 Este servicio permitirá filtrar usuarios
 ---
-definitions:
-  FriendsInformationList:
-    type: array
-    items:
-      type: object
-      properties:
-        email:
-          type: string
-        fullName:
-          type: string
-      example:
-        email: 'diegote@gmail.com'
-        fullName: 'Diegote'
 parameters:
   - in: query
     name: filter
     description: filtering data
-    schema:
-      type: string
+    type: string
+  - in: body
+    name: user_email
+    description: users email executing request
+    type: string
       
 responses:
   200:
     description: obtiene usuarios filtrados
     schema:
-      $ref: '#/definitions/FriendsInformationList'
+      $ref: '#/definitions/UsersInformationList'
