@@ -7,7 +7,7 @@ def test_insert_new_friendship_request_was_already_submitted(client):
 		mock.return_value = 409
 
 		value_expected = {'Friendship_request':
-				'Friendship request was already submitted'}
+				'La solicitud de amistad ya fue enviada y está pendiente'}
 		response = client.post('/api/users/01xa/friends/01xb',
 							   follow_redirects=False)
 		assert mock.called
@@ -20,7 +20,7 @@ def test_insert_new_friendship_request_failed(client):
 		mock.return_value = 500
 
 		value_expected = {'Friendship_request':
-				'The request could not complete successfully'}
+				'La solicitud no se pudo completar'}
 
 		response = client.post('/api/users/01xa/friends/01xb',
 							   follow_redirects=False)
@@ -33,7 +33,7 @@ def test_insert_new_friendship_request_is_successfull(client):
 
 		mock.return_value = 201
 
-		value_expected = {'Friendship_request': 'Your request was completed successfully'}
+		value_expected = {'Friendship_request': 'La solicitud fue completada con éxito'}
 
 		response = client.post('/api/users/01xa/friends/01xb',
 							   follow_redirects=False)
