@@ -17,7 +17,7 @@ parameters:
     description: my email
     type: string
   - in: path
-    name: new_friends_email
+    name: friends_email
     description: potential new friends email
     type: string
       

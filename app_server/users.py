@@ -27,17 +27,17 @@ def _request_friendships(user_email, new_friends_email):
 												new_friends_email,
 												client[DB][coll])
 	if status_code == HTTP_CREATED:
-		message = 'Your request was completed successfully'
+		message = 'La solicitud fue completada con éxito'
 	elif status_code == HTTP_FORBIDDEN:
-		message = 'This user is already your friend!'
+		message = 'Este usuario ya es tu amigo'
 	elif status_code == HTTP_NOT_FOUND:
-		message = 'The request could not complete successfully because one of the users is not valid'
+		message = 'La solicitud no se pudo completar porque uno de los usuarios no existe'
 	elif status_code == HTTP_METHOD_NOT_ALLOWED:
-		message = "You can't ask yourself for friendship. That's weird"
+		message = "No podes enviarte una solicitud de amistad a vos mismo. Eso es raro"
 	elif status_code == HTTP_CONFLICT:
-		message = 'Friendship request was already submitted'
+		message = 'La solicitud de amistad ya fue enviada y está pendiente'
 	else: # HTTP_INTERNAL_SERVER_ERROR
-		message = 'The request could not complete successfully'
+		message = 'La solicitud no se pudo completar'
 
 	return {'Friendship_request': message}, status_code
 
@@ -63,26 +63,26 @@ def respond_to_friendship_request(user_email, new_friends_email, collection, acc
 		status_code = accept_friendship_request(user_email, new_friends_email, collection)
 
 		if status_code == HTTP_OK:
-			message = 'Friendship accepted successfully'
+			message = 'Solicitud de amistad aceptada con éxito'
 		elif status_code == HTTP_FORBIDDEN:
-			message = 'There is no such friendship request pending to respond'
+			message = 'La solicitud de amistad que queres responder no existe'
 		elif status_code == HTTP_NOT_FOUND:
-			message = 'The request could not complete successfully because one of the users is not valid'
+			message = 'La solicitud no se pudo completar porque uno de los usuarios no existe'
 		else: # HTTP_INTERNAL_SERVER_ERROR
-			message = 'The request could not complete successfully'
+			message = 'La solicitud no se pudo completar'
 
 		return {'Accept_friendship_request': message}, status_code
 
 	status_code = reject_friendship(user_email, new_friends_email, collection)
 
 	if status_code == HTTP_OK:
-		message = 'Friendship rejected successfully'
+		message = 'Solicitud de amistad rechazada con éxito'
 	elif status_code == HTTP_FORBIDDEN:
-		message = 'There is no such friendship request pending to respond'
+		message = 'La solicitud de amistad que queres responder no existe'
 	elif status_code == HTTP_NOT_FOUND:
-		message = 'The request could not complete successfully because one of the users is not valid'
+		message = 'La solicitud no se pudo completar porque uno de los usuarios no existe'
 	else: 	# ?
-		message = 'The request could not complete successfully'
+		message = 'La solicitud no se pudo completar'
 
 	return {'Reject_friendship_request': message}, status_code
 
@@ -95,13 +95,13 @@ def _delete_friendship(user_email, friends_email):
 											  	 friends_email,
 											 	 client[DB][coll])
 	if status_code == HTTP_OK:
-		message = 'Friendship removed successfully'
+		message = 'Amistad removida con éxito'
 	elif status_code == HTTP_FORBIDDEN:
-		message = 'There is no such friendship relationship to remove'
+		message = 'Ésta relación de amistad no existe'
 	elif status_code == HTTP_NOT_FOUND:
-		message = 'The request could not complete successfully because one of the users is not valid'
+		message = 'La solicitud no se pudo completar porque uno de los usuarios no existe'
 	else: 	# ?
-		message = 'The request could not complete successfully'
+		message = 'La solicitud no se pudo completar'
 
 	return {'Delete_friendship_request': message}, status_code
 
