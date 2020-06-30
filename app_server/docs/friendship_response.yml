@@ -29,16 +29,16 @@ parameters:
       $ref: '#/definitions/AcceptFriend'
       
 responses:
-  201:
-    description: solicitud completada
+  200:
+    description: la respuesta fue procesada
     schema:
       $ref: '#/definitions/RespondFriendshipResponse'
   403:
-    description: alguno de los ids no existe
+    description: la solicitud de amistad no existe
     schema:
       $ref: '#/definitions/RespondFriendshipResponse'
-  409:
-    description: la solicitud de contacto no existe
+  404:
+    description: alguno de los usuarios no existe
     schema:
       $ref: '#/definitions/RespondFriendshipResponse'
   500:
