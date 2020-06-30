@@ -107,10 +107,10 @@ def _login_user_using_firebase():
 	if response.status_code == 200:
 		logger.debug('Login request returned successful status code')
 		coll = 'users'
-		insert_new_firebase_user_if_not_exists(response['claims'],
+		json_response = response.json()
+		insert_new_firebase_user_if_not_exists(json_response['claims'],
 											   client[DB][coll])
 
-		json_response = response.json()
 		app_token = generate_app_token({'email': get_user_from_token(json_response['Token'])})
 		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
 	else:
