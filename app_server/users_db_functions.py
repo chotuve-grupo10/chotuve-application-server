@@ -171,3 +171,24 @@ def get_users_by_query(filter_str, user_email, collection):
 
 	# users = [user for user in users if user['email'] is not user_email]
 	return list(users)
+
+def delete_friendship_relationship(user_email, friends_email, collection):
+
+	user = get_user_by_email(user_email, collection)
+	friend = get_user_by_email(friends_email, collection)
+	if user is None or friend is None:
+		return HTTP_NOT_FOUND
+
+	#2 eliminar la request
+	result_01 = collection.update_one({'_id': user['_id']},
+								   	  {'$pull': {'friends': friend['_id']}})
+	result_02 = collection.update_one({'_id': friend['_id']},
+								   	  {'$pull': {'friends': user['_id']}})
+	if result_01.modified_count != 1 or result_02.modified_count != 1:
+		logger.error('There is no friendship relationship between %s and %s',
+					 user_email, friends_email)
+		return HTTP_FORBIDDEN
+
+	# 3 no agrego nada!
+	logger.debug('Friendship relationship was deleted ' + user_email)
+	return HTTP_OK

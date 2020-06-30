@@ -1,7 +1,7 @@
-Este servicio permitirá dar de alta una solicitud de contacto de usuario
+Este servicio permite aceptar una solicitud de contacto de usuario y crear una relación de amistad
 ---
 definitions:
-  RequestFriendshipResponse:
+  BasicServerResponse:
     type: object
     properties:
       status:
@@ -11,7 +11,6 @@ definitions:
         properties:
           message:
             type: string
-
 parameters:
   - in: path
     name: user_email
@@ -23,23 +22,19 @@ parameters:
     type: string
       
 responses:
-  201:
-    description: solicitud completada
+  200:
+    description: la amistad fue eliminada
     schema:
-      $ref: '#/definitions/RequestFriendshipResponse'
+      $ref: '#/definitions/BasicServerResponse'
   403:
-    description: estos usuarios ya son amigos
+    description: la amistad no existe
     schema:
-      $ref: '#/definitions/RequestFriendshipResponse'
+      $ref: '#/definitions/BasicServerResponse'
   404:
     description: alguno de los usuarios no existe
     schema:
-      $ref: '#/definitions/RequestFriendshipResponse'
-  409:
-    description: esta solicitud ya existe
-    schema:
-      $ref: '#/definitions/RequestFriendshipResponse'
+      $ref: '#/definitions/BasicServerResponse'
   500:
     description: solicitud rechazada por error interno del server
     schema:
-      $ref: '#/definitions/RequestFriendshipResponse'
+      $ref: '#/definitions/BasicServerResponse'

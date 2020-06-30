@@ -86,6 +86,25 @@ def respond_to_friendship_request(user_email, new_friends_email, collection, acc
 
 	return {'Reject_friendship_request': message}, status_code
 
+@users_bp.route('/api/users/<user_email>/friends/<friends_email>',
+				methods=['DELETE'])
+@swag_from('docs/friendship_delete.yml')
+def _delete_friendship(user_email, friends_email):
+	coll = 'users'
+	status_code = delete_friendship_relationship(user_email,
+											  	 friends_email,
+											 	 client[DB][coll])
+	if status_code == HTTP_OK:
+		message = 'Friendship removed successfully'
+	elif status_code == HTTP_FORBIDDEN:
+		message = 'There is no such friendship relationship to remove'
+	elif status_code == HTTP_NOT_FOUND:
+		message = 'The request could not complete successfully because one of the users is not valid'
+	else: 	# ?
+		message = 'The request could not complete successfully'
+
+	return {'Delete_friendship_request': message}, status_code
+
 
 @users_bp.route('/api/users/<user_email>/friends', methods=['GET'])
 @swag_from('docs/get_user_friends.yml')
