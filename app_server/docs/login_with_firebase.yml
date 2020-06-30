@@ -2,26 +2,6 @@ Recibe una solicitud de login utilizando Firebase.
 Si el login es exitoso pero el usuario no está registrado en la plataforma, se
 lo registra automáticamente
 ---
-definitions:
-  FirebaseLoginResponse:
-    type: object
-    properties:
-      App token: 
-        type: string
-        description: App server token
-      Auth token:
-        type: string
-        description: Auth server token
-      claim:
-        type: object
-        description: claim object that contains Owner information
-        properties:
-          email:
-            type: string
-          name:
-            type: string
-          picture:
-            type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -40,11 +20,7 @@ responses:
   200:
     description: Returns tokens
     schema:
-      $ref: '#/definitions/FirebaseLoginResponse'
+      $ref: '#/definitions/LoginResponse'
     example:
       App token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.dQd-o5sC4n8z2rUuu-DVEF7FCJNILrSUVBKDqkutFgA"
       Auth token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.BzT0Wx3BO2NBQC16UZwXoOV7AwVfwA121gUyzrdZjA4"
-      claim:
-        email: "diegote@gmail.com"
-        name: "Diegote"
-        picture: "manoDeDios.jpg"

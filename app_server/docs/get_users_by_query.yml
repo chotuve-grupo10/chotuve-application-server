@@ -5,11 +5,12 @@ parameters:
     name: filter
     description: filtering data
     type: string
-  - in: body
-    name: user_email
-    description: users email executing request
+  - in: header
+    name: User_email
+    description: users email making request
     type: string
-      
+    required: true
+
 responses:
   200:
     description: obtiene usuarios filtrados

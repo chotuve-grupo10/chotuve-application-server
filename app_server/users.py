@@ -108,8 +108,8 @@ def _get_users_by_query():
 	except KeyError:
 		return {'Users_by_query': 'No filter parameter was given'}, HTTP_BAD_REQUEST
 
-	data = request.json
-	response = get_users_by_query(filter_str, data['email'],
+	user_email = request.headers.get('User_email')
+	response = get_users_by_query(filter_str, user_email,
 								  client[DB][coll])
 
 	return json.dumps(response), HTTP_OK
