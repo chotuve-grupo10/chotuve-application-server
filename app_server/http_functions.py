@@ -58,18 +58,21 @@ def post_auth_server_with_header(url, headers):
 	response = requests.post(url=url, headers=headers)
 	return response
 
-def get_media_server_request(url_received, headers_received={APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}):
+def get_media_server_request(url_received, headers_received=None):
 	logger.debug('Media server get request')
 	if not url_received:
 		logger.critical("URL received is empty")
 		raise ValueError('URL received is empty')
 
 	logger.debug('URL: ' + url_received)
-
+	headers_to_use = {}
 	if headers_received is None:
-		response = requests.get(url=url_received)
+		headers_to_use = {APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}
 	else:
-		response = requests.get(url=url_received, headers=headers_received)
+		headers_to_use = headers_received
+		headers_to_use[APP_SERVER_TOKEN_HEADER] = os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')
+
+	response = requests.get(url=url_received, headers=headers_to_use)
 	return response
 
 
