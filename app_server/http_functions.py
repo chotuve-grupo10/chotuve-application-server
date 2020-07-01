@@ -28,7 +28,8 @@ def get_media_server_ping(url_received):
 		raise ValueError('URL received is empty')
 
 	logger.debug('URL: ' + url_received)
-	response = requests.get(url=url_received)
+	header = {APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}
+	response = requests.get(url=url_received, headers=header)
 	return response
 
 def post_auth_server(url, user_data):
@@ -57,7 +58,7 @@ def post_auth_server_with_header(url, headers):
 	response = requests.post(url=url, headers=headers)
 	return response
 
-def get_media_server_request(url_received, headers_received=None):
+def get_media_server_request(url_received, headers_received={APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}):
 	logger.debug('Media server get request')
 	if not url_received:
 		logger.critical("URL received is empty")
@@ -82,7 +83,7 @@ def post_media_server(url, user_data):
 		raise ValueError("Video data is None")
 
 	logger.debug('URL: ' + url)
-	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain', APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}
 	response = requests.post(url=url, data=json.dumps(user_data), headers=headers)
 	return response
 
@@ -93,5 +94,6 @@ def delete_media_server(url):
 		raise ValueError('URL received is empty')
 
 	logger.debug('URL: ' + url)
-	response = requests.delete(url)
+	header = {APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_MEDIA_SERVER')}
+	response = requests.delete(url, headers=header)
 	return response
