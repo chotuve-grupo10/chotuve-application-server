@@ -1,18 +1,5 @@
 Este servicio permite obtener las solicitudes de amistad de un usuario
 ---
-definitions:
-  UsersInformationList:
-    type: array
-    items:
-      type: object
-      properties:
-        email:
-          type: string
-        fullName:
-          type: string
-      example:
-        email: 'diegote@gmail.com'
-        fullName: 'Diegote'
 parameters:
   - in: path
     name: user_email
@@ -21,6 +8,6 @@ parameters:
       
 responses:
   200:
-    description: se envian las solicitudes de amistad pendientes
+    description: se envian los usuarios que esperan una respuesta a la solicitud de amistad
     schema:
       $ref: '#/definitions/UsersInformationList'
