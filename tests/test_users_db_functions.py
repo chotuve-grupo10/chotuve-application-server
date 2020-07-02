@@ -604,7 +604,7 @@ def test_get_user_requests():
 
 	client.close()
 
-def test_get_user_friends_fails():
+def test_get_user_requests_fails():
 	client = MongoClient()
 	collection = client[DB]['users']
 	data = []
