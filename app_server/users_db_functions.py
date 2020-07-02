@@ -147,13 +147,26 @@ def reject_friendship(user_email, new_friends_email, collection):
 	logger.debug('Friendship request was denied by ' + user_email)
 	return HTTP_OK
 
-def get_user_information_from_db(user_email, collection):
+def get_user_friends_from_db(user_email, collection):
 	#1 Chequear que el user exista realmente
 	user = get_user_by_email(user_email, collection)
 	if user is None:
 		return HTTP_NOT_FOUND	# User not found
 	result = []
 	for friend in user['friends']:
+		this_user = get_user_by_objectid(ObjectId(friend), collection,
+										 {'email': 1, 'fullName': 1, '_id': 0})
+		result.append(this_user)
+
+	return result
+
+def get_user_requests_from_db(user_email, collection):
+	#1 Chequear que el user exista realmente
+	user = get_user_by_email(user_email, collection)
+	if user is None:
+		return HTTP_NOT_FOUND	# User not found
+	result = []
+	for friend in user['requests']:
 		this_user = get_user_by_objectid(ObjectId(friend), collection,
 										 {'email': 1, 'fullName': 1, '_id': 0})
 		result.append(this_user)
