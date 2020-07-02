@@ -12,12 +12,6 @@ logger = logging.getLogger('gunicorn.error')
 client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
-# No logré que funcionara el yml de swagger así
-# @users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
-# 				methods=['POST', 'PATCH', 'DELETE'])
-# @swag_from('docs/friendship_handling.yml')
-# def _handle_friendships(user_email, new_friends_email):
-
 @users_bp.route('/api/users/<user_email>/friends/<new_friends_email>',
 				methods=['POST'])
 @swag_from('docs/friendship_request.yml')
@@ -110,14 +104,28 @@ def _delete_friendship(user_email, friends_email):
 @swag_from('docs/get_user_friends.yml')
 def _get_user_information(user_email):
 	coll = 'users'
-	response = get_user_information_from_db(user_email,
-											client[DB][coll])
+	response = get_user_friends_from_db(user_email,
+										client[DB][coll])
 	if response == HTTP_NOT_FOUND:
 		return {'Get_user_information':
 				'User not found'}, response
 
 	return json.dumps(response), HTTP_OK
-#
+
+@users_bp.route('/api/users/<user_email>/requests', methods=['GET'])
+@swag_from('docs/get_user_requests.yml')
+def _get_user_requests(user_email):
+	coll = 'users'
+	response = get_user_requests_from_db(user_email,
+								 		 client[DB][coll])
+	if response == HTTP_NOT_FOUND:
+		return {'Get_user_information':
+				'User not found'}, response
+
+	return json.dumps(response), HTTP_OK
+
+
+
 @users_bp.route('/api/users', methods=['GET'])
 @swag_from('docs/get_users_by_query.yml')
 def _get_users_by_query():

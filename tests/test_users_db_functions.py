@@ -352,9 +352,9 @@ def test_reject_friendship_non_existing_user_fails():
 
 	client.close()
 
-### Get user information (for now, friends) ###
+### Get user friends ###
 
-def test_get_user_information():
+def test_get_user_friends():
 	client = MongoClient()
 	collection = client[DB]['users']
 	data = []
@@ -376,7 +376,7 @@ def test_get_user_information():
 													   accept=True)
 		assert status_code == 200
 
-	result = get_user_information_from_db(my_user['email'], collection)
+	result = get_user_friends_from_db(my_user['email'], collection)
 	assert len(result) == 3
 
 	list_result = list(result)
@@ -386,7 +386,7 @@ def test_get_user_information():
 	assert my_user not in result
 	client.close()
 
-def test_get_user_information_fails():
+def test_get_user_friends_fails():
 	client = MongoClient()
 	collection = client[DB]['users']
 	data = []
@@ -399,7 +399,7 @@ def test_get_user_information_fails():
 	assert len(list(result)) == 4
 
 	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
-	result = get_user_information_from_db(third_user, collection)
+	result = get_user_friends_from_db(third_user, collection)
 	assert result == 404
 	client.close()
 
@@ -567,4 +567,56 @@ def test_delete_friendship_relationship_fails_when_user_is_not_found():
 	user = collection.find_one({'email': data[2]['email']})
 	assert len(user['friends']) == 0
 
+	client.close()
+
+### Get user friendship requests ###
+
+def test_get_user_requests():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	result = collection.find({})
+	assert len(list(result)) == 4
+
+	my_user = data[3]
+	for i in range(0, 3):
+		insert_new_friendship_request(data[i]['email'], my_user['email'], collection)
+
+	result = get_user_requests_from_db(my_user['email'], collection)
+	assert len(result) == 3
+	list_result = list(result)
+	for i in range(0, 3):
+		assert data[i]['email'] == list_result[i]['email']
+
+	for i in range(0, 3):
+		respond_to_friendship_request(my_user['email'],
+									  data[i]['email'],
+									  collection,
+									  accept=True)
+
+	result = get_user_requests_from_db(my_user['email'], collection)
+	assert len(result) == 0
+
+	client.close()
+
+def test_get_user_requests_fails():
+	client = MongoClient()
+	collection = client[DB]['users']
+	data = []
+	for i in range(0, 4):
+		data.append({'email': 'test_{0}@test.com'.format(i),
+					 'full name': '{0}'.format(i)})
+		insert_new_user(data[i], collection)
+
+	result = collection.find({})
+	assert len(list(result)) == 4
+
+	third_user = 'surprisingly_inexistent@mail.call'	# Not existing
+	result = get_user_requests_from_db(third_user, collection)
+	assert result == 404
 	client.close()
