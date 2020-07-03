@@ -223,8 +223,7 @@ def filter_videos_for_specific_user(videos_list, user_email, collection):
 	if user is None:
 		return HTTP_NOT_FOUND
 
-	emails_friends = get_friends_email(user, collection)
-
+	# emails_friends = get_friends_email(user, collection)
 	filtered_videos = []
 	for video in videos_list:
 		# if video['is_private']:
