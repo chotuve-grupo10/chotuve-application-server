@@ -225,7 +225,12 @@ def filter_videos_for_specific_user(videos_list, user_email, collection):
 
 	emails_friends = get_friends_email(user, collection)
 
+	filtered_videos = []
 	for video in videos_list:
-		if video['']
-		if video['user'] in emails_friends:
-	return
+		# if video['is_private']:
+		# 	if video['user'] in emails_friends:
+		# 		filtered_videos.append(video)
+		# else:
+		filtered_videos.append(video)
+
+	return filtered_videos

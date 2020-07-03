@@ -42,7 +42,9 @@ def _list_videos(user_id):
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos
 		raw_data = response_media_server.json()
-		status = filter_videos_for_specific_user(raw_data, user_id)
+		coll = 'users'
+		status = filter_videos_for_specific_user(raw_data, user_id,
+												 client[DB][coll])
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []

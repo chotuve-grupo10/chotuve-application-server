@@ -65,14 +65,18 @@ def test_upload_video_successfully(client):
 def test_list_videos_sucessfully(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
 
-		mock.return_value.status_code = 200
-		response_media = [{'id' : 'test', 'title' : 'test'}]
-		mock.return_value.json.return_value = response_media
+		with patch('app_server.videos.filter_videos_for_specific_user') as mock_videos:
 
-		value_expected = response_media
-		response = client.get('/api/videos/user_test@test.com', follow_redirects=False)
-		assert mock.called
-		assert json.loads(response.data) == value_expected
+			mock.return_value.status_code = 200
+			response_media = [{'id' : 'test', 'title' : 'test'}]
+			mock.return_value.json.return_value = response_media
+			mock_videos.return_value = response_media
+
+			value_expected = response_media
+			response = client.get('/api/videos/user_test@test.com', follow_redirects=False)
+			assert mock.called
+			assert mock_videos.called
+			assert json.loads(response.data) == value_expected
 
 def test_list_videos_fails(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
@@ -80,7 +84,7 @@ def test_list_videos_fails(client):
 		mock.return_value.status_code = 500
 
 		value_expected = []
-		response = client.get('/api/list_videos/', follow_redirects=False)
+		response = client.get('/api/videos/test_user@test.com', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -143,6 +147,3 @@ def test_comment_video_is_successfull(client):
 		assert mock.called
 		assert response.status_code == 201
 		assert json.loads(response.data) == value_expected
-
-def test_list_videos_filters_private_videos():
-
