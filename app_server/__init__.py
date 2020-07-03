@@ -8,6 +8,7 @@ from app_server.http_functions import *
 from app_server.authentication import authentication_bp
 from app_server.videos import videos_bp
 from app_server.users import users_bp
+from app_server.push_notifications import notifications_bp
 
 from app_server.users import *
 
@@ -47,6 +48,7 @@ def create_app(test_config=None):
 		app.register_blueprint(authentication_bp)
 		app.register_blueprint(videos_bp)
 		app.register_blueprint(users_bp)
+		app.register_blueprint(notifications_bp)
 
 	@app.route('/api/ping/', methods=['GET'])
 	@swag_from('docs/ping.yml')

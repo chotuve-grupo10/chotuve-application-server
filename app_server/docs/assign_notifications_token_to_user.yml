@@ -1,0 +1,25 @@
+Este servicio permite vincular un Token único de notificaciones a un determinado usuario
+---
+parameters:
+  - in: path
+    name: user_email
+    description: email del usuario
+    type: string
+  - in: path
+    name: token
+    description: token único
+    type: string
+      
+responses:
+  200:
+    description: el token se vinculo al usuario exitosamente
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: no se encontro al usuario
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  500:
+    description: error interno del servidor
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
