@@ -70,7 +70,7 @@ def test_list_videos_sucessfully(client):
 		mock.return_value.json.return_value = response_media
 
 		value_expected = response_media
-		response = client.get('/api/list_videos/', follow_redirects=False)
+		response = client.get('/api/videos/user_test@test.com', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -143,3 +143,6 @@ def test_comment_video_is_successfull(client):
 		assert mock.called
 		assert response.status_code == 201
 		assert json.loads(response.data) == value_expected
+
+def test_list_videos_filters_private_videos():
+

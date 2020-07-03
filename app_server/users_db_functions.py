@@ -205,3 +205,27 @@ def delete_friendship_relationship(user_email, friends_email, collection):
 	# 3 no agrego nada!
 	logger.debug('Friendship relationship was deleted ' + user_email)
 	return HTTP_OK
+
+def get_friends_email(user, collection):
+	if len(user['friends']) == 0:
+		return []
+	friends_email = []
+	for friend_object_id in user['friends']:
+		friend = get_user_by_objectid(friend_object_id, collection,
+									  {'email': True})
+		friends_email.append(friend['email'])
+
+	return friends_email
+
+def filter_videos_for_specific_user(videos_list, user_email, collection):
+
+	user = get_user_by_email(user_email, collection)
+	if user is None:
+		return HTTP_NOT_FOUND
+
+	emails_friends = get_friends_email(user, collection)
+
+	for video in videos_list:
+		if video['']
+		if video['user'] in emails_friends:
+	return
