@@ -12,9 +12,9 @@ client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
 @notifications_bp.route(
-	'/api/users/<user_email>/notifications_token/<token>',
-	methods=['POST'])
-@swag_from('docs/assign_notifications_token_to_user.yml')
+	'/api/users/<user_email>/notifications/<token>',
+	methods=['PUT'])
+@swag_from('docs/add_notifications_token_to_user.yml')
 def _assign_push_notifications_token(user_email, token):
 	coll = 'users'
 	status_code = add_notifications_token(user_email,

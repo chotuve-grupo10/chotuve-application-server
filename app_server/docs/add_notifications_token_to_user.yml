@@ -12,7 +12,7 @@ parameters:
       
 responses:
   200:
-    description: el token se vinculo al usuario exitosamente
+    description: el token se agregó al usuario exitosamente
     schema:
       $ref: '#/definitions/BasicServerResponse'
   404:
