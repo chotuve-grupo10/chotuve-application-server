@@ -6,7 +6,6 @@ from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.videos_db_functions import *
-from app_server.users_db_functions import filter_videos_for_specific_user
 
 videos_bp = Blueprint('videos', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -15,13 +14,12 @@ client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
 @videos_bp.route('/api/users/<user_id>/videos/', methods=['GET'])
-@swag_from('docs/list_videos_for_user_id.yml')
-def _list_videos_for_user(user_id):
+@swag_from('docs/list_videos_of_user.yml')
+def _list_videos_of_user(user_id):
 	assert user_id == request.view_args['user_id']
 	logger.debug("Requested videos from id:" + user_id)
-	api_list_video_for_user = '/api/list_videos/'
-	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_for_user)
-	status = []
+	api_list_video_of_user = '/api/list_videos/'+ user_id
+	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_of_user)
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos según id
@@ -37,14 +35,15 @@ def _list_videos_for_user(user_id):
 def _list_videos(user_id):
 	api_list_videos = '/api/list_videos/'
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
-	status = []
 	if response_media_server.status_code == 200:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos
 		raw_data = response_media_server.json()
-		coll = 'users'
+		users_coll = 'users'
+		videos_coll = 'videos'
 		status = filter_videos_for_specific_user(raw_data, user_id,
-												 client[DB][coll])
+												 client[DB][users_coll],
+												 client[DB][videos_coll])
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []

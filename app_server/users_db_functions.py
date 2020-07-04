@@ -206,7 +206,7 @@ def delete_friendship_relationship(user_email, friends_email, collection):
 	logger.debug('Friendship relationship was deleted ' + user_email)
 	return HTTP_OK
 
-def get_friends_email(user, collection):
+def get_friends_email_list(user, collection):
 	if len(user['friends']) == 0:
 		return []
 	friends_email = []
@@ -216,20 +216,3 @@ def get_friends_email(user, collection):
 		friends_email.append(friend['email'])
 
 	return friends_email
-
-def filter_videos_for_specific_user(videos_list, user_email, collection):
-
-	user = get_user_by_email(user_email, collection)
-	if user is None:
-		return HTTP_NOT_FOUND
-
-	# emails_friends = get_friends_email(user, collection)
-	filtered_videos = []
-	for video in videos_list:
-		# if video['is_private']:
-		# 	if video['user'] in emails_friends:
-		# 		filtered_videos.append(video)
-		# else:
-		filtered_videos.append(video)
-
-	return filtered_videos

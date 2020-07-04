@@ -1,4 +1,4 @@
-Este servicio permitirá listar videos en el sistema
+Este servicio permitirá listar los videos de un usuario especifico para mostrarlos en su perfil
 ---
 definitions:
   VideoList:
