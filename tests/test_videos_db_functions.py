@@ -31,7 +31,7 @@ def test_insert_new_video():
 
 	assert len(result) == 1
 	assert first_video['title'] == 'test'
-	assert first_video['is_private'] == True
+	assert first_video['is_private']
 
 def test_insert_ten_videos():
 	client = MongoClient()
@@ -49,7 +49,7 @@ def test_insert_ten_videos():
 
 	fifth_video = collection.find_one({'title': 'test_5'})
 	assert fifth_video is not None
-	assert fifth_video['is_private'] == False
+	assert not fifth_video['is_private']
 	eleventh_video = collection.find_one({'title': 'test_11'})
 	assert eleventh_video is None
 
@@ -59,3 +59,46 @@ def test_insert_ten_videos():
 	assert len(result) == 10
 	for counter, document in enumerate(result):
 		assert document['title'] == 'test_{0}'.format(counter)
+
+def test_delete_video_is_successful():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, data, collection)
+
+	result = list(collection.find({}))
+	assert len(result) == 1
+
+	status = delete_video_in_db(_id, collection)
+	assert status == HTTP_OK
+
+	result = list(collection.find({}))
+	assert len(result) == 0
+	client.close()
+
+def test_delete_video_not_exists():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {'title': 'test',
+			'url': 'test.com',
+			'user': 'test','isPrivate': True
+			}
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, data, collection)
+
+	another_id = '66dbc9196ab5430010391c79'
+	status = delete_video_in_db(another_id, collection)
+	assert status == HTTP_NOT_FOUND
+
+	result = list(collection.find({}))
+	assert len(result) == 1
+	client.close()

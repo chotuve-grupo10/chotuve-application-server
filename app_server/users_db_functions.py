@@ -1,17 +1,9 @@
 import logging
 import pymongo.errors
 from bson import ObjectId
+from app_server.utils.http_responses import *
 
 logger = logging.getLogger('gunicorn.error')
-
-HTTP_OK = 200
-HTTP_CREATED = 201
-HTTP_BAD_REQUEST = 400
-HTTP_FORBIDDEN = 403
-HTTP_NOT_FOUND = 404
-HTTP_METHOD_NOT_ALLOWED = 405
-HTTP_CONFLICT = 409
-HTTP_INTERNAL_SERVER_ERROR = 500
 
 def insert_new_user(data, collection):
 

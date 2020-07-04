@@ -2,6 +2,7 @@ import logging
 import datetime
 from bson import ObjectId
 import pymongo.errors
+from app_server.utils.http_responses import *
 from app_server.users_db_functions import get_user_by_email, get_user_friends_from_db
 
 logger = logging.getLogger('gunicorn.error')
@@ -21,13 +22,16 @@ def insert_video_into_db(video_id, data, collection):
 	try:
 		collection.insert_one(doc)
 		logger.debug('Successfully inserted new video with id:' + video_id)
-		return 201
+		return HTTP_CREATED
 	except pymongo.errors.DuplicateKeyError:
 		logger.error('Pymongo duplicate key error')
-		return 500
+		return HTTP_INTERNAL_SERVER_ERROR
 
-# def delete_video_by_object_id(video_object_id, collection):
-# 	return
+def delete_video_in_db(str_id, collection):
+	result = collection.delete_one({'_id': ObjectId(str_id)})
+	if result.deleted_count != 1:
+		return HTTP_NOT_FOUND
+	return HTTP_OK
 
 def insert_comment_into_video(video_id, user_email, comment, collection):
 
@@ -41,10 +45,10 @@ def insert_comment_into_video(video_id, user_email, comment, collection):
 		logger.error('Apparently this video does not exist for AppServer ' +
 					 video_id)
 		return {'Comment video':
-				'The request could not complete successfully'}, 500
+				'The request could not complete successfully'}, HTTP_INTERNAL_SERVER_ERROR
 
 	return {'Comment video':
-			'Your request was completed successfully'}, 201
+			'Your request was completed successfully'}, HTTP_CREATED
 
 def get_video_by_objectid(_id, collection, docs=None):
 	try:

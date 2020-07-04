@@ -6,6 +6,7 @@ from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.videos_db_functions import *
+from app_server.utils.http_responses import *
 
 videos_bp = Blueprint('videos', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -20,7 +21,7 @@ def _list_videos_of_user(user_id):
 	logger.debug("Requested videos from id:" + user_id)
 	api_list_video_of_user = '/api/list_videos/'+ user_id
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_of_user)
-	if response_media_server.status_code == 200:
+	if response_media_server.status_code == HTTP_OK:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos según id
 		status = response_media_server.json()
@@ -35,7 +36,7 @@ def _list_videos_of_user(user_id):
 def _list_videos(user_id):
 	api_list_videos = '/api/list_videos/'
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
-	if response_media_server.status_code == 200:
+	if response_media_server.status_code == HTTP_OK:
 		logger.debug('Response from media server list videos is 200')
 		#Recibe lista de videos
 		raw_data = response_media_server.json()
@@ -50,23 +51,22 @@ def _list_videos(user_id):
 
 	return json.dumps(status), response_media_server.status_code
 
-@videos_bp.route('/api/upload_video/', methods=['POST'])
+@videos_bp.route('/api/videos/', methods=['POST'])
 @swag_from('docs/upload_video.yml')
 def _upload_video():
 	data = request.json
 	api_upload_video = '/api/upload_video/'
 	response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
 	status = {}
-	status_code = 0
 	# Trate de usar el .ok de la response, pero un 500 lo toma como true.
 	# Por suerte estaban los tests para hacermelo notar
-	if response_media_server.status_code == 201:
+	if response_media_server.status_code == HTTP_CREATED:
 		logger.debug('Response from media server upload video is 201')
 		coll = 'videos'
 		media_server_response_data = response_media_server.json()
 		status_code = insert_video_into_db(media_server_response_data['_id'], data, client[DB][coll])
 
-		if status_code == 201:
+		if status_code == HTTP_CREATED:
 			status['Upload video'] = 'Successfully uploaded video'
 		else:
 			status['Upload video'] = 'Couldnt upload video'
@@ -78,16 +78,22 @@ def _upload_video():
 	return json.dumps(status), status_code
 
 
-@videos_bp.route('/api/delete_video/<video_id>', methods=['DELETE'])
+@videos_bp.route('/api/videos/<video_id>', methods=['DELETE'])
 @swag_from('docs/delete_video.yml')
 def _delete_video(video_id):
 	logger.debug("Requested delete video with id:" + video_id)
 	api_delete_video = '/api/delete_video/' + video_id
 	response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 	status = {}
-	if response_media_server.status_code == 200:
+	if response_media_server.status_code == HTTP_OK:
 		logger.debug('Response from media server list videos is 200')
 		data = response_media_server.json()
+		videos_coll = 'videos'
+		app_server_status = delete_video_in_db(video_id,
+											   client[DB][videos_coll])
+		if app_server_status == HTTP_NOT_FOUND:
+			logger.error('App server did not found this video on its collection')
+
 		status['Deleted Video'] = data
 	else:
 		logger.debug('Response from media server is NOT 200')
