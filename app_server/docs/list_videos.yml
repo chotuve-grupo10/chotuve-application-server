@@ -1,4 +1,4 @@
-Este servicio permitirá listar videos en el sistema
+Este servicio permitirá listar videos en el sistema para mostrarlos en la home de un usuario
 ---
 definitions:
   VideoList:
@@ -16,6 +16,11 @@ definitions:
           type: string
         upload_date:
           type: string
+parameters:
+  - in: path
+    name: user_id
+    description: user id
+    type: string
 responses:
   200:
     description: videos list returned

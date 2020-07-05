@@ -12,4 +12,6 @@ disable=
     bad-continuation,
     redefined-outer-name,
     line-too-long,
-    too-many-statements
+    too-many-statements,
+    R0801 # me hubiera encantado agregarlo solo en los tests pero no lo logré
+    

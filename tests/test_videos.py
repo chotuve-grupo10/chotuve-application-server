@@ -14,7 +14,7 @@ def test_upload_video_fails(client):
 		mock.return_value.json.return_value = {'Upload' : 'video uploaded'}
 
 		value_expected = {'Upload Video' : 'No response'}
-		response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
+		response = client.post('/api/videos/', json=video_to_upload, follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -34,7 +34,7 @@ def test_upload_fails_problems_inserting_into_db(client):
 			mock_insert_video.return_value = 500
 
 			value_expected = {'Upload video' : 'Couldnt upload video'}
-			response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
+			response = client.post('/api/videos/', json=video_to_upload, follow_redirects=False)
 
 			assert mock.called
 			assert mock_insert_video.called
@@ -56,7 +56,7 @@ def test_upload_video_successfully(client):
 			mock_insert_video.return_value = 201
 
 			value_expected = {'Upload video' : 'Successfully uploaded video'}
-			response = client.post('/api/upload_video/', json=video_to_upload, follow_redirects=False)
+			response = client.post('/api/videos/', json=video_to_upload, follow_redirects=False)
 
 			assert mock.called
 			assert mock_insert_video.called
@@ -65,14 +65,18 @@ def test_upload_video_successfully(client):
 def test_list_videos_sucessfully(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
 
-		mock.return_value.status_code = 200
-		response_media = [{'id' : 'test', 'title' : 'test'}]
-		mock.return_value.json.return_value = response_media
+		with patch('app_server.videos.filter_videos_for_specific_user') as mock_videos:
 
-		value_expected = response_media
-		response = client.get('/api/list_videos/', follow_redirects=False)
-		assert mock.called
-		assert json.loads(response.data) == value_expected
+			mock.return_value.status_code = 200
+			response_media = [{'id' : 'test', 'title' : 'test'}]
+			mock.return_value.json.return_value = response_media
+			mock_videos.return_value = response_media
+
+			value_expected = response_media
+			response = client.get('/api/videos/user_test@test.com', follow_redirects=False)
+			assert mock.called
+			assert mock_videos.called
+			assert json.loads(response.data) == value_expected
 
 def test_list_videos_fails(client):
 	with patch('app_server.videos.get_media_server_request') as mock:
@@ -80,21 +84,22 @@ def test_list_videos_fails(client):
 		mock.return_value.status_code = 500
 
 		value_expected = []
-		response = client.get('/api/list_videos/', follow_redirects=False)
+		response = client.get('/api/videos/test_user@test.com', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
 def test_delete_video_sucessfully(client):
 	with patch('app_server.videos.delete_media_server') as mock:
+		with patch('app_server.videos.delete_video_in_db') as _:
 
-		mock.return_value.status_code = 200
-		response_media = {'Delete' : 'Video deleted'}
-		mock.return_value.json.return_value = response_media
+			mock.return_value.status_code = 200
+			response_media = {'Delete' : 'Video deleted'}
+			mock.return_value.json.return_value = response_media
 
-		value_expected = {'Deleted Video' : response_media}
-		response = client.delete('/api/delete_video/3', follow_redirects=False)
-		assert mock.called
-		assert json.loads(response.data) == value_expected
+			value_expected = {'Deleted Video' : response_media}
+			response = client.delete('/api/videos/3', follow_redirects=False)
+			assert mock.called
+			assert json.loads(response.data) == value_expected
 
 def test_delete_video_fails(client):
 	with patch('app_server.videos.delete_media_server') as mock:
@@ -102,7 +107,7 @@ def test_delete_video_fails(client):
 		mock.return_value.status_code = 500
 
 		value_expected = {'Deleted Video' : 'No response'}
-		response = client.delete('/api/delete_video/3', follow_redirects=False)
+		response = client.delete('/api/videos/3', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
@@ -118,7 +123,7 @@ def test_comment_video_fails(client):
 		mock.return_value = info, 500
 
 		value_expected = info
-		response = client.put('/api/videos/01xa/comment',
+		response = client.post('/api/videos/01xa/comments',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
@@ -137,7 +142,7 @@ def test_comment_video_is_successfull(client):
 		mock.return_value = info, 201
 
 		value_expected = info
-		response = client.put('/api/videos/01xa/comment',
+		response = client.post('/api/videos/01xa/comments',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
