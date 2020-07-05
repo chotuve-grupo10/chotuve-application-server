@@ -5,6 +5,7 @@ from flask import Blueprint, request
 from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.users_db_functions import *
+from app_server.relationships_functions import *
 
 users_bp = Blueprint('users_relationships', __name__)
 logger = logging.getLogger('gunicorn.error')

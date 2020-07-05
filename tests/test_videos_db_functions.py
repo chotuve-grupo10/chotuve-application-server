@@ -89,8 +89,9 @@ def test_delete_video_not_exists():
 
 	data = {'title': 'test',
 			'url': 'test.com',
-			'user': 'test','isPrivate': True
-			}
+			'user': 'test',
+			'isPrivate': True
+	}
 
 	_id = '5edbc9196ab5430010391c79'
 	insert_video_into_db(_id, data, collection)
