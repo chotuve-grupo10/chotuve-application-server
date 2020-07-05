@@ -123,7 +123,7 @@ def test_comment_video_fails(client):
 		mock.return_value = info, 500
 
 		value_expected = info
-		response = client.put('/api/videos/01xa/comment',
+		response = client.post('/api/videos/01xa/comments',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
@@ -142,7 +142,7 @@ def test_comment_video_is_successfull(client):
 		mock.return_value = info, 201
 
 		value_expected = info
-		response = client.put('/api/videos/01xa/comment',
+		response = client.post('/api/videos/01xa/comments',
 							   json=data_to_comment,
 							   follow_redirects=False)
 		assert mock.called
