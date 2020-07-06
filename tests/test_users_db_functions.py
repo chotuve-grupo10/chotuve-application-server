@@ -1,3 +1,4 @@
+from unittest.mock import patch
 from pymongo_inmemory import MongoClient
 from app_server.users_db_functions import *
 from app_server.users import respond_to_friendship_request
@@ -74,36 +75,37 @@ def test_insert_firebase_user_inserts_new_user_once():
 ### Get user friends ###
 
 def test_get_user_friends():
-	client = MongoClient()
-	collection = client[DB]['users']
-	data = []
-	for i in range(0, 4):
-		data.append({'email': 'test_{0}@test.com'.format(i),
-					 'full name': '{0}'.format(i)})
-		insert_new_user(data[i], collection)
+	with patch('app_server.relationships_functions.send_notification_to_user') as _mock:
+		client = MongoClient()
+		collection = client[DB]['users']
+		data = []
+		for i in range(0, 4):
+			data.append({'email': 'test_{0}@test.com'.format(i),
+						 'full name': '{0}'.format(i)})
+			insert_new_user(data[i], collection)
 
-	result = collection.find({})
-	assert len(list(result)) == 4
+		result = collection.find({})
+		assert len(list(result)) == 4
 
-	my_user = data[3]
-	for i in range(0, 3):
-		insert_new_friendship_request(data[i]['email'], my_user['email'], collection)
-	for i in range(0, 3):
-		_, status_code = respond_to_friendship_request(my_user['email'],
-													   data[i]['email'],
-													   collection,
-													   accept=True)
-		assert status_code == 200
+		my_user = data[3]
+		for i in range(0, 3):
+			insert_new_friendship_request(data[i]['email'], my_user['email'], collection)
+		for i in range(0, 3):
+			_, status_code = respond_to_friendship_request(my_user['email'],
+														   data[i]['email'],
+														   collection,
+														   accept=True)
+			assert status_code == 200
 
-	result = get_user_friends_from_db(my_user['email'], collection)
-	assert len(result) == 3
+		result = get_user_friends_from_db(my_user['email'], collection)
+		assert len(result) == 3
 
-	list_result = list(result)
-	for i in range(0, 3):
-		assert data[i]['email'] == list_result[i]['email']
+		list_result = list(result)
+		for i in range(0, 3):
+			assert data[i]['email'] == list_result[i]['email']
 
-	assert my_user not in result
-	client.close()
+		assert my_user not in result
+		client.close()
 
 def test_get_user_friends_fails():
 	client = MongoClient()

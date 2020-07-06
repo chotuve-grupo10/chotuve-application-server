@@ -1,15 +1,20 @@
 import os
 import logging
+import json
+import requests
 from flask import Blueprint
 from flasgger import swag_from
 from pymongo import MongoClient
-from app_server.users_db_functions import HTTP_OK, HTTP_NOT_FOUND
+from app_server.users_db_functions import get_user_by_email
+from app_server.utils.http_responses import *
 
 notifications_bp = Blueprint('push_notifications', __name__)
 logger = logging.getLogger('gunicorn.error')
 
 client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
+
+FIREBASE_URL = 'https://fcm.googleapis.com/fcm/send'
 
 @notifications_bp.route(
 	'/api/users/<user_email>/notifications/<token>',
@@ -24,7 +29,7 @@ def _assign_push_notifications_token(user_email, token):
 	if status_code == HTTP_OK:
 		message = 'La solicitud fue completada con éxito'
 	elif status_code == HTTP_NOT_FOUND:
-		message = 'La solicitud no se pudo completar porque uno de los usuarios no existe'
+		message = 'La solicitud no se pudo completar porque el usuario no existe'
 	else: # HTTP_INTERNAL_SERVER_ERROR
 		message = 'La solicitud no se pudo completar'
 
@@ -39,3 +44,32 @@ def add_notifications_token(user_email, token, collection):
 		return HTTP_NOT_FOUND
 
 	return HTTP_OK
+
+def get_user_token(user_email, collection):
+	user = get_user_by_email(user_email, collection)
+	if user is not None:
+		return user['notifications_token']
+	return None
+
+def send_notification_to_user(user_email, title, message, collection):
+	token = get_user_token(user_email, collection)
+	if token is not None:
+
+		headers = {'Content-type': 'application/json',
+				   'Authorization': 'key='+ os.environ.get('FIREBASE_SERVER_KEY')}
+
+		notification_body = {'title': title,
+							 'body': message}
+
+		body = {'notification': notification_body,
+				'to': token,
+				'priority': 'high'}
+
+		response = requests.post(url=FIREBASE_URL,
+								 headers=headers,
+								 data=json.dumps(body))
+		if response.status_code == HTTP_OK:
+			logger.debug('Successfully sent notification to user %s', user_email)
+		else:
+			logger.error('Error %s sendind notification to user %s',
+						 str(response.status_code), user_email)
