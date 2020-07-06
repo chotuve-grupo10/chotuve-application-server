@@ -27,8 +27,13 @@ def _assign_push_notifications_token(user_email, token):
 										  client[DB][coll])
 
 	if status_code == HTTP_OK:
+		logger.debug('El usuario %s ya tenía el mismo token asociado', user_email)
+		message = 'La solicitud fue completada con éxito'
+	if status_code == HTTP_CREATED:
+		logger.debug('Nuevo token asociado a usuario %s', user_email)
 		message = 'La solicitud fue completada con éxito'
 	elif status_code == HTTP_NOT_FOUND:
+		logger.debug('No se encontró al usuario %s', user_email)
 		message = 'La solicitud no se pudo completar porque el usuario no existe'
 	else: # HTTP_INTERNAL_SERVER_ERROR
 		message = 'La solicitud no se pudo completar'
@@ -38,17 +43,23 @@ def _assign_push_notifications_token(user_email, token):
 
 def add_notifications_token(user_email, token, collection):
 	doc_to_set = {'$set': {'notifications_token': token}}
-	result = collection.update_one({'email': user_email},
-								   doc_to_set)
-	if result.modified_count != 1:
-		return HTTP_NOT_FOUND
 
+	previous_token = get_user_by_email(user_email, collection)
+	if token != previous_token:
+		result = collection.update_one({'email': user_email},
+									   doc_to_set)
+		if result.modified_count != 1:
+			return HTTP_NOT_FOUND
+		return HTTP_CREATED
 	return HTTP_OK
 
 def get_user_token(user_email, collection):
 	user = get_user_by_email(user_email, collection)
 	if user is not None:
-		return user['notifications_token']
+		try:
+			return user['notifications_token']
+		except KeyError:
+			return ''	# Token not available yet
 	return None
 
 def send_notification_to_user(user_email, title, message, collection):
