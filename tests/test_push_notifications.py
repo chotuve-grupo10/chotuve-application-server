@@ -1,6 +1,6 @@
 # pylint: disable=E0012
 from pymongo_inmemory import MongoClient
-from app_server.push_notifications import add_notifications_token, HTTP_OK, HTTP_CREATED
+from app_server.push_notifications import add_notifications_token, HTTP_CREATED
 from app_server.users_db_functions import insert_new_user
 
 DB = 'test_app_server'
