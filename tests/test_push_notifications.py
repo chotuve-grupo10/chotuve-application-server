@@ -1,11 +1,11 @@
 # pylint: disable=E0012
 from pymongo_inmemory import MongoClient
-from app_server.push_notifications import add_notifications_token, HTTP_OK
+from app_server.push_notifications import add_notifications_token, HTTP_CREATED
 from app_server.users_db_functions import insert_new_user
 
 DB = 'test_app_server'
 
-def test_add_notification():
+def test_add_notification_token():
 	client = MongoClient()
 	collection = client[DB]['users']
 
@@ -22,9 +22,9 @@ def test_add_notification():
 	assert len(result) == 1
 	assert first_user['email'] == '@test.com'
 	assert first_user['notifications_token'] == 'FAKE_TOKEN'
-	assert status_code == HTTP_OK
+	assert status_code == HTTP_CREATED
 
-def test_add_notification_twice():
+def test_add_notification_token_twice():
 	client = MongoClient()
 	collection = client[DB]['users']
 
@@ -43,4 +43,4 @@ def test_add_notification_twice():
 	assert len(result) == 1
 	assert first_user['email'] == '@test.com'
 	assert first_user['notifications_token'] == 'NEW_FAKE_TOKEN'
-	assert status_code == HTTP_OK
+	assert status_code == HTTP_CREATED

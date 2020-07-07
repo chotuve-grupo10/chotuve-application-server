@@ -1,5 +1,7 @@
 import logging
 from app_server.users_db_functions import *
+from app_server.push_notifications import send_notification_to_user
+from app_server.utils.notification_messages import *
 
 logger = logging.getLogger('gunicorn.error')
 
@@ -35,6 +37,10 @@ def insert_new_friendship_request(user_email, new_friends_email, collection):
 					 user_email)
 		return HTTP_INTERNAL_SERVER_ERROR
 
+	send_notification_to_user(new_friends_email,
+							  NEW_FRIENDSHIP_REQUEST_TITLE,
+							  NEW_FRIENDSHIP_REQUEST_BODY.format(user_email),
+							  collection)
 	logger.debug('New friendship request submitted ' + user_email)
 	return HTTP_CREATED
 
@@ -64,6 +70,10 @@ def accept_friendship_request(user_email, new_friends_email, collection):
 					 user_email)
 		return HTTP_INTERNAL_SERVER_ERROR
 
+	send_notification_to_user(new_friends_email,
+							  ACCEPT_FRIENDSHIP_REQUEST_TITLE,
+							  ACCEPT_FRIENDSHIP_REQUEST_BODY.format(user_email),
+							  collection)
 	logger.debug('Friendship request was accepted by ' + user_email)
 	return HTTP_OK
 
