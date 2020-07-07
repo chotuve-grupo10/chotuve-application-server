@@ -70,6 +70,10 @@ def accept_friendship_request(user_email, new_friends_email, collection):
 					 user_email)
 		return HTTP_INTERNAL_SERVER_ERROR
 
+	send_notification_to_user(new_friends_email,
+							  ACCEPT_FRIENDSHIP_REQUEST_TITLE,
+							  ACCEPT_FRIENDSHIP_REQUEST_BODY.format(user_email),
+							  collection)
 	logger.debug('Friendship request was accepted by ' + user_email)
 	return HTTP_OK
 
