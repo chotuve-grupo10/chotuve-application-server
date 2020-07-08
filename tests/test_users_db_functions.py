@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import patch
+import pytest
 from pymongo_inmemory import MongoClient
 from app_server.users_db_functions import *
 from app_server.users import respond_to_friendship_request
