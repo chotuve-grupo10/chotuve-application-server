@@ -141,3 +141,15 @@ def _get_users_by_query():
 								  client[DB][coll])
 
 	return json.dumps(response), HTTP_OK
+
+@users_bp.route('/api/users/<user_email>', methods=['DELETE'])
+@swag_from('docs/delete_user.yml')
+def _delete_user(user_email):
+	# coll = 'users'
+	# response = get_user_friends_from_db(user_email,
+	# 									client[DB][coll])
+	# if response == HTTP_NOT_FOUND:
+	# 	return {'Get_user_information':
+	# 			'User not found'}, response
+
+	return json.dumps({'Delete': 'user {0} deleted'.format(user_email)}), HTTP_OK
