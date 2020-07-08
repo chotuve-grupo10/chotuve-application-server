@@ -73,6 +73,46 @@ def test_insert_firebase_user_inserts_new_user_once():
 
 	client.close()
 
+## Get users
+
+def test_get_user_by_email_successfully():
+	client = MongoClient()
+	collection = client[DB]['users']
+
+	email = 'test@test.com'
+	data = {'email': email, 'full name': ''}
+	insert_new_user(data, collection)
+
+	result = list(collection.find({}))
+	first_user = result[0]
+
+	assert len(result) == 1
+	assert first_user['email'] == 'test@test.com'
+
+	result_get = get_user_by_email(email, collection)
+	result = list(collection.find({}))
+	assert result_get['email'] == email
+	client.close()
+
+def test_get_user_that_doesnt_exist():
+	client = MongoClient()
+	collection = client[DB]['users']
+
+	email = 'test@test.com'
+	data = {'email': email, 'full name': ''}
+	insert_new_user(data, collection)
+
+	result = list(collection.find({}))
+	first_user = result[0]
+
+	assert len(result) == 1
+	assert first_user['email'] == 'test@test.com'
+
+	result_get = get_user_by_email('prueba@prueba.com', collection)
+	result = list(collection.find({}))
+	assert result_get == None
+	client.close()
+
 ### Get user friends ###
 
 def test_get_user_friends():
