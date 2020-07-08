@@ -110,7 +110,7 @@ def test_get_user_that_doesnt_exist():
 
 	result_get = get_user_by_email('prueba@prueba.com', collection)
 	result = list(collection.find({}))
-	assert result_get == None
+	assert result_get is None
 	client.close()
 
 ### Get user friends ###
