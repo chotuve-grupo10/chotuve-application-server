@@ -92,3 +92,10 @@ def get_users_by_query(filter_str, user_email, collection):
 
 	# users = [user for user in users if user['email'] is not user_email]
 	return list(users)
+
+def delete_user_from_db(user_email, collection):
+
+	result = collection.delete_one({'email': user_email})
+	if result.deleted_count == 0:
+		raise ValueError('User {0} doesnt exist'.format(user_email))
+	return result

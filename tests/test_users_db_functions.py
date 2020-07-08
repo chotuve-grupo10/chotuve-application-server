@@ -1,3 +1,4 @@
+import pytest
 from unittest.mock import patch
 from pymongo_inmemory import MongoClient
 from app_server.users_db_functions import *
@@ -164,4 +165,49 @@ def test_get_users_when_filter_is_empty_gets_all_except_me():
 	emails = [item['email'] for item in list(_all)]
 	assert 'test_4@test.com' not in emails
 
+	client.close()
+
+## Delete users from db
+
+def test_delete_user_fails_because_doesnt_exist():
+	client = MongoClient()
+	collection = client[DB]['users']
+
+	email = 'test@test.com'
+	data = {'email': email, 'full name': ''}
+	insert_new_user(data, collection)
+
+	result = list(collection.find({}))
+	first_user = result[0]
+
+	assert len(result) == 1
+	assert first_user['email'] == 'test@test.com'
+
+	with pytest.raises(ValueError) as error_received:
+		delete_result = delete_user_from_db('prueba@prueba.com', collection)
+
+		result = list(collection.find({}))
+		assert len(result) == 1
+		assert delete_result.deleted_count == 0
+	assert str(error_received.value) == 'User prueba@prueba.com doesnt exist'
+	client.close()
+
+def test_delete_user_successfully():
+	client = MongoClient()
+	collection = client[DB]['users']
+
+	email = 'test@test.com'
+	data = {'email': email, 'full name': ''}
+	insert_new_user(data, collection)
+
+	result = list(collection.find({}))
+	first_user = result[0]
+
+	assert len(result) == 1
+	assert first_user['email'] == 'test@test.com'
+
+	delete_result = delete_user_from_db(email, collection)
+	result = list(collection.find({}))
+	assert len(result) == 0
+	assert delete_result.deleted_count == 1
 	client.close()
