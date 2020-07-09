@@ -6,7 +6,7 @@ from app_server.utils.http_responses import *
 logger = logging.getLogger('gunicorn.error')
 
 def insert_new_user(data, collection):
-	logger.debug('User to insert:' + data)
+	logger.debug('User to insert:' + str(data))
 	doc = {'email': data['email'],
 		   'fullName': data['full name'],
 		   'friends': [],
