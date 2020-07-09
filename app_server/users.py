@@ -146,13 +146,20 @@ def _get_users_by_query():
 @swag_from('docs/delete_user.yml')
 def _delete_user(user_email):
 
-	#primero obtenemos el user
-	#despues insertamos el user en coleccion de users_deleted
-	#borramos al user de la coleccion users
+	logger.debug('Received request to delete user: ' + user_email)
 
-	response = get_user_by_email(user_email, client[DB]['users'])
-	if response == HTTP_NOT_FOUND:
-		return {'Get_user_information':
-				'User not found'}, response
+	user_obtained = get_user_by_email(user_email, client[DB]['users'])
+	if user_obtained is None:
+		return {'Error': 'user {0} doesnt exist'.format(user_email)}, HTTP_NOT_FOUND
 
-	return json.dumps({'Delete': 'user {0} deleted'.format(user_email)}), HTTP_OK
+	user_insert_response = insert_new_user(user_obtained, client[DB]['users_deleted'])
+
+	if user_insert_response == HTTP_INTERNAL_SERVER_ERROR:
+		return {'Error': 'couldnt insert deleted user in users_delete collection'}, HTTP_INTERNAL_SERVER_ERROR
+
+	try:
+		delete_user_from_db(user_email, client[DB]['users'])
+		return {'Delete': 'user {0} deleted'.format(user_email)}, HTTP_OK
+	except ValueError:
+		# Esto nunca deberia suceder. Pero mejor prevenir que curar
+		return {'Error': 'user {0} doesnt exist'.format(user_email)}, HTTP_NOT_FOUND
