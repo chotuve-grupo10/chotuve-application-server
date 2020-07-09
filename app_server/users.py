@@ -150,9 +150,11 @@ def _delete_user(user_email):
 
 	user_obtained = get_user_by_email(user_email, client[DB]['users'])
 	if user_obtained is None:
+		logger.debug('User NOT found')
 		return {'Error': 'user {0} doesnt exist'.format(user_email)}, HTTP_NOT_FOUND
 
-	user_insert_response = insert_new_user(user_obtained, client[DB]['users_deleted'])
+	logger.debug('User found')
+	user_insert_response = insert_complete_user(user_obtained, client[DB]['users_deleted'])
 
 	if user_insert_response == HTTP_INTERNAL_SERVER_ERROR:
 		return {'Error': 'couldnt insert deleted user in users_delete collection'}, HTTP_INTERNAL_SERVER_ERROR

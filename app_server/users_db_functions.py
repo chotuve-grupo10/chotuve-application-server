@@ -21,6 +21,17 @@ def insert_new_user(data, collection):
 		logger.error('Cant insert user. Duplicate key error')
 		return 500
 
+def insert_complete_user(user_to_insert, collection):
+	logger.debug('User to insert:' + str(user_to_insert))
+	try:
+		## insert_one result has no attribute modified_counts
+		collection.insert_one(user_to_insert)
+		logger.debug('User inserted')
+		return 201
+	except pymongo.errors.DuplicateKeyError:
+		logger.error('Cant insert user. Duplicate key error')
+		return 500
+
 def insert_new_firebase_user_if_not_exists(claims, collection):
 
 	user = get_user_by_email(claims.get('email'), collection)
@@ -42,7 +53,6 @@ def get_user_by_email(user_email, collection):
 	logger.debug('Looking for user with email ' + user_email)
 	try:
 		user = collection.find_one({'email': user_email})
-		logger.debug('User found')
 		return user
 	except TypeError:
 		logger.error('User % is not a valid user', user_email)

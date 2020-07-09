@@ -61,7 +61,7 @@ def test_delete_user_successfully(client):
 
 		mock_get_user.return_value = {'email' : 'test@test.com'}
 
-		with patch('app_server.users.insert_new_user') as mock_insert_user:
+		with patch('app_server.users.insert_complete_user') as mock_insert_user:
 
 			mock_insert_user.return_value = 201
 

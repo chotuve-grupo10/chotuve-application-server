@@ -73,6 +73,20 @@ def test_insert_firebase_user_inserts_new_user_once():
 
 	client.close()
 
+def test_insert_complete_user_successfully():
+	client = MongoClient()
+	collection = client[DB]['users']
+
+	data = {'email': 'test@test.com', 'full name': '', 'friends': [], 'requests': []}
+	insert_new_user(data, collection)
+
+	result = list(collection.find({}))
+	first_user = result[0]
+	client.close()
+
+	assert len(result) == 1
+	assert first_user['email'] == 'test@test.com'
+
 ## Get users
 
 def test_get_user_by_email_successfully():
