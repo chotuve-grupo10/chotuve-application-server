@@ -6,7 +6,7 @@ from app_server.utils.http_responses import *
 logger = logging.getLogger('gunicorn.error')
 
 def insert_new_user(data, collection):
-
+	logger.debug('User to insert:' + str(data))
 	doc = {'email': data['email'],
 		   'fullName': data['full name'],
 		   'friends': [],
@@ -15,8 +15,21 @@ def insert_new_user(data, collection):
 	try:
 		## insert_one result has no attribute modified_counts
 		collection.insert_one(doc)
+		logger.debug('User inserted')
 		return 201
 	except pymongo.errors.DuplicateKeyError:
+		logger.error('Cant insert user. Duplicate key error')
+		return 500
+
+def insert_complete_user(user_to_insert, collection):
+	logger.debug('User to insert:' + str(user_to_insert))
+	try:
+		## insert_one result has no attribute modified_counts
+		collection.insert_one(user_to_insert)
+		logger.debug('User inserted')
+		return 201
+	except pymongo.errors.DuplicateKeyError:
+		logger.error('Cant insert user. Duplicate key error')
 		return 500
 
 def insert_new_firebase_user_if_not_exists(claims, collection):
@@ -37,6 +50,7 @@ def insert_new_firebase_user_if_not_exists(claims, collection):
 		pass
 
 def get_user_by_email(user_email, collection):
+	logger.debug('Looking for user with email ' + user_email)
 	try:
 		user = collection.find_one({'email': user_email})
 		return user
@@ -92,3 +106,13 @@ def get_users_by_query(filter_str, user_email, collection):
 
 	# users = [user for user in users if user['email'] is not user_email]
 	return list(users)
+
+def delete_user_from_db(user_email, collection):
+	logger.debug('Deleting user with email ' + user_email)
+
+	result = collection.delete_one({'email': user_email})
+	if result.deleted_count == 0:
+		logger.error('User not found. Cant delete user')
+		raise ValueError('User {0} doesnt exist'.format(user_email))
+	logger.debug('User deleted')
+	return result
