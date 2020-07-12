@@ -2,10 +2,10 @@ Este servicio permite obtener la hora del Server
 ---
 definitions:
   ServerTime:
-  type: object
-  properties:
-    timestamp:
-      type: string
+    type: object
+    properties:
+      timestamp:
+        type: string
 
 responses:
   200:
