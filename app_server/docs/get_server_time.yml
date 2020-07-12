@@ -1,0 +1,11 @@
+Este servicio permite obtener la hora del Server
+---
+responses:
+  200:
+    description: devuelve la hora del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  500:
+    description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
