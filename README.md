@@ -8,6 +8,8 @@
 
 1. Ejecutamos ```docker run -e AUTH_SERVER_URL=https://chotuve-auth-server-dev.herokuapp.com -e MEDIA_SERVER_URL=https://chotuve-media-server-dev.herokuapp.com -e GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000" -p 8000:8000 --name app-server app-server```
 
+2. Para hacer que las estadísticas se publiquen a Datadog, le agregamos al comando anterior la API key para el Datadog Agent: ```docker run -e AUTH_SERVER_URL=https://chotuve-auth-server-dev.herokuapp.com -e MEDIA_SERVER_URL=https://chotuve-media-server-dev.herokuapp.com -e DD_API_KEY=<DATADOG API KEY> -e GUNICORN_CMD_ARGS="--bind=0.0.0.0:8000" -p 8000:8000 --name app-server app-server```
+
 #### Dockercompose
 
 1. Para poder correr el server dockerizado lo primero que tenemos que hacer es descomentar el
