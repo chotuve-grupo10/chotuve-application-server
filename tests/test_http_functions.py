@@ -28,3 +28,8 @@ def test_post_auth_server_error_data_empty():
 	with pytest.raises(ValueError) as error_received:
 		http_functions.post_auth_server('test', None)
 	assert str(error_received.value) == 'User data is None'
+
+def test_put_auth_server_error_url_empty():
+	with pytest.raises(ValueError) as error_received:
+		http_functions.put_auth_server('', None)
+	assert str(error_received.value) == 'URL received is empty'
