@@ -1,0 +1,55 @@
+Este servicio permitirá likear un video
+---
+definitions:
+  Video:
+    type: object
+    properties:
+      _id:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      user:
+        type: string
+      is_private:
+        type: boolean
+      likes:
+        type: array
+        items:
+          type: string
+      dislikes:
+        type: array
+        items:
+          type: string
+      upload_date:
+        type: string
+
+parameters:
+  - in: path
+    name: video_id
+    description: id del video
+    type: string
+    
+  - in: path
+    name: user_id
+    description: User making comment.
+    type: string
+
+responses:
+  201:
+    description: video likeado
+    schema:
+      $ref: '#/definitions/Video'
+  403:
+    description: ya likeaste este video
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: el usuario o el video no existen
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  400:
+    description: error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
