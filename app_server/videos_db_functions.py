@@ -85,20 +85,3 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 			filtered_videos.append(raw_video)
 
 	return filtered_videos
-
-def like_video(video_id, user, collection):
-	logger.debug('El usuario % quiere likear un video', user['email'])
-	video = get_video_by_objectid(ObjectId(video_id), collection)
-	if video is None:
-		return HTTP_NOT_FOUND
-
-	if user['email'] in video['likes']:
-		logger.debug('Este usuario ya likeo el video antes')
-		return HTTP_CONFLICT
-
-	result = collection.update_one({'id': ObjectId(video_id)},
-							{'$push': {'likes': user['email']}})
-	if result.modified_count != 1:
-		return HTTP_INTERNAL_SERVER_ERROR
-
-	return HTTP_CREATED

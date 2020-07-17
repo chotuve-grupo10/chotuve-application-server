@@ -1,0 +1,31 @@
+Este servicio permitirá eliminar el like de un video
+---
+parameters:
+  - in: path
+    name: video_id
+    description: id del video
+    type: string
+    
+  - in: body
+    name: user data
+    description: usuario que hace la request
+    schema:
+      $ref: '#/definitions/UserData'
+
+responses:
+  200:
+    description: like del video eliminado
+    schema:
+      $ref: '#/definitions/Video'
+  403:
+    description: este video no tiene tu like
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: el usuario o el video no existen
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  400:
+    description: error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'

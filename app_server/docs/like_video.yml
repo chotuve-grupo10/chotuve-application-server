@@ -24,17 +24,23 @@ definitions:
           type: string
       upload_date:
         type: string
-
+  UserData:
+    type: object
+    properties:
+      email:
+        type: string
+        
 parameters:
   - in: path
     name: video_id
     description: id del video
     type: string
     
-  - in: path
-    name: user_id
-    description: User making comment.
-    type: string
+  - in: body
+    name: user data
+    description: usuario que hace la request
+    schema:
+      $ref: '#/definitions/UserData'
 
 responses:
   201:
