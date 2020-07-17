@@ -13,5 +13,5 @@ disable=
     redefined-outer-name,
     line-too-long,
     too-many-statements,
-    R0801 # me hubiera encantado agregarlo solo en los tests pero no lo logré
-    
+    R0801 # me hubiera encantado agregarlo solo en los tests pero no lo logré,
+    logging-format-interpolation
