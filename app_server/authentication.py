@@ -118,3 +118,13 @@ def _login_user_using_firebase():
 		text = response.json()
 
 	return text, response.status_code
+
+@authentication_bp.route('/api/users/<user_email>/reset_password_token', methods=['POST'])
+@swag_from('docs/forgot_password.yml')
+def _forgot_password(user_email):
+	return {'Forgot password' : 'sent email to {0}'.format(user_email)}
+
+@authentication_bp.route('/api/users/<user_email>/password', methods=['PUT'])
+@swag_from('docs/reset_password.yml')
+def _reset_password(user_email):
+	return {'Reset password' : 'password updated for user {0}'.format(user_email)}
