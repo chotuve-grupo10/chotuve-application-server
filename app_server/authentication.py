@@ -142,4 +142,17 @@ def _forgot_password(user_email):
 @authentication_bp.route('/api/users/<user_email>/password', methods=['PUT'])
 @swag_from('docs/reset_password.yml')
 def _reset_password(user_email):
-	return {'Reset password' : 'password updated for user {0}'.format(user_email)}
+
+	data = request.json
+	logger.debug('Received reset password request from user %s', user_email)
+
+	api_reset_password = '/api/users/' + user_email + '/password'
+	url = os.environ.get('AUTH_SERVER_URL') + api_reset_password
+
+	response = put_auth_server(url, data)
+	logger.debug('Finished auth server reset password request')
+
+	if response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+		return {'Error': 'there is a problem with the auth server'}, HTTPStatus.BAD_REQUEST
+
+	return response.json(), response.status_code

@@ -64,3 +64,26 @@ def test_forgot_password_successfully(client):
 		response = client.post('/api/users/' + user_email + '/reset_password_token', follow_redirects=False)
 		assert mock.called
 		assert json.loads(response.data) == value
+
+def test_reset_password_fails_problem_with_auth_server(client):
+	with patch('app_server.authentication.put_auth_server') as mock:
+
+		mock.return_value.status_code = 500
+		mock.return_value.json.return_value = {'Error' : 'Error'}
+
+		user_email = 'test@test.com'
+		response = client.put('/api/users/' + user_email + '/password', follow_redirects=False)
+		assert mock.called
+		assert json.loads(response.data) == {'Error': 'there is a problem with the auth server'}
+
+def test_reset_password_successfully(client):
+	with patch('app_server.authentication.put_auth_server') as mock:
+
+		mock.return_value.status_code = 200
+		user_email = 'test@test.com'
+		value = {'Reset password' : 'password updated for user {0}'.format(user_email)}
+		mock.return_value.json.return_value = value
+
+		response = client.put('/api/users/' + user_email + '/password', follow_redirects=False)
+		assert mock.called
+		assert json.loads(response.data) == value
