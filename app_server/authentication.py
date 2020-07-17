@@ -124,7 +124,7 @@ def _login_user_using_firebase():
 @swag_from('docs/forgot_password.yml')
 def _forgot_password(user_email):
 
-	logger.debug('Received forgot password request from user {0}'.format(user_email))
+	logger.debug('Received forgot password request from user %s', user_email)
 
 	api_forgot_password = '/api/users/' + user_email + '/reset_password_token'
 	url = os.environ.get('AUTH_SERVER_URL') + api_forgot_password
