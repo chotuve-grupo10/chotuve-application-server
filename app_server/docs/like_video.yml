@@ -1,5 +1,5 @@
 Este servicio permitirá likear un video
----
+---G
 definitions:
   Comment:
     type: object
@@ -38,7 +38,9 @@ definitions:
     properties:
       Authorization:
         type: string
-        
+tags:
+  - name: auth-required
+    description: Requires Authorization header       
 parameters:
   - in: path
     name: video_id

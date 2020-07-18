@@ -1,5 +1,8 @@
 Este servicio permitirá eliminar un dislike a un video
----       
+---
+tags:
+  - name: auth-required
+    description: Requires Authorization header       
 parameters:
   - in: path
     name: video_id

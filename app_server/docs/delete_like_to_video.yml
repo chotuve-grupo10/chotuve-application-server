@@ -1,5 +1,8 @@
 Este servicio permitirá eliminar el like de un video
 ---
+tags:
+  - name: auth-required
+    description: Requires Authorization header
 parameters:
   - in: path
     name: video_id

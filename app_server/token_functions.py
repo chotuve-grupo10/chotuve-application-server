@@ -35,3 +35,7 @@ def validate_token(token):
 def get_user_from_token(token):
 	payload = jwt.decode(token, 'secret', algorithms='HS256')
 	return payload['user_id']
+
+def decode_app_server_token(token):
+	payload = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
+	return payload
