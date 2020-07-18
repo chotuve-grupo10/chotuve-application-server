@@ -40,7 +40,7 @@ definitions:
         type: string
 tags:
   - name: auth-required
-    description: Requires Authorization header       
+    description: Requires Authorization header
 parameters:
   - in: path
     name: video_id
