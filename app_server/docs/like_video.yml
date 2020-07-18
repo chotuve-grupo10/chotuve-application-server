@@ -33,10 +33,10 @@ definitions:
           type: string
       comments:
         $ref: '#/definitions/Comment'
-  UserData:
+  UserAuthorizationData:
     type: object
     properties:
-      email:
+      Authorization:
         type: string
         
 parameters:
@@ -46,10 +46,10 @@ parameters:
     type: string
     
   - in: body
-    name: user data
+    name: user_data
     description: usuario que hace la request
     schema:
-      $ref: '#/definitions/UserData'
+      $ref: '#/definitions/UserAuthorizationData'
 
 responses:
   201:

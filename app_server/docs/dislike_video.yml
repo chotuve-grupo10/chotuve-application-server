@@ -7,10 +7,10 @@ parameters:
     type: string
     
   - in: body
-    name: user data
+    name: user_data
     description: usuario que hace la request
     schema:
-      $ref: '#/definitions/UserData'
+      $ref: '#/definitions/UserAuthorizationData'
 
 responses:
   201:

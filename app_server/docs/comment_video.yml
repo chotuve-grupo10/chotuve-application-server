@@ -15,8 +15,8 @@ parameters:
     type: string
     
   - in: body
-    name: user
-    description: User making comment.
+    name: comment
+    description: comment information.
     schema:
       $ref: '#/definitions/Comment'
 responses:
