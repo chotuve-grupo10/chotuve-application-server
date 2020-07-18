@@ -8,6 +8,9 @@ from app_server.users_db_functions import get_user_by_email, get_user_friends_fr
 
 logger = logging.getLogger('gunicorn.error')
 
+KEYS_TO_APPEND = ['likes', 'dislikes', 'comments']
+KEYS_TO_DELETE = ['latitude', 'longitude']
+
 def insert_video_into_db(video_id, data, collection):
 
 	doc = {'_id': ObjectId(video_id),
@@ -79,6 +82,13 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 			# acá debería pudrirse toddo para mí... pero tampoco debería suceder nunca
 			logger.error("Este video no existe en la base del AppServer %s", raw_video['_id'])
 			continue
+		for key in KEYS_TO_APPEND:
+			raw_video[key] = video[key]
+		for key in KEYS_TO_DELETE:
+			try:
+				del raw_video[key]
+			except KeyError:
+				pass
 		if video['is_private']:
 			if video['user'] in email_friends or video['user'] == user_email:
 				filtered_videos.append(raw_video)
