@@ -76,6 +76,22 @@ def get_media_server_request(url_received, headers_received=None):
 	return response
 
 
+def put_auth_server(url, data):
+	logger.debug('Auth server put reques')
+	if not url:
+		logger.critical("URL received is empty")
+		raise ValueError('URL received is empty')
+
+	logger.debug('URL: ' + url)
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain', APP_SERVER_TOKEN_HEADER : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
+
+	if data is None:
+		response = requests.put(url=url, headers=headers)
+	else:
+		response = requests.put(url=url, data=json.dumps(data), headers=headers)
+
+	return response
+
 def post_media_server(url, user_data):
 	logger.debug('Media server upload video requested')
 	if not url:
