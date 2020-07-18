@@ -1,13 +1,6 @@
 Este servicio permitirá dar de alta un comentario en un video
 ---
 definitions:
-  CommentVideo:
-    type: object
-    properties:
-      email:
-        type: string
-      comment:
-        type: string
   CommentVideoResponse:
     type: object
     properties:
@@ -25,7 +18,7 @@ parameters:
     name: user
     description: User making comment.
     schema:
-      $ref: '#/definitions/CommentVideo'
+      $ref: '#/definitions/Comment'
 responses:
   200:
     description: comentario agregado al video
