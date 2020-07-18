@@ -164,3 +164,41 @@ def test_delete_inexistent_dislike_fails():
 	client.close()
 
 ### Crossed tests ###
+
+def test_dislike_video_liked_deletes_like_and_dislikes():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	_id = '5df1679ee0acd518e5cfd002'
+	status_code = insert_video_into_db(_id, empty_video_01, collection)
+	assert status_code == HTTP_CREATED
+
+	fake_user = {'email': 'fake_email@gmail.com'}
+	status_code = like_video(_id, fake_user, collection)
+	assert status_code == HTTP_CREATED
+	status_code = dislike_video(_id, fake_user, collection)
+	assert status_code == HTTP_CREATED
+
+	video = collection.find_one({'_id': ObjectId(_id)})
+	assert fake_user['email'] in video['dislikes']
+	assert fake_user['email'] not in video['likes']
+	client.close()
+
+def test_like_video_disliked_deletes_dislike_and_likes():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	_id = '5df1679ee0acd518e5cfd002'
+	status_code = insert_video_into_db(_id, empty_video_01, collection)
+	assert status_code == HTTP_CREATED
+
+	fake_user = {'email': 'fake_email@gmail.com'}
+	status_code = dislike_video(_id, fake_user, collection)
+	assert status_code == HTTP_CREATED
+	status_code = like_video(_id, fake_user, collection)
+	assert status_code == HTTP_CREATED
+
+	video = collection.find_one({'_id': ObjectId(_id)})
+	assert fake_user['email'] not in video['dislikes']
+	assert fake_user['email'] in video['likes']
+	client.close()
