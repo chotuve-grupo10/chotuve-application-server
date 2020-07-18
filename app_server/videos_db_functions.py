@@ -1,3 +1,4 @@
+# pylint: disable=W0622
 import logging
 import datetime
 from bson import ObjectId
@@ -50,12 +51,12 @@ def insert_comment_into_video(video_id, user_email, comment, collection):
 	return {'Comment video':
 			'Your request was completed successfully'}, HTTP_CREATED
 
-def get_video_by_objectid(_id, collection, docs=None):
+def get_video_by_objectid(_id, collection, filter=None):
 	try:
-		if docs is None:
+		if filter is None:
 			video = collection.find_one({'_id': _id})
 		else:
-			video = collection.find_one({'_id': _id}, docs)
+			video = collection.find_one({'_id': _id}, filter)
 		return video
 	except TypeError:
 		logger.error('Video with id % is not valid', _id)
@@ -85,3 +86,14 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 			filtered_videos.append(raw_video)
 
 	return filtered_videos
+
+def get_video_for_response(video_id, collection):
+	# video_doc = {'_id': False, 'title': True, 'user': True, 'is_private': True,
+	# 			 'likes': True, 'dislikes': True, 'comments': True}
+
+	video = get_video_by_objectid(ObjectId(video_id), collection)
+	for key in ['_id', 'upload_date']:
+		video[key] = str(video[key])
+	# logger.debug('Video es asi mas o menos {0}'.format(video))
+
+	return video

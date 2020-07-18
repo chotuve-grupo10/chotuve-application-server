@@ -8,7 +8,7 @@ logger = logging.getLogger('gunicorn.error')
 def like_video(video_id, user, collection):
 
 	logger.debug('El usuario %s quiere likear un video', user['email'])
-	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	video = get_video_by_objectid(ObjectId(video_id), collection, filter=None)
 	if video is None:
 		return HTTP_NOT_FOUND
 
@@ -26,12 +26,12 @@ def like_video(video_id, user, collection):
 		logger.debug('Error queriendo modificar el video de id %s', video_id)
 		return HTTP_INTERNAL_SERVER_ERROR
 
-	logger.debug('El usuario % dio like al video con éxito', user['email'])
+	logger.debug('El usuario %s dio like al video con éxito', user['email'])
 	return HTTP_CREATED
 
 def delete_like_video(video_id, user, collection):
 	logger.debug('El usuario %s quiere sacar su like de un video', user['email'])
-	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	video = get_video_by_objectid(ObjectId(video_id), collection, filter=None)
 	if video is None:
 		return HTTP_NOT_FOUND
 
@@ -51,7 +51,7 @@ def delete_like_video(video_id, user, collection):
 def dislike_video(video_id, user, collection):
 
 	logger.debug('El usuario %s quiere dislikear un video', user['email'])
-	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	video = get_video_by_objectid(ObjectId(video_id), collection, filter=None)
 	if video is None:
 		return HTTP_NOT_FOUND
 
@@ -69,12 +69,12 @@ def dislike_video(video_id, user, collection):
 		logger.debug('Error queriendo modificar el video de id %s', video_id)
 		return HTTP_INTERNAL_SERVER_ERROR
 
-	logger.debug('El usuario % dio dislike al video con éxito', user['email'])
+	logger.debug('El usuario %s dio dislike al video con éxito', user['email'])
 	return HTTP_CREATED
 
 def delete_dislike_video(video_id, user, collection):
 	logger.debug('El usuario %s quiere sacar su dislike de un video', user['email'])
-	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	video = get_video_by_objectid(ObjectId(video_id), collection, filter=None)
 	if video is None:
 		return HTTP_NOT_FOUND
 

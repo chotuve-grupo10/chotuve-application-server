@@ -1,6 +1,7 @@
 import os
 import logging
 from pymongo import MongoClient
+from bson import json_util
 from flask import Blueprint, request
 from flasgger import swag_from
 from app_server.http_functions import *
@@ -28,15 +29,17 @@ def _like_video(video_id):
 	status_code = like_video(video_id, user, client[DB][coll_videos])
 
 	if status_code == HTTP_CREATED:
-		result = {'Like_video': 'Te gusta este video'}
+		video = get_video_for_response(video_id, client[DB][coll_videos])
+		result = json.dumps(video, default=json_util.default)
 	elif status_code == HTTP_CONFLICT:
 		result = {'Like_video': 'Este video ya te gusta'}
 	elif status_code == HTTP_NOT_FOUND:
 		result = {'Like_video': 'No se encontró el video'}
-	else: # HTTP_INTERNAL_SERVER_ERROR
+	else:  # HTTP_INTERNAL_SERVER_ERROR
 		result = {'Like_video': 'Sucedió un error'}
 
 	return result, status_code
+
 
 @videos_reactions_bp.route('/api/videos/<video_id>/likes', methods=['DELETE'])
 @swag_from('docs/delete_like_to_video.yml')
@@ -53,15 +56,17 @@ def _delete_like_video(video_id):
 	status_code = delete_like_video(video_id, user, client[DB][coll_videos])
 
 	if status_code == HTTP_OK:
-		result = {'Delete_like_video': 'Borraste el like del video'}
+		video = get_video_for_response(video_id, client[DB][coll_videos])
+		result = json.dumps(video, default=json_util.default)
 	elif status_code == HTTP_CONFLICT:
 		result = {'Delete_like_video': 'Este video no tenia tu like'}
 	elif status_code == HTTP_NOT_FOUND:
 		result = {'Delete_like_video': 'No se encontró el video'}
-	else: # HTTP_INTERNAL_SERVER_ERROR
+	else:  # HTTP_INTERNAL_SERVER_ERROR
 		result = {'Delete_like_video': 'Sucedió un error'}
 
 	return result, status_code
+
 
 @videos_reactions_bp.route('/api/videos/<video_id>/dislikes', methods=['POST'])
 @swag_from('docs/dislike_video.yml')
@@ -78,15 +83,17 @@ def _dislike_video(video_id):
 	status_code = dislike_video(video_id, user, client[DB][coll_videos])
 
 	if status_code == HTTP_CREATED:
-		result = {'Dislike_video': 'Te disgusta este video'}
+		video = get_video_for_response(video_id, client[DB][coll_videos])
+		result = json.dumps(video, default=json_util.default)
 	elif status_code == HTTP_CONFLICT:
 		result = {'Dislike_video': 'Este video ya te disgusta'}
 	elif status_code == HTTP_NOT_FOUND:
 		result = {'Dislike_video': 'No se encontró el video'}
-	else: # HTTP_INTERNAL_SERVER_ERROR
+	else:  # HTTP_INTERNAL_SERVER_ERROR
 		result = {'Dislike_video': 'Sucedió un error'}
 
 	return result, status_code
+
 
 @videos_reactions_bp.route('/api/videos/<video_id>/dislikes', methods=['DELETE'])
 @swag_from('docs/delete_dislike_to_video.yml')
@@ -103,12 +110,13 @@ def _delete_dislike_video(video_id):
 	status_code = delete_dislike_video(video_id, user, client[DB][coll_videos])
 
 	if status_code == HTTP_OK:
-		result = {'Delete_dislike_video': 'Eliminaste el dislike de este video'}
+		video = get_video_for_response(video_id, client[DB][coll_videos])
+		result = json.dumps(video, default=json_util.default)
 	elif status_code == HTTP_CONFLICT:
 		result = {'Delete_dislike_video': 'Este video no tenia tu dislike'}
 	elif status_code == HTTP_NOT_FOUND:
 		result = {'Delete_dislike_video': 'No se encontró el video'}
-	else: # HTTP_INTERNAL_SERVER_ERROR
+	else:  # HTTP_INTERNAL_SERVER_ERROR
 		result = {'Delete_dislike_video': 'Sucedió un error'}
 
 	return result, status_code

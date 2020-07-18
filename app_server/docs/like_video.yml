@@ -1,6 +1,13 @@
 Este servicio permitirá likear un video
 ---
 definitions:
+  Comment:
+    type: object
+    properties:
+      user:
+        type: string
+      text:
+        type: string
   Video:
     type: object
     properties:
@@ -14,6 +21,8 @@ definitions:
         type: string
       is_private:
         type: boolean
+      upload_date:
+        type: string
       likes:
         type: array
         items:
@@ -22,8 +31,8 @@ definitions:
         type: array
         items:
           type: string
-      upload_date:
-        type: string
+      comments:
+        $ref: '#/definitions/Comment'
   UserData:
     type: object
     properties:
