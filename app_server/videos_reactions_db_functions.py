@@ -1,7 +1,5 @@
 import logging
-import datetime
 from bson import ObjectId
-import pymongo.errors
 from app_server.utils.http_responses import *
 from app_server.videos_db_functions import get_video_by_objectid
 
@@ -24,9 +22,8 @@ def like_video(video_id, user, collection):
 
 	result = collection.update_one({'_id': ObjectId(video_id)},
 							{'$push': {'likes': user['email']}})
-	logger.debug('Realicé el update!')
 	if result.modified_count != 1:
-		logger.debug('Error queriendo modificar el video de id %', video_id)
+		logger.debug('Error queriendo modificar el video de id %s', video_id)
 		return HTTP_INTERNAL_SERVER_ERROR
 
 	logger.debug('El usuario % dio like al video con éxito', user['email'])
@@ -44,10 +41,52 @@ def delete_like_video(video_id, user, collection):
 
 	result = collection.update_one({'_id': ObjectId(video_id)},
 							{'$pull': {'likes': user['email']}})
-	logger.debug('Realicé el update!')
 	if result.modified_count != 1:
-		logger.debug('Error queriendo modificar el video de id %', video_id)
+		logger.debug('Error queriendo modificar el video de id %s', video_id)
 		return HTTP_INTERNAL_SERVER_ERROR
 
-	logger.debug('El usuario % quitó su like del video con éxito', user['email'])
+	logger.debug('El usuario %s quito su like del video con éxito', user['email'])
+	return HTTP_OK
+
+def dislike_video(video_id, user, collection):
+
+	logger.debug('El usuario %s quiere dislikear un video', user['email'])
+	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	if video is None:
+		return HTTP_NOT_FOUND
+
+	if user['email'] in video['dislikes']:
+		logger.debug('Este usuario ya dislikeo el video antes')
+		return HTTP_CONFLICT
+	if user['email'] in video['likes']:
+		logger.debug('Eliminando like del video antes')
+		result = collection.update_one({'_id': ObjectId(video_id)},
+							{'$pull': {'likes': user['email']}})
+
+	result = collection.update_one({'_id': ObjectId(video_id)},
+							{'$push': {'dislikes': user['email']}})
+	if result.modified_count != 1:
+		logger.debug('Error queriendo modificar el video de id %s', video_id)
+		return HTTP_INTERNAL_SERVER_ERROR
+
+	logger.debug('El usuario % dio dislike al video con éxito', user['email'])
+	return HTTP_CREATED
+
+def delete_dislike_video(video_id, user, collection):
+	logger.debug('El usuario %s quiere sacar su dislike de un video', user['email'])
+	video = get_video_by_objectid(ObjectId(video_id), collection, docs=None)
+	if video is None:
+		return HTTP_NOT_FOUND
+
+	if user['email'] not in video['dislikes']:
+		logger.debug('Este usuario NO dislikeo el video antes')
+		return HTTP_CONFLICT
+
+	result = collection.update_one({'_id': ObjectId(video_id)},
+							{'$pull': {'dislikes': user['email']}})
+	if result.modified_count != 1:
+		logger.debug('Error queriendo modificar el video de id %s', video_id)
+		return HTTP_INTERNAL_SERVER_ERROR
+
+	logger.debug('El usuario %s quito su dislike del video con éxito', user['email'])
 	return HTTP_OK
