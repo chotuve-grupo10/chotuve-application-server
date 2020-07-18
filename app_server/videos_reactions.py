@@ -2,7 +2,7 @@ import os
 import logging
 from pymongo import MongoClient
 from bson import json_util
-from flask import Blueprint, request, g
+from flask import Blueprint, g
 from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.videos_db_functions import *
