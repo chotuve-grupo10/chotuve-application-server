@@ -1,3 +1,4 @@
+# pylint: disable=W0622
 import logging
 import datetime
 from bson import ObjectId
@@ -6,6 +7,9 @@ from app_server.utils.http_responses import *
 from app_server.users_db_functions import get_user_by_email, get_user_friends_from_db
 
 logger = logging.getLogger('gunicorn.error')
+
+KEYS_TO_APPEND = ['likes', 'dislikes', 'comments']
+KEYS_TO_DELETE = ['latitude', 'longitude']
 
 def insert_video_into_db(video_id, data, collection):
 
@@ -50,12 +54,12 @@ def insert_comment_into_video(video_id, user_email, comment, collection):
 	return {'Comment video':
 			'Your request was completed successfully'}, HTTP_CREATED
 
-def get_video_by_objectid(_id, collection, docs=None):
+def get_video_by_objectid(_id, collection, filter=None):
 	try:
-		if docs is None:
+		if filter is None:
 			video = collection.find_one({'_id': _id})
 		else:
-			video = collection.find_one({'_id': _id}, docs)
+			video = collection.find_one({'_id': _id}, filter)
 		return video
 	except TypeError:
 		logger.error('Video with id % is not valid', _id)
@@ -75,9 +79,16 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 		video = get_video_by_objectid(ObjectId(raw_video['_id']),
 									  videos_collection)
 		if video is None:
-			# acá debería pudrirse todo para mí... pero tampoco debería suceder nunca
+			# acá debería pudrirse toddo para mí... pero tampoco debería suceder nunca
 			logger.error("Este video no existe en la base del AppServer %s", raw_video['_id'])
 			continue
+		for key in KEYS_TO_APPEND:
+			raw_video[key] = video[key]
+		for key in KEYS_TO_DELETE:
+			try:
+				del raw_video[key]
+			except KeyError:
+				pass
 		if video['is_private']:
 			if video['user'] in email_friends or video['user'] == user_email:
 				filtered_videos.append(raw_video)
@@ -85,3 +96,14 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 			filtered_videos.append(raw_video)
 
 	return filtered_videos
+
+def get_video_for_response(video_id, collection):
+	# video_doc = {'_id': False, 'title': True, 'user': True, 'is_private': True,
+	# 			 'likes': True, 'dislikes': True, 'comments': True}
+
+	video = get_video_by_objectid(ObjectId(video_id), collection)
+	for key in ['_id', 'upload_date']:
+		video[key] = str(video[key])
+	# logger.debug('Video es asi mas o menos {0}'.format(video))
+
+	return video

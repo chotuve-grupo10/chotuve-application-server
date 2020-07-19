@@ -4,18 +4,7 @@ definitions:
   VideoList:
     type: array
     items: 
-      type: object
-      properties:
-        _id:
-          type: string
-        title:
-          type: string
-        url:
-          type: string
-        user:
-          type: string
-        upload_date:
-          type: string
+      $ref: '#/definitions/Video'
 parameters:
   - in: path
     name: user_id

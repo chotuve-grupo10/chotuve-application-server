@@ -1,21 +1,5 @@
 Este servicio permitirá listar los videos de un usuario especifico para mostrarlos en su perfil
 ---
-definitions:
-  VideoList:
-    type: array
-    items:
-      type: object
-      properties:
-        _id:
-          type: string
-        title:
-          type: string
-        url:
-          type: string
-        user:
-          type: string
-        upload_date:
-          type: string
 parameters:
   - in: path
     name: user_id
@@ -24,3 +8,5 @@ parameters:
 responses:
   200:
     description: videos list returned
+    schema:
+      $ref: '#/definitions/VideoList'

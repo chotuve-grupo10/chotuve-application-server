@@ -1,0 +1,34 @@
+Este servicio permitirá dar dislike a un video
+---
+tags:
+  - name: auth-required
+    description: Requires Authorization header
+parameters:
+  - in: path
+    name: video_id
+    description: id del video
+    type: string
+    
+  - in: body
+    name: user_data
+    description: usuario que hace la request
+    schema:
+      $ref: '#/definitions/UserAuthorizationData'
+
+responses:
+  201:
+    description: video dislikeado
+    schema:
+      $ref: '#/definitions/Video'
+  403:
+    description: ya dislikeaste este video
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: el usuario o el video no existen
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  400:
+    description: error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
