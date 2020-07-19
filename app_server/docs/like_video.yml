@@ -1,5 +1,5 @@
 Este servicio permitirá likear un video
----G
+---
 definitions:
   Comment:
     type: object
