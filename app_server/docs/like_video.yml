@@ -40,7 +40,9 @@ definitions:
         items:
           type: string
       comments:
-        $ref: '#/definitions/Comment'
+        type: array
+        items:
+          $ref: '#/definitions/Comment'
   UserAuthorizationData:
     type: object
     properties:
