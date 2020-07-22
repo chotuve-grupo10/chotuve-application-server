@@ -107,3 +107,12 @@ def get_video_for_response(video_id, collection):
 	# logger.debug('Video es asi mas o menos {0}'.format(video))
 
 	return video
+
+def filter_public_videos(videos_list):
+	public_videos = []
+
+	for video in videos_list:
+		if not video['isPrivate']:
+			public_videos.append(video)
+
+	return public_videos

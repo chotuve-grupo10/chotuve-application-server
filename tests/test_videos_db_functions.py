@@ -103,3 +103,25 @@ def test_delete_video_not_exists():
 	result = list(collection.find({}))
 	assert len(result) == 1
 	client.close()
+
+def test_filter_public_videos_successfully():
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'is_private': True}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': 'test2',
+	 'is_private': False}
+
+	videos_list = [data, data2]
+	result = filter_public_videos(videos_list)
+	first_video = result[0]
+
+	assert len(result) == 1
+	assert first_video['title'] == 'test2'
+	assert not first_video['is_private']

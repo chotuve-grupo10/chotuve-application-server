@@ -41,7 +41,7 @@ def _list_videos_of_user(user_id):
 			status = response_media_server.json()
 		else:
 			logger.debug('Users are not friends. Showing public videos only')
-			status = {'Result' : 'no son amigos'}
+			status = filter_public_videos(response_media_server.json())
 
 	else:
 		logger.debug('Response from media server is NOT 200')
