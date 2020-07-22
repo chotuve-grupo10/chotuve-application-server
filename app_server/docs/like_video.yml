@@ -1,5 +1,13 @@
 Este servicio permitirá likear un video
 ---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
 definitions:
   Comment:
     type: object
@@ -32,7 +40,9 @@ definitions:
         items:
           type: string
       comments:
-        $ref: '#/definitions/Comment'
+        type: array
+        items:
+          $ref: '#/definitions/Comment'
   UserAuthorizationData:
     type: object
     properties:
@@ -46,12 +56,11 @@ parameters:
     name: video_id
     description: id del video
     type: string
-    
-  - in: body
-    name: user_data
-    description: usuario que hace la request
-    schema:
-      $ref: '#/definitions/UserAuthorizationData'
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
 
 responses:
   201:
