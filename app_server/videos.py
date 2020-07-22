@@ -7,6 +7,7 @@ from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.videos_db_functions import *
 from app_server.utils.http_responses import *
+from app_server.decorators.auth_required_decorator import auth_required
 
 videos_bp = Blueprint('videos', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -15,6 +16,7 @@ client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
 @videos_bp.route('/api/users/<user_id>/videos/', methods=['GET'])
+@auth_required
 @swag_from('docs/list_videos_of_user.yml')
 def _list_videos_of_user(user_id):
 	assert user_id == request.view_args['user_id']
