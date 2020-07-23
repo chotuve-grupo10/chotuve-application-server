@@ -126,14 +126,22 @@ def _delete_video(video_id):
 	return json.dumps(status), response_media_server.status_code
 
 @videos_bp.route('/api/videos/<video_id>/comments', methods=['POST'])
+@auth_required
 @swag_from('docs/comment_video.yml')
 def _comment_video(video_id):
+	user_email = g.data['user_id']
 
 	data = request.json
 	coll = 'videos'
-	result, status_code = insert_comment_into_video(video_id,
-													data['email'],
-													data['comment'],
-													client[DB][coll])
+	status_code = insert_comment_into_video(video_id,
+											user_email,
+											data['text'],
+											client[DB][coll])
+
+	if status_code == HTTP_CREATED:
+		video = get_video_for_response(video_id, client[DB][coll])
+		result = json.dumps(video)
+	else: # HTTP_INTERNAL_SERVER_ERROR
+		result = {'Comment video': 'The request could not complete successfully'}
 
 	return result, status_code

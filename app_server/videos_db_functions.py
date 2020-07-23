@@ -5,9 +5,11 @@ from bson import ObjectId
 import pymongo.errors
 from app_server.utils.http_responses import *
 from app_server.users_db_functions import get_user_by_email, get_user_friends_from_db
+from app_server.time import get_local_timestamp
 
 logger = logging.getLogger('gunicorn.error')
 
+FIRST_POSITION = 0
 KEYS_TO_APPEND = ['likes', 'dislikes', 'comments']
 KEYS_TO_DELETE = ['latitude', 'longitude']
 
@@ -38,21 +40,19 @@ def delete_video_in_db(str_id, collection):
 	return HTTP_OK
 
 def insert_comment_into_video(video_id, user_email, comment, collection):
-
 	data = {'user': user_email,
-			'comment': comment,
-			'timestamp': datetime.datetime.now()}
+			'text': comment,
+			'timestamp': get_local_timestamp()}
 	result = collection.update_one({'_id': ObjectId(video_id)},
-								   {'$push': {'comments': data}})
+								   {'$push': {'comments': {'$each' : [data],
+								    '$position': FIRST_POSITION}}})
 
 	if result.modified_count != 1:
 		logger.error('Apparently this video does not exist for AppServer ' +
 					 video_id)
-		return {'Comment video':
-				'The request could not complete successfully'}, HTTP_INTERNAL_SERVER_ERROR
+		return HTTP_INTERNAL_SERVER_ERROR
 
-	return {'Comment video':
-			'Your request was completed successfully'}, HTTP_CREATED
+	return HTTP_CREATED
 
 def get_video_by_objectid(_id, collection, filter=None):
 	try:
