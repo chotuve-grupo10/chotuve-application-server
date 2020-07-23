@@ -33,13 +33,12 @@ def _list_videos_of_user(user_id):
 	if response_media_server.status_code == HTTP_OK:
 		logger.debug('Response from media server list videos is 200')
 
-		videos_list = delete_keys_from_videos(response_media_server.json(), KEYS_TO_DELETE)
-
 		if user_requesting_videos_id == user_id:
 			logger.debug('User requesting own videos')
-			status = videos_list
+			status = response_media_server.json()
 
 		else:
+			videos_list = delete_keys_from_videos(response_media_server.json(), KEYS_TO_DELETE)
 			user_friends = get_user_friends_from_db(user_id, client[DB]['users'])
 			friends_list = [friend['email'] for friend in user_friends]
 
