@@ -110,13 +110,13 @@ def test_filter_public_videos_successfully():
 	 'title': 'test',
 	 'url': 'test.com',
 	 'user': 'test',
-	 'is_private': True}
+	 'isPrivate': True}
 
 	data2 = {
 	 'title': 'test2',
 	 'url': 'test2.com',
 	 'user': 'test2',
-	 'is_private': False}
+	 'isPrivate': False}
 
 	videos_list = [data, data2]
 	result = filter_public_videos(videos_list)
@@ -124,4 +124,4 @@ def test_filter_public_videos_successfully():
 
 	assert len(result) == 1
 	assert first_video['title'] == 'test2'
-	assert not first_video['is_private']
+	assert not first_video['isPrivate']
