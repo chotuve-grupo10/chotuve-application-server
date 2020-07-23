@@ -125,3 +125,29 @@ def test_filter_public_videos_successfully():
 	assert len(result) == 1
 	assert first_video['title'] == 'test2'
 	assert not first_video['isPrivate']
+
+def test_delete_keys_successfully():
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': 'test2',
+	 'isPrivate': False}
+
+	videos_list = [data, data2]
+	result = delete_keys_from_videos(videos_list, ['user'])
+	first_video = result[0]
+
+	value_expected = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'isPrivate': True}
+
+	assert len(result) == 2
+	assert first_video == value_expected

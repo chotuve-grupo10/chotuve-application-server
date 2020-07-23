@@ -116,3 +116,14 @@ def filter_public_videos(videos_list):
 			public_videos.append(video)
 
 	return public_videos
+
+def delete_keys_from_videos(videos_list, keys):
+
+	for video in videos_list:
+		for key in keys:
+			try:
+				del video[key]
+			except KeyError:
+				pass
+
+	return videos_list

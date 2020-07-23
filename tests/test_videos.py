@@ -153,8 +153,8 @@ def test_get_videos_from_specific_user_with_users_being_friends(client):
 		with patch('app_server.videos.get_media_server_request') as mock_get_media_server:
 
 			mock_get_media_server.return_value.status_code = 200
-			video_info = {'Video' : 'video1'}
-			mock_get_media_server.return_value.json.return_value = video_info
+			video_info = {'Video' : 'video1', 'latitude': 0, 'longitude': 0}
+			mock_get_media_server.return_value.json.return_value = [video_info]
 
 			with patch('app_server.videos.get_user_friends_from_db') as mock_get_user_friends:
 
@@ -171,7 +171,7 @@ def test_get_videos_from_specific_user_with_users_being_friends(client):
 				assert mock_get_media_server.called
 				assert mock_get_user_friends.called
 				assert response.status_code == 200
-				assert json.loads(response.data) == video_info
+				assert json.loads(response.data)[0] == video_info
 
 def test_get_videos_from_specific_user_with_users_not_being_friends(client):
 	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
