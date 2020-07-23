@@ -151,3 +151,95 @@ def test_delete_keys_successfully():
 
 	assert len(result) == 2
 	assert first_video == value_expected
+
+### Comments test ###
+
+def test_comment_video():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	video_data = {'title': 'test',
+			'url': 'test.com',
+			'user': 'test',
+			'isPrivate': True,
+			'comments': []
+	}
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, video_data, collection)
+
+	user = 'test_01@test.com'
+	text = 'Este es un comentario de prueba'
+	status_code = insert_comment_into_video(_id, user, text, collection)
+	assert status_code == HTTP_CREATED
+
+	this_video = collection.find_one({'_id': ObjectId(_id)})
+
+	assert len(this_video['comments']) == 1
+	comment = this_video['comments'][0]
+
+	assert comment['text'] == text
+	assert comment['user'] == user
+	assert 'timestamp' in comment.keys()
+	client.close()
+
+def test_second_comment_video_comes_first():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	video_data = {'title': 'test',
+			'url': 'test.com',
+			'user': 'test',
+			'isPrivate': True,
+			'comments': []
+	}
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, video_data, collection)
+
+	user = 'test_01@test.com'
+	text_01 = 'Este es un comentario de prueba'
+	insert_comment_into_video(_id, user, text_01, collection)
+	text_02 = 'Este es el segundo comentario'
+	status_code = insert_comment_into_video(_id, user, text_02, collection)
+	assert status_code == HTTP_CREATED
+
+	this_video = collection.find_one({'_id': ObjectId(_id)})
+
+	assert len(this_video['comments']) == 2
+	comment = this_video['comments'][0]
+
+	assert comment['text'] == text_02
+	assert comment['user'] == user
+	assert 'timestamp' in comment.keys()
+	client.close()
+
+def test_ten_comments_in_order():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	video_data = {'title': 'test',
+				  'url': 'test.com',
+				  'user': 'test',
+				  'isPrivate': True,
+				  'comments': []
+				  }
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, video_data, collection)
+
+	user = 'test_01@test.com'
+	text = 'Este es el comentario numero {0}'
+	for i in range(0, 10):
+		text = text.format(i)
+		insert_comment_into_video(_id, user, text, collection)
+
+	this_video = collection.find_one({'_id': ObjectId(_id)})
+
+	assert len(this_video['comments']) == 10
+
+	for i in range(10, 0):
+		comment = this_video['comments'][i]
+		assert comment['text'] == text.format(i)
+
+	client.close()

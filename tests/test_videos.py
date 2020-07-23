@@ -112,25 +112,6 @@ def test_delete_video_fails(client):
 		assert mock.called
 		assert json.loads(response.data) == value_expected
 
-def test_comment_video_fails(client):
-	with patch('app_server.videos.insert_comment_into_video') as mock:
-
-		data_to_comment = {
-			'email': 'email01@gmail.com',
-			'comment': 'This is one hell of a fake comment'
-		}
-		info = {'Comment video':
-				'The request could not complete successfully'}
-		mock.return_value = info, 500
-
-		value_expected = info
-		response = client.post('/api/videos/01xa/comments',
-							   json=data_to_comment,
-							   follow_redirects=False)
-		assert mock.called
-		assert response.status_code == 500
-		assert json.loads(response.data) == value_expected
-
 def test_get_videos_from_specific_user_fails_invalid_token(client):
 	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
 
