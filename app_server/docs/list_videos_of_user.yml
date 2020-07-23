@@ -1,10 +1,26 @@
-Este servicio permitirá listar los videos de un usuario especifico para mostrarlos en su perfil
+Este servicio permitirá listar los videos de un usuario especifico teniendo en cuenta si el usuario que hace la request es amigo o no.
 ---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+tags:
+  - name: auth-required
+    description: Requires Authorization header
 parameters:
   - in: path
     name: user_id
     description: user id
     type: string
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
 responses:
   200:
     description: videos list returned
