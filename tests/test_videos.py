@@ -203,3 +203,27 @@ def test_get_videos_from_specific_user_with_users_not_being_friends(client):
 				assert response.status_code == 200
 				assert len(json.loads(response.data)) == 1
 				assert json.loads(response.data)[0] == video_info2
+
+def test_get_own_videos_successfully(client):
+	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
+
+		user_requesting = 'test@test.com'
+		mock.return_value = {'Message': 'token valido para user {0}'.format(user_requesting)}, 200
+
+		with patch('app_server.videos.get_media_server_request') as mock_get_media_server:
+
+			mock_get_media_server.return_value.status_code = 200
+			video_info = {'Video' : 'video1', 'isPrivate' : True}
+			video_info2 = {'Video' : 'video2', 'isPrivate' : False}
+			mock_get_media_server.return_value.json.return_value = [video_info, video_info2]
+
+			token = generate_app_token({'email': user_requesting})
+			response = client.get('/api/users/' + user_requesting + '/videos/',
+								headers={'Authorization': token},
+								follow_redirects=False)
+
+			assert mock.called
+			assert mock_get_media_server.called
+			assert response.status_code == 200
+			assert len(json.loads(response.data)) == 2
+			assert json.loads(response.data)[0] == video_info
