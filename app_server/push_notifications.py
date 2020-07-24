@@ -29,7 +29,7 @@ def _assign_push_notifications_token(user_email, token):
 	if status_code == HTTP_OK:
 		logger.debug('El usuario %s ya tenía el mismo token asociado', user_email)
 		message = 'La solicitud fue completada con éxito'
-	if status_code == HTTP_CREATED:
+	elif status_code == HTTP_CREATED:
 		logger.debug('Nuevo token asociado a usuario %s', user_email)
 		message = 'La solicitud fue completada con éxito'
 	elif status_code == HTTP_NOT_FOUND:
@@ -44,14 +44,21 @@ def _assign_push_notifications_token(user_email, token):
 def add_notifications_token(user_email, token, collection):
 	doc_to_set = {'$set': {'notifications_token': token}}
 
-	previous_token = get_user_by_email(user_email, collection)
-	if token != previous_token:
-		result = collection.update_one({'email': user_email},
-									   doc_to_set)
-		if result.modified_count != 1:
-			return HTTP_NOT_FOUND
+	user = get_user_by_email(user_email, collection)
+	try:
+		previous_token = user['notifications_token']
+		if token != previous_token:
+			result = collection.update_one({'email': user_email},
+										   doc_to_set)
+			if result.modified_count != 1:
+				return HTTP_NOT_FOUND
+			return HTTP_CREATED
+		return HTTP_OK
+	except KeyError:
+		collection.update_one({'email': user_email},
+								   doc_to_set)
 		return HTTP_CREATED
-	return HTTP_OK
+
 
 def get_user_token(user_email, collection):
 	user = get_user_by_email(user_email, collection)

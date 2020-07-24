@@ -10,7 +10,8 @@ def insert_new_user(data, collection):
 	doc = {'email': data['email'],
 		   'fullName': data['full name'],
 		   'friends': [],
-		   'requests': []
+		   'requests': [],
+		   'notifications_token': ''
 	}
 	try:
 		## insert_one result has no attribute modified_counts
