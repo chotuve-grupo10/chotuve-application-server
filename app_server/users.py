@@ -1,11 +1,12 @@
 import os
 import json
 import logging
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.users_db_functions import *
 from app_server.relationships_functions import *
+from app_server.decorators.auth_required_decorator import auth_required
 
 users_bp = Blueprint('users_relationships', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -165,3 +166,13 @@ def _delete_user(user_email):
 	except ValueError:
 		# Esto nunca deberia suceder. Pero mejor prevenir que curar
 		return {'Error': 'user {0} doesnt exist'.format(user_email)}, HTTP_NOT_FOUND
+
+@users_bp.route('/api/users/<user_email>', methods=['GET'])
+@auth_required
+@swag_from('docs/get_user_profile.yml')
+def _get_user_profile(user_email):
+
+	user_email_performing_request = g.data['user_id']
+	logger.debug('User {0} requesting {1} profile'.format(user_email_performing_request, user_email))
+
+	return {'Profile': 'user {0} profile'.format(user_email)}
