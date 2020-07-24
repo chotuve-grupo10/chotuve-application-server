@@ -7,6 +7,7 @@ from pymongo import MongoClient
 from app_server.users_db_functions import *
 from app_server.relationships_functions import *
 from app_server.decorators.auth_required_decorator import auth_required
+from app_server.http_functions import get_auth_server_request
 
 users_bp = Blueprint('users_relationships', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -180,7 +181,13 @@ def _get_user_profile(user_email):
 		result = {'Error' : 'requesting profile from another user'}
 		status_code = HTTP_PRECONDITION_FAILED
 	else:
-		result = {'Ok' : 'ok'}
-		status_code = 200
+		header = {'AppServerToken' : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
+		api_get_user_profile = '/api/users/' + user_email
+		url = os.environ.get('AUTH_SERVER_URL') + api_get_user_profile
+
+		response = get_auth_server_request(url, header)
+		logger.debug('Finished auth server request')
+		result = response.json()
+		status_code = response.status_code
 
 	return result, status_code
