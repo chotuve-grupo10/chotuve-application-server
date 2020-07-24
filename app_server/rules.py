@@ -26,7 +26,7 @@ ruleset = [
 		'actions': [
 			{
 				'name': 'multiply_likes',
-				'params': { 'factor': 0.2 }
+				'params': {'factor': 0.2}
 			}
 		]
 	},
@@ -43,7 +43,7 @@ ruleset = [
 		'actions': [
 			{
 				'name': 'multiply_comments',
-				'params': { 'factor': 0.4 }
+				'params': {'factor': 0.4}
 			}
 		]
 	},
@@ -60,7 +60,7 @@ ruleset = [
 		'actions': [
 			{
 				'name': 'penalize',
-				'params': { 'penalty': 2 }
+				'params': {'penalty': 2}
 			}
 		]
 	},
@@ -77,7 +77,7 @@ ruleset = [
 		'actions': [
 			{
 				'name': 'boost',
-				'params': { 'bonus': 5 }
+				'params': {'bonus': 5}
 			}
 		]
 	}
