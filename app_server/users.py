@@ -175,4 +175,12 @@ def _get_user_profile(user_email):
 	user_email_performing_request = g.data['user_id']
 	logger.debug('User %s requesting %s profile', user_email_performing_request, user_email)
 
-	return {'Profile': 'user {0} profile'.format(user_email)}
+	if user_email_performing_request != user_email:
+		logger.debug('User requesting profile from another user')
+		result = {'Error' : 'requesting profile from another user'}
+		status_code = HTTP_PRECONDITION_FAILED
+	else:
+		result = {'Ok' : 'ok'}
+		status_code = 200
+
+	return result, status_code

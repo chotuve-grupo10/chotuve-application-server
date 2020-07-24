@@ -1,5 +1,6 @@
 from unittest.mock import patch
 import simplejson as json
+from app_server.token_functions import generate_app_token
 
 def test_insert_new_friendship_request_was_already_submitted(client):
 	with patch('app_server.users.insert_new_friendship_request') as mock:
@@ -78,3 +79,20 @@ def test_delete_user_successfully(client):
 				assert mock.called
 				assert response.status_code == 200
 				assert json.loads(response.data) == value_expected
+
+def test_cant_get_user_profile_user_requesting_anohter_profile(client):
+	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
+
+		user_requesting = 'test@test.com'
+		mock.return_value = {'Message': 'token valido para user {0}'.format(user_requesting)}, 200
+
+		user_to_get_profile = 'test2@test.com'
+
+		token = generate_app_token({'email': user_requesting})
+		response = client.get('/api/users/' + user_to_get_profile,
+							headers={'Authorization': token},
+							follow_redirects=False)
+
+		assert mock.called
+		assert response.status_code == 412
+		assert json.loads(response.data) ==  {'Error' : 'requesting profile from another user'}
