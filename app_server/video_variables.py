@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import sys
 from business_rules.variables import (BaseVariables, numeric_rule_variable)
 
@@ -28,4 +28,4 @@ class VideoVariables(BaseVariables):
 	def days_since_publication(self):
 		if 'upload_date' not in self.video:
 			return sys.maxsize
-		return (datetime.datetime.now() - self.video['upload_date']).days
+		return (datetime.now() - datetime.strptime(self.video['upload_date'], '%m/%d/%Y')).days
