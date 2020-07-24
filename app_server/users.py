@@ -173,6 +173,6 @@ def _delete_user(user_email):
 def _get_user_profile(user_email):
 
 	user_email_performing_request = g.data['user_id']
-	logger.debug('User {0} requesting {1} profile'.format(user_email_performing_request, user_email))
+	logger.debug('User %s requesting %s profile', user_email_performing_request, user_email)
 
 	return {'Profile': 'user {0} profile'.format(user_email)}
