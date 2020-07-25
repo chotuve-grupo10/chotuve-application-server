@@ -59,6 +59,11 @@ def _list_videos_of_user(user_id):
 		logger.debug('Response from media server is NOT 200')
 		status = []
 
+	if len(status) != 0:
+		for video in status:
+			rules.set_importance(video, rules.ruleset)
+		status = sorted(status, key=operator.itemgetter('importance'), reverse=True)
+
 	return json.dumps(status), response_media_server.status_code
 
 @videos_bp.route('/api/videos/<user_id>', methods=['GET'])
@@ -77,7 +82,7 @@ def _list_videos(user_id):
 												 client[DB][videos_coll])
 		for video in status:
 			rules.set_importance(video, rules.ruleset)
-		status = sorted(status, key=operator.itemgetter('importance'))
+		status = sorted(status, key=operator.itemgetter('importance'), reverse=True)
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []
