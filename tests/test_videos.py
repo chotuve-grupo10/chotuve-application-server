@@ -140,19 +140,20 @@ def test_get_videos_from_specific_user_with_users_being_friends(client):
 			with patch('app_server.videos.get_user_friends_from_db') as mock_get_user_friends:
 
 				mock_get_user_friends.return_value = [{'email': user_requesting, 'fullName': 'test'}]
+				with patch('app_server.videos.append_data_to_videos') as mock_append_data:
+					mock_append_data.return_value = [video_info]
+					user_to_get_videos = 'test2@test.com'
 
-				user_to_get_videos = 'test2@test.com'
+					token = generate_app_token({'email': user_requesting})
+					response = client.get('/api/users/' + user_to_get_videos + '/videos/',
+										headers={'Authorization': token},
+										follow_redirects=False)
 
-				token = generate_app_token({'email': user_requesting})
-				response = client.get('/api/users/' + user_to_get_videos + '/videos/',
-									headers={'Authorization': token},
-									follow_redirects=False)
-
-				assert mock.called
-				assert mock_get_media_server.called
-				assert mock_get_user_friends.called
-				assert response.status_code == 200
-				assert json.loads(response.data)[0] == video_info
+					assert mock.called
+					assert mock_get_media_server.called
+					assert mock_get_user_friends.called
+					assert response.status_code == 200
+					assert json.loads(response.data)[0] == video_info
 
 def test_get_videos_from_specific_user_with_users_not_being_friends(client):
 	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
@@ -171,19 +172,22 @@ def test_get_videos_from_specific_user_with_users_not_being_friends(client):
 
 				mock_get_user_friends.return_value = [{'email': 'hola@hola.com', 'fullName': 'test'}]
 
-				user_to_get_videos = 'test2@test.com'
+				with patch('app_server.videos.append_data_to_videos') as mock_append_data:
+					mock_append_data.return_value = [video_info, video_info2]
 
-				token = generate_app_token({'email': user_requesting})
-				response = client.get('/api/users/' + user_to_get_videos + '/videos/',
-									headers={'Authorization': token},
-									follow_redirects=False)
+					user_to_get_videos = 'test2@test.com'
 
-				assert mock.called
-				assert mock_get_media_server.called
-				assert mock_get_user_friends.called
-				assert response.status_code == 200
-				assert len(json.loads(response.data)) == 1
-				assert json.loads(response.data)[0] == video_info2
+					token = generate_app_token({'email': user_requesting})
+					response = client.get('/api/users/' + user_to_get_videos + '/videos/',
+										headers={'Authorization': token},
+										follow_redirects=False)
+
+					assert mock.called
+					assert mock_get_media_server.called
+					assert mock_get_user_friends.called
+					assert response.status_code == 200
+					assert len(json.loads(response.data)) == 1
+					assert json.loads(response.data)[0] == video_info2
 
 def test_get_own_videos_successfully(client):
 	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
@@ -198,13 +202,16 @@ def test_get_own_videos_successfully(client):
 			video_info2 = {'Video' : 'video2', 'isPrivate' : False}
 			mock_get_media_server.return_value.json.return_value = [video_info, video_info2]
 
-			token = generate_app_token({'email': user_requesting})
-			response = client.get('/api/users/' + user_requesting + '/videos/',
-								headers={'Authorization': token},
-								follow_redirects=False)
+			with patch('app_server.videos.append_data_to_videos') as mock_append_data:
+				mock_append_data.return_value = [video_info, video_info2]
 
-			assert mock.called
-			assert mock_get_media_server.called
-			assert response.status_code == 200
-			assert len(json.loads(response.data)) == 2
-			assert json.loads(response.data)[0] == video_info
+				token = generate_app_token({'email': user_requesting})
+				response = client.get('/api/users/' + user_requesting + '/videos/',
+									headers={'Authorization': token},
+									follow_redirects=False)
+
+				assert mock.called
+				assert mock_get_media_server.called
+				assert response.status_code == 200
+				assert len(json.loads(response.data)) == 2
+				assert json.loads(response.data)[0] == video_info

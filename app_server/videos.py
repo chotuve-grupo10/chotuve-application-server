@@ -37,16 +37,20 @@ def _list_videos_of_user(user_id):
 
 		if user_requesting_videos_id == user_id:
 			logger.debug('User requesting own videos')
-			status = response_media_server.json()
+			videos_collection = client[DB]['videos']
+			status = append_data_to_videos(response_media_server.json(), videos_collection)
 
 		else:
+			videos_collection = client[DB]['videos']
 			videos_list = delete_keys_from_videos(response_media_server.json(), KEYS_TO_DELETE)
+			videos_list = append_data_to_videos(videos_list, videos_collection)
 			user_friends = get_user_friends_from_db(user_id, client[DB]['users'])
 			friends_list = [friend['email'] for friend in user_friends]
 
 			if user_requesting_videos_id in friends_list:
 				logger.debug('Users are friends. Showing all videos')
 				status = videos_list
+
 			else:
 				logger.debug('Users are not friends. Showing public videos only')
 				status = filter_public_videos(videos_list)
@@ -54,6 +58,11 @@ def _list_videos_of_user(user_id):
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []
+
+	if len(status) != 0:
+		for video in status:
+			rules.set_importance(video, rules.ruleset)
+		status = sorted(status, key=operator.itemgetter('importance'), reverse=True)
 
 	return json.dumps(status), response_media_server.status_code
 
@@ -73,7 +82,7 @@ def _list_videos(user_id):
 												 client[DB][videos_coll])
 		for video in status:
 			rules.set_importance(video, rules.ruleset)
-		status = sorted(status, key=operator.itemgetter('importance'))
+		status = sorted(status, key=operator.itemgetter('importance'), reverse=True)
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []
