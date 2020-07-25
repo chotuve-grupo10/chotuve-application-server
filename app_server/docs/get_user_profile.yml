@@ -6,11 +6,11 @@ definitions:
     properties:
       email:
         type: string
-      full name:
+      full_name:
         type: string
-      phone number:
+      phone_number:
         type: string
-      profile picture:
+      profile_picture:
         type: string
 tags:
   - name: auth-required
@@ -25,8 +25,7 @@ parameters:
     name: user_email
     description: User's email
     required: true
-    schema:
-        type: string
+    type: string
 responses:
   200:
     description: user profile.
