@@ -1,5 +1,6 @@
 import os
 import logging
+import operator
 import simplejson as json
 from pymongo import MongoClient
 from flask import Blueprint, request, g
@@ -7,6 +8,7 @@ from flasgger import swag_from
 from app_server.http_functions import *
 from app_server.videos_db_functions import *
 from app_server.utils.http_responses import *
+from app_server import rules
 from app_server.decorators.auth_required_decorator import auth_required
 from app_server.users_db_functions import get_user_friends_from_db
 from app_server.users_db_functions import get_user_by_email
@@ -69,6 +71,9 @@ def _list_videos(user_id):
 		status = filter_videos_for_specific_user(raw_data, user_id,
 												 client[DB][users_coll],
 												 client[DB][videos_coll])
+		for video in status:
+			rules.set_importance(video, rules.ruleset)
+		status = sorted(status, key=operator.itemgetter('importance'))
 	else:
 		logger.debug('Response from media server is NOT 200')
 		status = []

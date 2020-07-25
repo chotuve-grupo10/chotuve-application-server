@@ -1,41 +1,84 @@
-# pylint: disable=W0622
-# pylint: disable=W0613
-# pylint: disable=C0103
+from business_rules import run_all
+from app_server.video_variables import VideoVariables
+from app_server.video_actions import VideoActions
 
-from durable.lang import *
+def set_importance(video, rules):
+	video['importance'] = 0
+	variables = VideoVariables(video)
+	actions = VideoActions(video, variables)
+	run_all(rule_list=rules,
+					defined_variables=variables,
+					defined_actions=actions,
+					stop_on_first_trigger=False
+					)
 
-with ruleset('comments_test'):
-	@when_all(m.comments == '2')
-	def comment_is_two(c):
-		logger.debug('All comments are 2s')
-
-
-with ruleset('choice_of_sequences'):
-	@when_any(all(c.first << m.comments == '2',
-				  c.second << m.likes == '5'),
-			  all(c.first << m.comments == '5',
-				  c.second << m.likes == 2))
-	def action_sequences(c):
-		msg = 'Comentarios es 2 y likes es 5'
-		logger.debug(msg)
-		return msg
-
-with ruleset('one_nesting'):
-	@when_all(c.user << (m.user == 'diegote') & (m.videos_stats.quantity > 10))
-	def action_nesting(c):
-		msg = 'Use un nivel de nesting'
-		logger.debug(msg)
-		return msg
-
-with ruleset('array_matching'):
-	@when_all(m.videos.allItems(item.comments < 5))
-	def rule_1(c):
-		return '{0} matches rule 1'
-
-	@when_all(m.videos.allItems((item.comments >= 5) & (item.comments < 10)))
-	def rule_2(c):
-		return '{0} matches rule 2'
-
-	@when_all(m.videos.allItems((item.comments >= 10) & (item.comments < 25)))
-	def rule_3(c):
-		return '{0} matches rule 3'
+ruleset = [
+	{
+		'conditions': {
+			'all': [
+				{
+					'name': 'likes',
+					'operator': 'greater_than',
+					'value': 0,
+				}
+			]
+		},
+		'actions': [
+			{
+				'name': 'multiply_likes',
+				'params': {'factor': 0.2}
+			}
+		]
+	},
+	{
+		'conditions': {
+			'all': [
+				{
+					'name': 'comments',
+					'operator': 'greater_than',
+					'value': 0,
+				}
+			]
+		},
+		'actions': [
+			{
+				'name': 'multiply_comments',
+				'params': {'factor': 0.4}
+			}
+		]
+	},
+	{
+		'conditions': {
+			'all': [
+				{
+					'name': 'likeability',
+					'operator': 'less_than',
+					'value': 0.5,
+				}
+			]
+		},
+		'actions': [
+			{
+				'name': 'penalize',
+				'params': {'penalty': 2}
+			}
+		]
+	},
+	{
+		'conditions': {
+			'all': [
+				{
+					'name': 'days_since_publication',
+					'operator': 'less_than',
+					'value': 7,
+				}
+			]
+		},
+		'actions': [
+			{
+				'name': 'boost',
+				'params': {'bonus': 5}
+			}
+		]
+	}
+]
