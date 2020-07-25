@@ -1,11 +1,13 @@
 import os
 import json
 import logging
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.users_db_functions import *
 from app_server.relationships_functions import *
+from app_server.decorators.auth_required_decorator import auth_required
+from app_server.http_functions import get_auth_server_request
 
 users_bp = Blueprint('users_relationships', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -165,3 +167,27 @@ def _delete_user(user_email):
 	except ValueError:
 		# Esto nunca deberia suceder. Pero mejor prevenir que curar
 		return {'Error': 'user {0} doesnt exist'.format(user_email)}, HTTP_NOT_FOUND
+
+@users_bp.route('/api/users/<user_email>', methods=['GET'])
+@auth_required
+@swag_from('docs/get_user_profile.yml')
+def _get_user_profile(user_email):
+
+	user_email_performing_request = g.data['user_id']
+	logger.debug('User %s requesting %s profile', user_email_performing_request, user_email)
+
+	if user_email_performing_request != user_email:
+		logger.debug('User requesting profile from another user')
+		result = {'Error' : 'requesting profile from another user'}
+		status_code = HTTP_PRECONDITION_FAILED
+	else:
+		header = {'AppServerToken' : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
+		api_get_user_profile = '/api/users/' + user_email
+		url = os.environ.get('AUTH_SERVER_URL') + api_get_user_profile
+
+		response = get_auth_server_request(url, header)
+		logger.debug('Finished auth server request')
+		result = response.json()
+		status_code = response.status_code
+
+	return result, status_code
