@@ -120,8 +120,8 @@ def test_set_last_videos_importance():
 			]
 		}
 	]
-	new_video = {'upload_date': datetime.datetime.now()}
-	old_video = {'upload_date': datetime.datetime.now() - datetime.timedelta(days=10)}
+	new_video = {'upload_date': str(datetime.datetime.now())}
+	old_video = {'upload_date': str(datetime.datetime.now() - datetime.timedelta(days=10))}
 	rules.set_importance(new_video, rule_last_week)
 	rules.set_importance(old_video, rule_last_week)
 	assert 'importance' in new_video
