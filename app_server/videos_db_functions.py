@@ -75,6 +75,31 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 	friends = get_user_friends_from_db(user['email'], user_collection)
 	email_friends = [friend['email'] for friend in friends]
 	filtered_videos = []
+	videos_list = append_data_to_videos(videos_list, videos_collection)
+	for raw_video in videos_list:
+		video = get_video_by_objectid(ObjectId(raw_video['_id']),
+									  videos_collection)
+		if video is None:
+			# acá debería pudrirse toddo para mí... pero tampoco debería suceder nunca
+			logger.error("Este video no existe en la base del AppServer %s", raw_video['_id'])
+			continue
+		# for key in KEYS_TO_APPEND:
+		# 	raw_video[key] = video[key]
+		# for key in KEYS_TO_DELETE:
+		# 	try:
+		# 		del raw_video[key]
+		# 	except KeyError:
+		# 		pass
+		if video['is_private']:
+			if video['user'] in email_friends or video['user'] == user_email:
+				filtered_videos.append(raw_video)
+		else:
+			filtered_videos.append(raw_video)
+
+	return filtered_videos
+
+def append_data_to_videos(videos_list, videos_collection):
+	# appended_data_video_list = []
 	for raw_video in videos_list:
 		video = get_video_by_objectid(ObjectId(raw_video['_id']),
 									  videos_collection)
@@ -84,18 +109,9 @@ def filter_videos_for_specific_user(videos_list, user_email, user_collection, vi
 			continue
 		for key in KEYS_TO_APPEND:
 			raw_video[key] = video[key]
-		for key in KEYS_TO_DELETE:
-			try:
-				del raw_video[key]
-			except KeyError:
-				pass
-		if video['is_private']:
-			if video['user'] in email_friends or video['user'] == user_email:
-				filtered_videos.append(raw_video)
-		else:
-			filtered_videos.append(raw_video)
+		# appended_data_video_list.append(raw_video)
 
-	return filtered_videos
+	return videos_list
 
 def get_video_for_response(video_id, collection):
 	# video_doc = {'_id': False, 'title': True, 'user': True, 'is_private': True,
