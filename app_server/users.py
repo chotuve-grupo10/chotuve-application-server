@@ -8,6 +8,7 @@ from app_server.users_db_functions import *
 from app_server.relationships_functions import *
 from app_server.decorators.auth_required_decorator import auth_required
 from app_server.http_functions import get_auth_server_request
+from app_server.http_functions import put_auth_server
 
 users_bp = Blueprint('users_relationships', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -205,11 +206,11 @@ def _modify_user_profile(user_email):
 		result = {'Error' : 'trying to modify profile from another user'}
 		status_code = HTTP_PRECONDITION_FAILED
 	else:
-		header = {'AppServerToken' : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
-		api_get_user_profile = '/api/users/' + user_email
-		url = os.environ.get('AUTH_SERVER_URL') + api_get_user_profile
+		data = request.json
+		api_modify_user_profile = '/api/users/' + user_email
+		url = os.environ.get('AUTH_SERVER_URL') + api_modify_user_profile
 
-		response = get_auth_server_request(url, header)
+		response = put_auth_server(url, data)
 		logger.debug('Finished auth server request')
 		result = response.json()
 		status_code = response.status_code
