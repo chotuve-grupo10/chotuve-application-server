@@ -124,3 +124,20 @@ def test_get_user_profile_successfully(client):
 			assert mock.called
 			assert response.status_code == 200
 			assert json.loads(response.data) == serialized_user
+
+def test_cant_modify_user_profile_user_requesting_anohter_profile(client):
+	with patch('app_server.decorators.auth_required_decorator.validate_token') as mock:
+
+		user_requesting = 'test@test.com'
+		mock.return_value = {'Message': 'token valido para user {0}'.format(user_requesting)}, 200
+
+		user_to_get_profile = 'test2@test.com'
+
+		token = generate_app_token({'email': user_requesting})
+		response = client.put('/api/users/' + user_to_get_profile,
+							headers={'Authorization': token},
+							follow_redirects=False)
+
+		assert mock.called
+		assert response.status_code == 412
+		assert json.loads(response.data) ==  {'Error' : 'trying to modify profile from another user'}

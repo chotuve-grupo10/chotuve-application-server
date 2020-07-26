@@ -1,0 +1,45 @@
+Este servicio permitirá modificar el perfil de un usuario
+---
+definitions:
+  UserModificationSuccessfulResponse:
+      type: object
+      properties:
+        Modify:
+          type: string
+          example: successfully modified user with email test@test.com
+tags:
+  - name: auth-required
+    description: Requires Authorization header
+parameters:
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
+  - in: path
+    name: user_email
+    description: User's email
+    required: true
+    type: string
+  - in: body
+    name: user
+    description: The user to modify.
+    schema:
+      $ref: '#/definitions/ListedUser'
+responses:
+  200:
+    description: user profile updated.
+    schema:
+      $ref: '#/definitions/UserModificationSuccessfulResponse'
+  403:
+    description: invalid token.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  412:
+    description: user requesting to modify profile information from another user.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  500:
+    description: there is an internal problem with the auth server.
+    schema:
+      $ref: '#/definitions/ErrorResponse'

@@ -191,3 +191,27 @@ def _get_user_profile(user_email):
 		status_code = response.status_code
 
 	return result, status_code
+
+@users_bp.route('/api/users/<user_email>', methods=['PUT'])
+@auth_required
+@swag_from('docs/modify_user_profile.yml')
+def _modify_user_profile(user_email):
+
+	user_email_performing_request = g.data['user_id']
+	logger.debug('User %s requesting to modify %s profile', user_email_performing_request, user_email)
+
+	if user_email_performing_request != user_email:
+		logger.debug('User trying to modify profile from another user')
+		result = {'Error' : 'trying to modify profile from another user'}
+		status_code = HTTP_PRECONDITION_FAILED
+	else:
+		header = {'AppServerToken' : os.environ.get('APP_SERVER_TOKEN_FOR_AUTH_SERVER')}
+		api_get_user_profile = '/api/users/' + user_email
+		url = os.environ.get('AUTH_SERVER_URL') + api_get_user_profile
+
+		response = get_auth_server_request(url, header)
+		logger.debug('Finished auth server request')
+		result = response.json()
+		status_code = response.status_code
+
+	return result, status_code
