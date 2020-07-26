@@ -140,4 +140,4 @@ def test_cant_modify_user_profile_user_requesting_anohter_profile(client):
 
 		assert mock.called
 		assert response.status_code == 412
-		assert json.loads(response.data) ==  {'Error' : 'trying to modify profile from another user'}
+		assert json.loads(response.data) == {'Error' : 'trying to modify profile from another user'}
