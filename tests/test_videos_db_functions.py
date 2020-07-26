@@ -60,6 +60,25 @@ def test_insert_ten_videos():
 	for counter, document in enumerate(result):
 		assert document['title'] == 'test_{0}'.format(counter)
 
+def test_insert_duplicate_key_video_fails():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+	response = insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+
+	client.close()
+
+	assert response == HTTP_INTERNAL_SERVER_ERROR
+
+### Delete video tests ###
+
 def test_delete_video_is_successful():
 	client = MongoClient()
 	collection = client[DB]['videos']
@@ -103,6 +122,53 @@ def test_delete_video_not_exists():
 	result = list(collection.find({}))
 	assert len(result) == 1
 	client.close()
+
+## Get video tests ##
+
+def test_get_video_fails_type_error():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+
+	result = list(collection.find({}))
+
+	assert len(result) == 1
+
+	video_obtained = get_video_by_objectid('test', collection)
+	assert video_obtained is None
+
+	client.close()
+
+def test_get_video_successfully():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+
+	result = list(collection.find({}))
+	first_video = result[0]
+
+	assert len(result) == 1
+
+	video_obtained = get_video_by_objectid(ObjectId('5edbc9196ab5430010391c79'), collection)
+	assert video_obtained == first_video
+
+	client.close()
+
+## Filter tests ##
 
 def test_filter_public_videos_successfully():
 
@@ -242,4 +308,29 @@ def test_ten_comments_in_order():
 		comment = this_video['comments'][i]
 		assert comment['text'] == text.format(i)
 
+	client.close()
+
+def test_comment_video_fails_video_does_not_exist():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	video_data = {'title': 'test',
+			'url': 'test.com',
+			'user': 'test',
+			'isPrivate': True,
+			'comments': []
+	}
+
+	_id = '5edbc9196ab5430010391c79'
+	insert_video_into_db(_id, video_data, collection)
+
+	user = 'test_01@test.com'
+	text = 'Este es un comentario de prueba'
+	__inexistent_id = '5edbc9196ab5430010391c78'
+	status_code = insert_comment_into_video(__inexistent_id, user, text, collection)
+	assert status_code == HTTP_INTERNAL_SERVER_ERROR
+
+	this_video = collection.find_one({'_id': ObjectId(_id)})
+
+	assert len(this_video['comments']) == 0
 	client.close()
