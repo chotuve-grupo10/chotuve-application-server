@@ -6,7 +6,7 @@ from flasgger import swag_from
 from pymongo import MongoClient
 from app_server.http_functions import *
 from app_server.token_functions import *
-from app_server.users_db_functions import insert_new_user, insert_new_firebase_user_if_not_exists
+from app_server.users_db_functions import insert_new_user, insert_new_firebase_user_if_not_exists, DEFAULT_PROFILE_PICTURE
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
@@ -22,7 +22,7 @@ def _register_user():
 	api_register = '/api/register/'
 	url = os.environ.get('AUTH_SERVER_URL') + api_register
 
-	# data['profile picture'] = DEFAULT_PROFILE_PICTURE
+	data['profile picture'] = DEFAULT_PROFILE_PICTURE
 
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server register request')
