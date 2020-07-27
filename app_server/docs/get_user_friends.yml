@@ -10,9 +10,12 @@ definitions:
           type: string
         fullName:
           type: string
+        profilePicture:
+          type: string
       example:
         email: 'diegote@gmail.com'
         fullName: 'Diegote'
+        profile:Picture: 'lamanodeDios.jpg'
 parameters:
   - in: path
     name: user_email
