@@ -1,5 +1,9 @@
+from unittest.mock import patch
 from pymongo_inmemory import MongoClient
 from app_server.videos_db_functions import *
+from app_server.users_db_functions import insert_new_user
+from app_server.users import respond_to_friendship_request
+from app_server.relationships_functions import insert_new_friendship_request
 
 DB = 'test_app_server'
 
@@ -191,6 +195,185 @@ def test_filter_videos_for_specific_user_fails_user_doesnt_exist():
 	assert filtered_videos == []
 
 	client.close()
+
+def test_filter_videos_for_specific_user_successfuly_all_private_videos_non_friends():
+	client = MongoClient()
+	collection = client[DB]['videos']
+	users_collection = client[DB]['users']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': 'test2',
+	 'isPrivate': True}
+
+	_id1 = '5edbc9196ab5430010391c79'
+	_id2 = '5edbc9196ab5430010391c78'
+
+	insert_video_into_db(_id1, data, collection)
+	insert_video_into_db(_id2, data2, collection)
+
+	data['_id'] = _id1
+	data2['_id'] = _id2
+
+	result = list(collection.find({}))
+
+	assert len(result) == 2
+
+	user = {'email': 'prueba@prueba.com', 'full name': 'Prueba'}
+	insert_new_user(user, users_collection)
+
+	filtered_videos = filter_videos_for_specific_user([data, data2], 'prueba@prueba.com', users_collection, collection)
+	assert len(filtered_videos) == 0
+
+	client.close()
+
+def test_filter_videos_for_specific_user_successfuly_all_public_videos():
+	client = MongoClient()
+	collection = client[DB]['videos']
+	users_collection = client[DB]['users']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': False}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': 'test2',
+	 'isPrivate': False}
+
+	_id1 = '5edbc9196ab5430010391c79'
+	_id2 = '5edbc9196ab5430010391c78'
+
+	insert_video_into_db(_id1, data, collection)
+	insert_video_into_db(_id2, data2, collection)
+
+	data['_id'] = _id1
+	data2['_id'] = _id2
+
+	result = list(collection.find({}))
+
+	assert len(result) == 2
+
+	user = {'email': 'prueba@prueba.com', 'full name': 'Prueba'}
+	insert_new_user(user, users_collection)
+
+	filtered_videos = filter_videos_for_specific_user([data, data2], 'prueba@prueba.com', users_collection, collection)
+	assert len(filtered_videos) == 2
+	assert filtered_videos[0] == data
+	assert filtered_videos[1] == data2
+
+	client.close()
+
+def test_filter_videos_for_specific_user_successfuly_all_own_videos():
+	client = MongoClient()
+	collection = client[DB]['videos']
+	users_collection = client[DB]['users']
+
+	user_filtering = 'test@test.com'
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': user_filtering,
+	 'isPrivate': True}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': user_filtering,
+	 'isPrivate': True}
+
+	_id1 = '5edbc9196ab5430010391c79'
+	_id2 = '5edbc9196ab5430010391c78'
+
+	insert_video_into_db(_id1, data, collection)
+	insert_video_into_db(_id2, data2, collection)
+
+	data['_id'] = _id1
+	data2['_id'] = _id2
+
+	result = list(collection.find({}))
+
+	assert len(result) == 2
+
+	user = {'email': user_filtering, 'full name': 'Prueba'}
+	insert_new_user(user, users_collection)
+
+	filtered_videos = filter_videos_for_specific_user([data, data2], user_filtering, users_collection, collection)
+	assert len(filtered_videos) == 2
+	assert filtered_videos[0] == data
+	assert filtered_videos[1] == data2
+
+	client.close()
+
+def test_filter_videos_for_specific_user_successfuly_friend_video():
+	client = MongoClient()
+	collection = client[DB]['videos']
+	users_collection = client[DB]['users']
+
+	user1_email = 'prueba@prueba.com'
+	user2_email = 'test@test.com'
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': user2_email,
+	 'isPrivate': True}
+
+	data2 = {
+	 'title': 'test2',
+	 'url': 'test2.com',
+	 'user': 'test2',
+	 'isPrivate': True}
+
+	_id1 = '5edbc9196ab5430010391c79'
+	_id2 = '5edbc9196ab5430010391c78'
+
+	insert_video_into_db(_id1, data, collection)
+	insert_video_into_db(_id2, data2, collection)
+
+	data['_id'] = _id1
+	data2['_id'] = _id2
+
+	result = list(collection.find({}))
+
+	assert len(result) == 2
+
+	user = {'email': user1_email,
+			'full name': 'Prueba',
+			'friends': [],
+		   'requests': []
+			}
+
+	user2 = {'email': user2_email,
+			'full name': 'Test',
+			'friends': [],
+		   'requests': []
+			}
+
+	insert_new_user(user, users_collection)
+	insert_new_user(user2, users_collection)
+
+	with patch('app_server.relationships_functions.send_notification_to_user') as _mock:
+
+		insert_new_friendship_request(user2_email, user1_email, users_collection)
+		respond_to_friendship_request(user1_email, user2_email, users_collection, accept=True)
+
+		filtered_videos = filter_videos_for_specific_user([data, data2], 'prueba@prueba.com', users_collection, collection)
+		assert len(filtered_videos) == 1
+		assert filtered_videos[0] == data
+
+		client.close()
 
 ## Filter tests ##
 
