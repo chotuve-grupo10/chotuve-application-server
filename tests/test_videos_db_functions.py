@@ -168,6 +168,31 @@ def test_get_video_successfully():
 
 	client.close()
 
+## Filter videos for specific user tests ##
+
+def test_filter_videos_for_specific_user_fails_user_doesnt_exist():
+	client = MongoClient()
+	collection = client[DB]['videos']
+	users_collection = client[DB]['users']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+
+	result = list(collection.find({}))
+	first_video = result[0]
+
+	assert len(result) == 1
+
+	filtered_videos = filter_videos_for_specific_user([data], 'test', users_collection, collection)
+	assert filtered_videos == []
+
+	client.close()
+
 ## Filter tests ##
 
 def test_filter_public_videos_successfully():
