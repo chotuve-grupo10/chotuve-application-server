@@ -88,6 +88,49 @@ def test_login_success_returns_two_tokens(client):
 		assert auth_value_expected in json.loads(response.data)
 		assert app_value_expected in json.loads(response.data)[auth_value_expected]
 
+def test_login_with_firebase_fails_auth_server_side(client):
+
+	with patch('app_server.authentication.post_auth_server_with_header') as mock:
+
+		data = {'email': 'test_email@test.com', 'password' : 'test'}
+
+		mock.return_value.status_code = http_responses.HTTP_INTERNAL_SERVER_ERROR
+		return_json = {'Error': 'problems with auth server'}
+		mock.return_value.json.return_value = return_json
+
+		hed = {'authorization': 'FIREBASE_TOKEN'}
+
+		response = client.post('/api/login_with_firebase/', headers=hed, json=data, follow_redirects=False)
+		assert mock.called
+		assert json.loads(response.data) == return_json
+		assert response.status_code == http_responses.HTTP_INTERNAL_SERVER_ERROR
+
+def test_login_with_firebase_success_returns_two_tokens(client):
+	with patch('app_server.authentication.post_auth_server_with_header') as mock:
+
+		data = {'email': 'test_email@test.com', 'password' : 'test'}
+
+		mock.return_value.status_code = http_responses.HTTP_OK
+		mock.return_value.json.return_value = {'Token' : '12k22l232nj3gghghg32', 'claims': 'test'}
+
+		with patch('app_server.authentication.insert_new_firebase_user_if_not_exists') as _mock_insert_user:
+
+			with patch('app_server.authentication.generate_app_token') as mock_generate_token:
+
+				mock_generate_token.return_value = 'token'
+
+				with patch('app_server.authentication.get_user_from_token') as mock_get_user_from_token:
+
+					mock_get_user_from_token.return_value = 'test_email@test.com'
+
+					auth_value_expected = 'Auth token'
+					app_value_expected = '12k22l232nj3gghghg32'
+					hed = {'authorization': 'FIREBASE_TOKEN'}
+					response = client.post('/api/login_with_firebase/', headers=hed, json=data, follow_redirects=False)
+					assert mock.called
+					assert auth_value_expected in json.loads(response.data)
+					assert app_value_expected in json.loads(response.data)[auth_value_expected]
+
 def test_forgot_password_fails_problem_with_auth_server(client):
 	with patch('app_server.authentication.post_auth_server_with_header') as mock:
 
