@@ -1,5 +1,51 @@
 from unittest.mock import patch
 import simplejson as json
+from app_server.utils import http_responses
+
+def test_register_fails_in_auth_server(client):
+	with patch('app_server.authentication.post_auth_server') as mock:
+
+		data = {
+			"email": "test@test.com",
+			"full name": "Test test",
+			"password": "test",
+			"phone number": "12345",
+			"profile picture": "test.jpg"
+		}
+
+		mock.return_value.status_code = 500
+		mock.return_value.text = 'Error'
+
+		response = client.post('/api/register/', json=data, follow_redirects=False)
+		assert mock.called
+		assert response.status_code == 500
+
+def test_register_fails_in_app_server(client):
+	with patch('app_server.authentication.post_auth_server') as mock:
+
+		data = {
+			"email": "test@test.com",
+			"full name": "Test test",
+			"password": "test",
+			"phone number": "12345",
+			"profile picture": "test.jpg"
+		}
+
+		mock.return_value.status_code = http_responses.HTTP_CREATED
+		mock.return_value.text = 'Ok'
+
+		with patch('app_server.authentication.insert_new_user') as mock_insert_user:
+
+			mock_insert_user.return_value = http_responses.HTTP_INTERNAL_SERVER_ERROR
+
+			response = client.post('/api/register/', json=data, follow_redirects=False)
+			assert mock.called
+			assert mock_insert_user.called
+			assert response.status_code == http_responses.HTTP_INTERNAL_SERVER_ERROR
+			assert json.loads(response.data) == {
+				'Registration': 'User {0} was registered successfully in AuthServer, yet'
+				'operation failed in AppServers db'.format(data['email'])
+			}
 
 def test_login_fails_auth_server_returns_invalid_password(client):
 	with patch('app_server.authentication.post_auth_server') as mock:
