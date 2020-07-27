@@ -5,14 +5,18 @@ from app_server.utils.http_responses import *
 
 logger = logging.getLogger('gunicorn.error')
 
+DEFAULT_PROFILE_PICTURE = 'https://firebasestorage.googleapis.com/v0/b/chotuve-android-app.appspot.com/o/profile_pictures%2Fdeafult-profile-03.jpg?alt=media&token=c8dd344d-1f7f-4267-95e6-0a195ebbc5d2'
+
 def insert_new_user(data, collection):
 	logger.debug('User to insert:' + str(data))
 	doc = {'email': data['email'],
 		   'fullName': data['full name'],
 		   'friends': [],
 		   'requests': [],
-		   'notifications_token': ''
+		   'notifications_token': '',
+		   'profilePicture': DEFAULT_PROFILE_PICTURE
 	}
+
 	try:
 		## insert_one result has no attribute modified_counts
 		collection.insert_one(doc)
@@ -78,7 +82,8 @@ def get_user_friends_from_db(user_email, collection):
 	result = []
 	for friend in user['friends']:
 		this_user = get_user_by_objectid(ObjectId(friend), collection,
-										 {'email': 1, 'fullName': 1, '_id': 0})
+										 {'email': 1, 'fullName': 1, 'profilePicture': 1,
+										  '_id': 0})
 		result.append(this_user)
 
 	return result
@@ -117,3 +122,13 @@ def delete_user_from_db(user_email, collection):
 		raise ValueError('User {0} doesnt exist'.format(user_email))
 	logger.debug('User deleted')
 	return result
+
+def modify_user_in_database(user_email, data, collection):
+	user = get_user_by_email(user_email, collection)
+	if user is not None:
+		info_to_set = {'fullName': data['full_name'],
+					   'profilePicture': data['profile_picture']}
+		collection.update_one({'email': user_email},
+							  {'$set': info_to_set})
+		return HTTP_OK
+	return HTTP_NOT_FOUND

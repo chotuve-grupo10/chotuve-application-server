@@ -214,5 +214,9 @@ def _modify_user_profile(user_email):
 		logger.debug('Finished auth server request')
 		result = response.json()
 		status_code = response.status_code
+		if status_code == HTTP_OK:
+			status_code = modify_user_in_database(user_email, data, client[DB]['users'])
+			if status_code != HTTP_OK:
+				result = {'Error': 'AuthServer modified correctly. AppServer missed it'}
 
 	return result, status_code

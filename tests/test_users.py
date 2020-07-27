@@ -154,15 +154,17 @@ def test_modify_user_profile_successfully(client):
 
 			mock_put_auth_server.return_value.status_code = 200
 			mock_put_auth_server.return_value.json.return_value = serialized_user
+			with patch('app_server.users.modify_user_in_database') as mock_modification_app_server:
+				mock_modification_app_server.return_value = 200
 
-			user_to_get_profile = 'test@test.com'
+				user_to_get_profile = 'test@test.com'
 
-			token = generate_app_token({'email': user_requesting})
+				token = generate_app_token({'email': user_requesting})
 
-			response = client.put('/api/users/' + user_to_get_profile,
-								headers={'Authorization': token},
-								follow_redirects=False)
+				response = client.put('/api/users/' + user_to_get_profile,
+									headers={'Authorization': token},
+									follow_redirects=False)
 
-			assert mock.called
-			assert response.status_code == 200
-			assert json.loads(response.data) == serialized_user
+				assert mock.called
+				assert response.status_code == 200
+				assert json.loads(response.data) == serialized_user

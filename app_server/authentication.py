@@ -22,6 +22,8 @@ def _register_user():
 	api_register = '/api/register/'
 	url = os.environ.get('AUTH_SERVER_URL') + api_register
 
+	# data['profile picture'] = DEFAULT_PROFILE_PICTURE
+
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server register request')
 
