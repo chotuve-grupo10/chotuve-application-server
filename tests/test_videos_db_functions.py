@@ -184,7 +184,6 @@ def test_filter_videos_for_specific_user_fails_user_doesnt_exist():
 	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
 
 	result = list(collection.find({}))
-	first_video = result[0]
 
 	assert len(result) == 1
 
