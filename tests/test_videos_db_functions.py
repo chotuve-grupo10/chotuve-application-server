@@ -172,6 +172,27 @@ def test_get_video_successfully():
 
 	client.close()
 
+def test_get_video_for_response_successfully():
+	client = MongoClient()
+	collection = client[DB]['videos']
+
+	data = {
+	 'title': 'test',
+	 'url': 'test.com',
+	 'user': 'test',
+	 'isPrivate': True}
+
+	insert_video_into_db('5edbc9196ab5430010391c79', data, collection)
+
+	result = list(collection.find({}))
+
+	assert len(result) == 1
+
+	video_obtained = get_video_for_response('5edbc9196ab5430010391c79', collection)
+	assert video_obtained['_id'] == '5edbc9196ab5430010391c79'
+
+	client.close()
+
 ## Filter videos for specific user tests ##
 
 def test_filter_videos_for_specific_user_fails_user_doesnt_exist():
