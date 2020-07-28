@@ -9,7 +9,7 @@
 ## Descripción
 Este server será el responsable de conectar a los usuarios.
 Se trata de una aplicación por consola destinada a mantenerse en ejecución por períodos prolongados de tiempo.
-Este servidor se comunicará con los Shared servers ([Media server](https://github.com/chotuve-grupo10/chotuve-media-server) y [Auth server](https://github.com/chotuve-grupo10/chotuve-auth-server)). En el caso que la aplicación Android necesite de algún servicio de los Shared Servers, el Application server deberá de actuar de fachada.
+Este servidor se comunicará con los Shared servers ([Media server](https://github.com/chotuve-grupo10/chotuve-media-server) y [Auth server](https://github.com/chotuve-grupo10/chotuve-auth-server)). En el caso que la aplicación [Android](https://github.com/chotuve-grupo10/chotuve-android-app) necesite de algún servicio de los Shared Servers, el Application server actúa de fachada.
 
 ## Contenidos
 1. [Correr el server localmente](#set-up-para-correr-el-app-server-localmente)
