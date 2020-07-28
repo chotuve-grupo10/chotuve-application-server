@@ -1,0 +1,38 @@
+Este servicio permitirá dar de alta un comentario en un video
+---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+tags:
+  - name: auth-required
+    description: Requires Authorization header
+parameters:
+  - in: path
+    name: video_id
+    description: id del video
+    type: string
+    required: true
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
+  - in: body
+    name: comment
+    schema:
+      $ref: '#/definitions/Comment'
+
+responses:
+  200:
+    description: comentario agregado al video
+    schema:
+      $ref: '#/definitions/Video'
+  500:
+    description: error interno del servidor
+    schema:
+      $ref: '#/definitions/BasicServerResponse'

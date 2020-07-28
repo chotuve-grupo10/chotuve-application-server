@@ -1,0 +1,33 @@
+Este servicio permite eliminar a un usuario
+---
+definitions:
+  SuccessfulDeleteUserResponse:
+    type: object
+    properties:
+      Delete user:
+        type: string
+        example: user example@exmample.com deleted
+  ErrorDeleteUserResponse:
+    type: object
+    properties:
+      Error:
+        type: string
+        example: error message
+parameters:
+  - in: path
+    name: user_email
+    description: my email
+    type: string
+responses:
+  200:
+    description: el usuario fue eliminado
+    schema:
+      $ref: '#/definitions/SuccessfulDeleteUserResponse'
+  404:
+    description: el usuario no existe
+    schema:
+      $ref: '#/definitions/ErrorDeleteUserResponse'
+  500:
+    description: no se puede eliminar usuario por error interno del server
+    schema:
+      $ref: '#/definitions/ErrorDeleteUserResponse'

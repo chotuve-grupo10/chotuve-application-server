@@ -1,12 +1,18 @@
 import os
 import logging
+from http import HTTPStatus
 from flask import Blueprint, request
 from flasgger import swag_from
+from pymongo import MongoClient
 from app_server.http_functions import *
 from app_server.token_functions import *
+from app_server.users_db_functions import insert_new_user, insert_new_firebase_user_if_not_exists, DEFAULT_PROFILE_PICTURE
 
 authentication_bp = Blueprint('authentication', __name__)
 logger = logging.getLogger('gunicorn.error')
+
+client = MongoClient(os.environ.get('DATABASE_URL'))
+DB = 'app_server'
 
 @authentication_bp.route('/api/register/', methods=['POST'])
 @swag_from('docs/register.yml')
@@ -16,8 +22,19 @@ def _register_user():
 	api_register = '/api/register/'
 	url = os.environ.get('AUTH_SERVER_URL') + api_register
 
+	data['profile picture'] = DEFAULT_PROFILE_PICTURE
+
 	response = post_auth_server(url, data)
 	logger.debug('Finished auth server register request')
+
+	if response.status_code == 201:
+		coll = 'users'
+		result = insert_new_user(data, client[DB][coll])
+		if result != 201:
+			return {
+				'Registration': 'User {0} was registered successfully in AuthServer, yet'
+				'operation failed in AppServers db'.format(data['email'])
+			}, 500
 
 	return response.text, response.status_code
 
@@ -52,7 +69,6 @@ def _register_user_using_firebase():
 
 	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
 	response = post_auth_server_with_header(url, headers)
-	logger.debug('Finished auth server register with firebase request')
 
 	return response.json(), response.status_code
 
@@ -69,6 +85,7 @@ def _login_user():
 
 	if response.status_code == 200:
 		logger.debug('Login request returned successful status code')
+
 		json_response = response.json()
 		app_token = generate_app_token(data)
 		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
@@ -89,5 +106,55 @@ def _login_user_using_firebase():
 	headers = {'Content-Type': 'application/json', 'authorization': jwt_token}
 	response = post_auth_server_with_header(url, headers)
 	logger.debug('Finished auth server register with firebase request')
+
+	if response.status_code == 200:
+		logger.debug('Login request returned successful status code')
+		coll = 'users'
+		json_response = response.json()
+		insert_new_firebase_user_if_not_exists(json_response['claims'],
+											   client[DB][coll])
+
+		app_token = generate_app_token({'email': get_user_from_token(json_response['Token'])})
+		text = {'Auth token' : json_response['Token'], 'App token' : app_token}
+	else:
+		logger.debug('Login request returned failure status code')
+		text = response.json()
+
+	return text, response.status_code
+
+@authentication_bp.route('/api/users/<user_email>/reset_password_token', methods=['POST'])
+@swag_from('docs/forgot_password.yml')
+def _forgot_password(user_email):
+
+	logger.debug('Received forgot password request from user %s', user_email)
+
+	api_forgot_password = '/api/users/' + user_email + '/reset_password_token'
+	url = os.environ.get('AUTH_SERVER_URL') + api_forgot_password
+
+	headers = {'Content-Type': 'application/json'}
+	response = post_auth_server_with_header(url, headers)
+	logger.debug('Finished auth server forgot password request')
+
+	if response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+		return {'Error': 'there is a problem with the auth server'}, HTTPStatus.BAD_REQUEST
+
+	return response.json(), response.status_code
+
+
+@authentication_bp.route('/api/users/<user_email>/password', methods=['PUT'])
+@swag_from('docs/reset_password.yml')
+def _reset_password(user_email):
+
+	data = request.json
+	logger.debug('Received reset password request from user %s', user_email)
+
+	api_reset_password = '/api/users/' + user_email + '/password'
+	url = os.environ.get('AUTH_SERVER_URL') + api_reset_password
+
+	response = put_auth_server(url, data)
+	logger.debug('Finished auth server reset password request')
+
+	if response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+		return {'Error': 'there is a problem with the auth server'}, HTTPStatus.BAD_REQUEST
 
 	return response.json(), response.status_code

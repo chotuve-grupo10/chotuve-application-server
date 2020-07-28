@@ -1,0 +1,40 @@
+Este servicio permite aceptar una solicitud de contacto de usuario y crear una relación de amistad
+---
+definitions:
+  BasicServerResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+      server_message:
+        type: object
+        properties:
+          message:
+            type: string
+parameters:
+  - in: path
+    name: user_email
+    description: my email
+    type: string
+  - in: path
+    name: friends_email
+    description: potential new friends email
+    type: string
+      
+responses:
+  200:
+    description: la amistad fue eliminada
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  403:
+    description: la amistad no existe
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: alguno de los usuarios no existe
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  500:
+    description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'

@@ -1,0 +1,20 @@
+Este servicio permite obtener la hora del Server
+---
+definitions:
+  ServerTime:
+    type: object
+    properties:
+      timestamp:
+        type: string
+
+responses:
+  200:
+    description: devuelve la hora del server
+    schema:
+      $ref: '#/definitions/ServerTime'
+    example:
+      Server_time : "2020-07-12 18:12:40.599717"
+  500:
+    description: solicitud rechazada por error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'

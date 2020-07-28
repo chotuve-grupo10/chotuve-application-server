@@ -1,63 +1,130 @@
-# pylint: disable=W0622
-# pylint: disable=W0611
-# pylint: disable=C0411
-
+import datetime
 import pytest
-import app_server.rules
-from durable.lang import *
-from durable.engine import *
+from app_server import rules
 
-def test_comment_is_two():
-	comments = {'user': 'diegote@gmail.com',
-				'algo': 'algo_mas',
-				'comments': 2}
+def test_base_importance():
+	rule_list = []
+	video = {}
+	rules.set_importance(video, rule_list)
+	assert 'importance' in video
+	assert video['importance'] == 0
 
-	assert post('comments_test', comments)
+def test_set_likes_importance():
+	rule_likes = [
+		{
+			'conditions': {
+				'all': [
+					{
+						'name': 'likes',
+						'operator': 'greater_than',
+						'value': 0,
+					}
+				]
+			},
+			'actions': [
+				{
+					'name': 'multiply_likes',
+					'params': {'factor': 0.2}
+				}
+			]
+		}
+	]
+	video = {
+						'likes': ['diegote', 'guillote', 'eche']
+					}
+	rules.set_importance(video, rule_likes)
+	assert 'importance' in video
+	assert video['importance'] == pytest.approx(0.6)
 
-def test_comment_is_two_likes_are_five():
-	data_first = {'comments': 2}
-	data_second = {'likes': 5}
+def test_set_comments_importance():
+	rule_comments = [
+		{
+			'conditions': {
+				'all': [
+					{
+						'name': 'comments',
+						'operator': 'greater_than',
+						'value': 0,
+					}
+				]
+			},
+			'actions': [
+				{
+					'name': 'multiply_comments',
+					'params': {'factor': 0.4}
+				}
+			]
+		}
+	]
+	video = {
+						'likes': ['diegote', 'guillote', 'eche'],
+						'dislikes': ['cosso', 'gonza'],
+						'comments': [
+							{'user': 'nico', 'comment': 'buen vidio', 'timestamp': 'now'},
+							{'user': 'cosso', 'comment': 'No me gusta', 'timestamp': 'yesterday'},
+						]
+					}
+	rules.set_importance(video, rule_comments)
+	assert 'importance' in video
+	assert video['importance'] == pytest.approx(0.8)
 
-	post('choice_of_sequences', data_first)
-	assert post('choice_of_sequences', data_second)
+def test_set_likes_dislikes_ratio_importance():
+	rule_likes_dislikes_ratio = [
+		{
+			'conditions': {
+				'all': [
+					{
+						'name': 'likeability',
+						'operator': 'less_than',
+						'value': 0.5,
+					}
+				]
+			},
+			'actions': [
+				{
+					'name': 'penalize',
+					'params': {'penalty': 2}
+				}
+			]
+		}
+	]
+	video = {
+						'likes': ['diegote', 'guillote', 'eche'],
+						'dislikes': ['cosso', 'gonza', 'agus', 'maxi'],
+						'comments': [
+							{'user': 'nico', 'comment': 'buen vidio', 'timestamp': 'now'},
+							{'user': 'cosso', 'comment': 'No me gusta', 'timestamp': 'yesterday'},
+						]
+					}
+	rules.set_importance(video, rule_likes_dislikes_ratio)
+	assert 'importance' in video
+	assert video['importance'] == pytest.approx(-2)
 
-def test_comment_is_two_likes_are_not_five():
-	data_first = {'comments': 2}
-	data_second = {'likes': 3}
-
-	post('choice_of_sequences', data_first)
-	with pytest.raises(MessageNotHandledException):
-		post('choice_of_sequences', data_second)
-
-def test_comment_is_five_likes_are_two():
-	data_first = {'comments': 5}
-	data_second = {'likes': 2}
-
-	post('choice_of_sequences', data_first)
-	assert post('choice_of_sequences', data_second)
-
-def test_one_nesting():
-	data = {'user': 'diegote',
-			'videos_stats': {'total_duration_hrs': 150,
-							 'quantity': 25}
-			}
-
-	assert post('one_nesting', data)
-
-def test_one_nesting_fails():
-	data = {'user': 'diegote',
-			'videos_stats': {'total_duration_hrs': 150,
-							 'quantity': 5}
-			}
-
-	with pytest.raises(MessageNotHandledException):
-		post('one_nesting', data)
-
-def test_array_behaviour():
-	data_1 = {'user': 'user01',
-			  'videos': [{'id': 0, 'comments': 2},
-						 {'id': 1, 'comments': 4},
-						 {'id': 2, 'comments': 2}]}
-
- 	# resp == 'user01 matches rule 1'
-	assert post('array_matching', data_1)
+def test_set_last_videos_importance():
+	rule_last_week = [
+		{
+			'conditions': {
+				'all': [
+					{
+						'name': 'days_since_publication',
+						'operator': 'less_than',
+						'value': 7,
+					}
+				]
+			},
+			'actions': [
+				{
+					'name': 'boost',
+					'params': {'bonus': 5}
+				}
+			]
+		}
+	]
+	new_video = {'upload_date': str(datetime.datetime.now())}
+	old_video = {'upload_date': str(datetime.datetime.now() - datetime.timedelta(days=10))}
+	rules.set_importance(new_video, rule_last_week)
+	rules.set_importance(old_video, rule_last_week)
+	assert 'importance' in new_video
+	assert 'importance' in old_video
+	assert new_video['importance'] == pytest.approx(5)
+	assert old_video['importance'] == 0

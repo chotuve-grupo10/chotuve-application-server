@@ -1,0 +1,18 @@
+Este servicio permitirá filtrar usuarios
+---
+parameters:
+  - in: query
+    name: filter
+    description: filtering data
+    type: string
+  - in: header
+    name: User_email
+    description: users email making request
+    type: string
+    required: true
+
+responses:
+  200:
+    description: obtiene usuarios filtrados
+    schema:
+      $ref: '#/definitions/UsersInformationList'

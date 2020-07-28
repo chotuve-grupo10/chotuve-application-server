@@ -1,0 +1,49 @@
+Este servicio permitirá consultar el perfil de un usuario
+---
+definitions:
+  ListedUser:
+    type: object
+    properties:
+      email:
+        type: string
+      full_name:
+        type: string
+      phone_number:
+        type: string
+      profile_picture:
+        type: string
+tags:
+  - name: auth-required
+    description: Requires Authorization header
+parameters:
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
+  - in: path
+    name: user_email
+    description: User's email
+    required: true
+    type: string
+responses:
+  200:
+    description: user profile.
+    schema:
+      $ref: '#/definitions/ListedUser'
+  403:
+    description: invalid token.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  404:
+    description: user doesnt exist.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  412:
+    description: user requesting profile information from another user.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  500:
+    description: there is an internal problem with the auth server.
+    schema:
+      $ref: '#/definitions/ErrorResponse'

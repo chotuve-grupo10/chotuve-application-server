@@ -1,0 +1,41 @@
+Este servicio permitirá dar dislike a un video
+---
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+tags:
+  - name: auth-required
+    description: Requires Authorization header
+parameters:
+  - in: path
+    name: video_id
+    description: id del video
+    type: string
+  - in: header
+    name: Authorization
+    description: token
+    type: string
+    required: true
+
+responses:
+  201:
+    description: video dislikeado
+    schema:
+      $ref: '#/definitions/Video'
+  403:
+    description: ya dislikeaste este video
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  404:
+    description: el usuario o el video no existen
+    schema:
+      $ref: '#/definitions/BasicServerResponse'
+  400:
+    description: error interno del server
+    schema:
+      $ref: '#/definitions/BasicServerResponse'

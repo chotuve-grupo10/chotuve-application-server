@@ -1,4 +1,6 @@
-Recibe una solicitud de login utilizando Firebase
+Recibe una solicitud de login utilizando Firebase.
+Si el login es exitoso pero el usuario no está registrado en la plataforma, se
+lo registra automáticamente
 ---
 components:
   securitySchemes:
@@ -16,4 +18,9 @@ parameters:
     required: true
 responses:
   200:
-    description: Login solicitation using Firbease
+    description: Returns tokens
+    schema:
+      $ref: '#/definitions/LoginResponse'
+    example:
+      App token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.dQd-o5sC4n8z2rUuu-DVEF7FCJNILrSUVBKDqkutFgA"
+      Auth token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGllZ290ZUBnbWFpbC5jb20iLCJleHAiOjE1OTA5MjM5ODl9.BzT0Wx3BO2NBQC16UZwXoOV7AwVfwA121gUyzrdZjA4"

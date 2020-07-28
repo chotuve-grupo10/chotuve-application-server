@@ -1,0 +1,13 @@
+Este servicio permite obtener las solicitudes de amistad de un usuario
+---
+parameters:
+  - in: path
+    name: user_email
+    description: email del usuario
+    type: string
+      
+responses:
+  200:
+    description: se envian los usuarios que esperan una respuesta a la solicitud de amistad
+    schema:
+      $ref: '#/definitions/UsersInformationList'
