@@ -19,17 +19,17 @@ logger = logging.getLogger('gunicorn.error')
 client = MongoClient(os.environ.get('DATABASE_URL'))
 DB = 'app_server'
 
-@videos_bp.route('/api/users/<user_id>/videos/', methods=['GET'])
+@videos_bp.route('/api/users/videos/', methods=['GET'])
 @auth_required
 @swag_from('docs/list_videos_of_user.yml')
-def _list_videos_of_user(user_id):
+def _list_videos_of_user():
 
+	user_id = request.args.get('user_id')
 	user_requesting_videos_id = g.data['user_id']
 	logger.debug("The user requesting the videos is:" + user_requesting_videos_id)
 
-	assert user_id == request.view_args['user_id']
 	logger.debug("Requested videos from id:" + user_id)
-	api_list_video_of_user = '/api/list_videos/'+ user_id
+	api_list_video_of_user = '/api/videos/?user_name=' + user_id
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_video_of_user)
 
 	if response_media_server.status_code == HTTP_OK:
@@ -69,7 +69,7 @@ def _list_videos_of_user(user_id):
 @videos_bp.route('/api/videos/<user_id>', methods=['GET'])
 @swag_from('docs/list_videos.yml')
 def _list_videos(user_id):
-	api_list_videos = '/api/list_videos/'
+	api_list_videos = '/api/videos/'
 	response_media_server = get_media_server_request(os.environ.get('MEDIA_SERVER_URL') + api_list_videos)
 	if response_media_server.status_code == HTTP_OK:
 		logger.debug('Response from media server list videos is 200')
@@ -93,7 +93,7 @@ def _list_videos(user_id):
 @swag_from('docs/upload_video.yml')
 def _upload_video():
 	data = request.json
-	api_upload_video = '/api/upload_video/'
+	api_upload_video = '/api/videos/'
 	response_media_server = post_media_server(os.environ.get('MEDIA_SERVER_URL') + api_upload_video, data)
 	status = {}
 	# Trate de usar el .ok de la response, pero un 500 lo toma como true.
@@ -120,7 +120,7 @@ def _upload_video():
 @swag_from('docs/delete_video.yml')
 def _delete_video(video_id):
 	logger.debug("Requested delete video with id:" + video_id)
-	api_delete_video = '/api/delete_video/' + video_id
+	api_delete_video = '/api/videos/' + video_id
 	response_media_server = delete_media_server(os.environ.get('MEDIA_SERVER_URL') + api_delete_video)
 	status = {}
 	if response_media_server.status_code == HTTP_OK:
