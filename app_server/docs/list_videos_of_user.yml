@@ -12,7 +12,7 @@ tags:
   - name: auth-required
     description: Requires Authorization header
 parameters:
-  - in: path
+  - in: query
     name: user_id
     description: user id
     type: string
