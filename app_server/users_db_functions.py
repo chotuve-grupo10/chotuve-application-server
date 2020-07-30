@@ -5,7 +5,7 @@ from app_server.utils.http_responses import *
 
 logger = logging.getLogger('gunicorn.error')
 
-DEFAULT_PROFILE_PICTURE = 'https://firebasestorage.googleapis.com/v0/b/chotuve-android-app.appspot.com/o/profile_pictures%2Fdeafult-profile-03.jpg?alt=media&token=c8dd344d-1f7f-4267-95e6-0a195ebbc5d2'
+DEFAULT_PROFILE_PICTURE = 'https://firebasestorage.googleapis.com/v0/b/chotuve-android-app.appspot.com/o/profile_pictures%2FChotuveProfilePicture.png?alt=media&token=813824e1-5d9d-4e2f-880c-19403e1862ae'
 
 def insert_new_user(data, collection):
 	logger.debug('User to insert:' + str(data))
