@@ -123,7 +123,7 @@ def test_get_videos_from_specific_user_fails_invalid_token(client):
 							   headers={'Authorization': 'FAKETOKEN'},
 							   follow_redirects=False)
 		assert mock.called
-		assert response.status_code == 403
+		assert response.status_code == 401
 		assert json.loads(response.data) == {'Error' : 'invalid token'}
 
 def test_get_videos_from_specific_user_with_users_being_friends(client):
