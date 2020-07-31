@@ -13,7 +13,7 @@ def auth_required(f):
 
         result, status_code = validate_token(token)
         if status_code != 200:
-            return {'Error' : result['Message']}, 403
+            return {'Error' : result['Message']}, status_code
 
         g.data = decode_app_server_token(token)
 
