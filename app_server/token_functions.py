@@ -8,7 +8,7 @@ JWT_ALGORITHM = 'HS256'
 
 logger = logging.getLogger('gunicorn.error')
 
-def generate_app_token(user_data, expiration=60):
+def generate_app_token(user_data, expiration=7200):
 	payload = {
 		'user_id': user_data['email'],
 		'exp': datetime.utcnow() + timedelta(seconds=expiration)
