@@ -41,7 +41,7 @@ more-itertools==8.2.0
 msgpack==1.0.0
 packaging==20.3
 pluggy==0.13.1
-protobuf==3.11.3
+protobuf==3.15.0
 psycopg2==2.8.5
 py==1.8.1
 py-postgresql==1.2.1
